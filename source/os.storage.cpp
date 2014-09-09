@@ -62,7 +62,7 @@ eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOp
 void Storage::UpdateFileHeader()
 {
     // write the data for this frame
-    FlushData();
+    FlushMyBuffer();
 
     // now that the data has been written, we can modify the file position
     fpos_t curPos;
