@@ -157,7 +157,7 @@
 		09C2F82119BF163A00472700 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0600;
 				ORGANIZATIONNAME = Olivier;
 			};
 			buildConfigurationList = 09C2F82419BF163A00472700 /* Build configuration list for PBXProject "os.storage" */;
@@ -282,6 +282,7 @@
 		09C2F82E19BF163B00472700 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -290,6 +291,7 @@
 		09C2F82F19BF163B00472700 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
