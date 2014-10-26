@@ -55,4 +55,6 @@ private:
     void FlushMyBuffer();
 
     void ReadToBuffer();
+
+    static char * FileOperationToString(FileOperation op);
 };

@@ -1,6 +1,6 @@
 
 #include "os.storage.h"
-
+#include "os.log.h"
 
 #ifdef _WIN32
 #include "windows.h"
@@ -36,6 +36,8 @@ void Storage::Finalize()
 
 eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOperation op)
 {
+    LG(INFO, "Storage::OpenFileForOperation( %s, %s) begin", sFilePath.c_str(), FileOperationToString(op));
+
     eResult ret = ILE_SUCCESS;
 
     CloseFile();
@@ -44,7 +46,7 @@ eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOp
 
     if (!m_pFile)
     {
-        std::cerr << "fopen failed : " << errno << std::endl;
+        LG(ERR, "Storage::OpenFileForOperation : fopen failed : %d", errno);
         ret = ILE_BAD_PARAMETER;
     }
     else
@@ -56,6 +58,7 @@ eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOp
         }
     }
 
+    LG(INFO, "Storage::OpenFileForOperation() returns %d", ret);
     return ret;
 }
 
@@ -163,4 +166,20 @@ int Storage::FlushData()
 #else
     return fflush(m_pFile);
 #endif
+}
+
+char * Storage::FileOperationToString(FileOperation op)
+{
+    switch (op)
+    {
+    case OP_WRITE:
+        return "OP_WRITE";
+        break;
+    case OP_READ:
+        return "OP_READ";
+        break;
+    default:
+        return "UNKNOWN";
+        break;
+    }
 }
