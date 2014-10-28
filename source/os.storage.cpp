@@ -3,14 +3,22 @@
 #include "os.log.h"
 
 #ifdef _WIN32
-#include "windows.h"
+#include <windows.h>
+#include <tchar.h> 
+#include <strsafe.h>
+#else
+#include <dirent.h>
+#include <sys/types.h>
 #endif
+
+#include <sys/stat.h>
 #include <stdio.h>
 #include <cassert>
 
 Storage::Storage() :
 m_pFile(NULL),
-m_bufferReadPos(0)
+m_bufferReadPos(0),
+m_totalSizeInBytes(0)
 {}
 
 
@@ -168,7 +176,152 @@ int Storage::FlushData()
 #endif
 }
 
-char * Storage::FileOperationToString(FileOperation op)
+int32_t Storage::WriteKeyData(char key, std::string & sValue)
+{
+    LG(INFO, "Storage::Write key:%c val:%s", key, sValue.c_str());
+
+    int32_t WriteSize = 0;
+    // write key
+    int32_t size = sizeof(char);
+    WriteData(&key, size, 1);
+    WriteSize += size;
+
+    // write data type
+    size = sizeof(char);
+    char val = DATA_TYPE_STRING;
+    WriteData((void*)&val, size, 1);
+    WriteSize += size;
+
+    // write data size
+    int32_t sizeData = sValue.size();
+    size = sizeof(int32_t);
+    WriteData(&sizeData, size, 1);
+    WriteSize += size;
+
+    // write data
+    size = sizeData;
+    WriteData((void*)sValue.c_str(), size, 1);
+    WriteSize += size;
+
+    return WriteSize;
+}
+
+int32_t Storage::WriteKeyData(char key, bool bValue)
+{
+    LG(INFO, "Storage::Write key:%c val:%s", key, (bValue ? "true" : "false"));
+
+    int32_t WriteSize = 0;
+    // write key
+    int32_t size = sizeof(char);
+    WriteData(&key, size, 1);
+    WriteSize += size;
+
+    // write data
+    size = sizeof(char);
+    char val = (bValue ? 0x01 : 0x00);
+    WriteData(&val, size, 1);
+    WriteSize += size;
+
+    return WriteSize;
+}
+
+int32_t Storage::WriteKeyData(char key, int32_t iValue)
+{
+    LG(INFO, "Storage::Write key:%c val:%d", key, iValue);
+
+    int32_t WriteSize = 0;
+    // write key
+    int32_t size = sizeof(char);
+    WriteData(&key, size, 1);
+    WriteSize += size;
+
+    // write data
+    size = sizeof(int32_t);
+    WriteData(&iValue, size, 1);
+    WriteSize += size;
+
+    return WriteSize;
+}
+
+int32_t Storage::WriteKeyData(char key, double dValue)
+{
+    LG(INFO, "Storage::Write key:%c val:%f", key, dValue);
+
+    int32_t WriteSize = 0;
+    // write key
+    int32_t size = sizeof(char);
+    WriteData(&key, size, 1);
+    WriteSize += size;
+
+    // write data
+    size = sizeof(double);
+    WriteData(&dValue, size, 1);
+    WriteSize += size;
+
+    return WriteSize;
+}
+
+int32_t Storage::WriteKeyData(char key, double * bValueArray, int nElems)
+{
+    LG(INFO, "Storage::Write key:%c, %x elements", key, nElems);
+
+    int32_t WriteSize = 0;
+
+    // write key
+    int32_t size = sizeof(char);
+    WriteData(&key, size, 1);
+    WriteSize += size;
+
+    // write data type
+    size = sizeof(char);
+    char val = DATA_TYPE_DOUBLE_ARRAY;
+    WriteData((void*)&val, size, 1);
+    WriteSize += size;
+
+    // write number of elements
+    size = sizeof(int32_t);
+    WriteData(&nElems, size, 1);
+    WriteSize += size;
+
+    // write data
+    size = nElems * sizeof(double);
+    WriteData((void*)bValueArray, size, 1);
+    WriteSize += size;
+
+    return WriteSize;
+}
+
+int32_t Storage::WriteKeyData(char key, float * bValueArray, int nElems)
+{
+    LG(INFO, "Storage::Write key:%c, %x elements", key, nElems);
+
+    int32_t WriteSize = 0;
+
+    // write key
+    int32_t size = sizeof(char);
+    WriteData(&key, size, 1);
+    WriteSize += size;
+
+    // write data type
+    size = sizeof(char);
+    char val = DATA_TYPE_FLOAT_ARRAY;
+    WriteData((void*)&val, size, 1);
+    WriteSize += size;
+
+    // write number of elements
+    size = sizeof(int32_t);
+    WriteData(&nElems, size, 1);
+    WriteSize += size;
+
+    // write data
+    size = nElems * sizeof(float);
+    WriteData((void*)bValueArray, size, 1);
+    WriteSize += size;
+
+    return WriteSize;
+}
+
+const char * Storage::FileOperationToString(FileOperation op)
 {
     switch (op)
     {
@@ -182,4 +335,199 @@ char * Storage::FileOperationToString(FileOperation op)
         return "UNKNOWN";
         break;
     }
+}
+
+#ifdef _WIN32
+void Storage::string_cast(const wchar_t* pSource, unsigned int codePage, std::string & oCast)
+{
+    assert(pSource != 0);
+    oCast.clear();
+    size_t sourceLength = std::wcslen(pSource);
+    if (sourceLength > 0)
+    {
+        int length = ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, NULL, 0, NULL, NULL);
+        if (length != 0)
+        {
+            std::vector<char> buffer(length);
+            ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, &buffer[0], length, NULL, NULL);
+            oCast.assign(buffer.begin(), buffer.end());
+        }
+    }
+}
+#endif
+
+bool Storage::dirExists(const std::string & path)
+{
+    LG(INFO, "Storage::dirExists(%s)", (path.c_str() ? path.c_str() : "NULL"));
+    bool bExists = false;
+
+    struct stat info;
+    bExists = ((stat(path.c_str(), &info) == 0) && (info.st_mode & S_IFDIR));
+
+    LG(INFO, "Storage::dirExists(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
+    return bExists;
+}
+
+bool Storage::fileExists(const std::string & path)
+{
+    LG(INFO, "Storage::fileExists(%s)", (path.c_str() ? path.c_str() : "NULL"));
+    bool bExists = false;
+
+    struct stat info;
+    bExists = (stat(path.c_str(), &info) == 0) && !(info.st_mode & S_IFDIR);
+
+    LG(INFO, "Storage::fileExists(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
+    return bExists;
+}
+
+eResult Storage::makeDir(const std::string & path)
+{
+    LG(INFO, "Storage::makeDir(%s)", (path.c_str() ? path.c_str() : "NULL"));
+    eResult res = ILE_SUCCESS;
+
+#ifdef _WIN32
+    std::wstring swName = std::wstring(path.begin(), path.end());
+    const wchar_t * pwStr = swName.c_str();
+    LG(INFO, "Storage::makeDir : before CreateDirectory");
+    if (!CreateDirectory(pwStr, NULL))
+    {
+        DWORD dwErr = GetLastError();
+        if (dwErr != ERROR_ALREADY_EXISTS)
+        {
+            LG(ERR, "Storage::makeDir : CreateDirectory error %x", dwErr);
+            res = ILE_ERROR;
+        }
+        else
+        {
+            LG(INFO, "Storage::makeDir : directory already exists");
+        }
+    }
+#else
+
+    int ret;
+    ret = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+    if (ret != 0)
+    {
+        if( errno != EEXIST)
+        {
+            LG(ERR, "Storage::makeDir : CreateDirectory error %x", errno);
+            res = ILE_ERROR;
+        }
+        else
+        {
+            LG(INFO, "Storage::makeDir : directory already exists");
+        }
+    }
+
+#endif
+
+    LG(INFO, "Storage::makePath(%s) returns %d", (path.c_str() ? path.c_str() : "NULL"), res);
+    return res;
+}
+
+// returns true if dir exists, flase otherwise
+bool Storage::listFilenames(const std::string & path, std::vector<std::string> & filenames)
+{
+    LG(INFO, "Storage::listFilenames(%s)", (path.c_str() ? path.c_str() : "NULL"));
+    bool bExists = false;
+    filenames.clear();
+
+#ifdef _WIN32
+    WIN32_FIND_DATA ffd;
+    LARGE_INTEGER filesize;
+    TCHAR szDir[MAX_PATH];
+    size_t length_of_arg;
+    HANDLE hFind = INVALID_HANDLE_VALUE;
+    DWORD dwError = 0;
+
+    // Check that the input path plus 3 is not longer than MAX_PATH.
+    // Three characters are for the "\*" plus NULL appended below.
+
+    TCHAR *tstrTo;
+    int tstrLen;
+#ifdef UNICODE
+    tstrLen = MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), NULL, 0);
+    tstrTo = (TCHAR*)malloc((tstrLen+1) * sizeof(TCHAR));
+    tstrTo[tstrLen] = 0;
+    MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), tstrTo, tstrLen);
+#else
+    tstrTo = strdup(dllPath);
+    tstrLen = strlen(tstrTo);
+#endif
+
+    StringCchLength(tstrTo, MAX_PATH, &length_of_arg);
+
+    if (length_of_arg > (MAX_PATH - 3))
+    {
+        LG(ERR, "Storage::listFilenames : Directory path is too long");
+    }
+    else
+    {
+        // Prepare string for use with FindFile functions.  First, copy the
+        // string to a buffer, then append '\*' to the directory name.
+
+        StringCchCopy(szDir, MAX_PATH, tstrTo);
+        StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
+
+        // Find the first file in the directory.
+
+        hFind = FindFirstFile(szDir, &ffd);
+
+        if (INVALID_HANDLE_VALUE == hFind)
+        {
+            LG(ERR, "Storage::listFilenames : FindFirstFile returned INVALID_HANDLE_VALUE");
+        }
+        else
+        {
+            // List all the files in the directory with some info about them.
+
+            bExists = true;
+
+            do
+            {
+                if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+                {
+                    //_tprintf(TEXT("  %s   <DIR>\n"), ffd.cFileName);
+                }
+                else
+                {
+                    std::string cast;
+                    string_cast(ffd.cFileName, CP_ACP, cast);
+                    filenames.push_back(cast);
+                }
+            } while (FindNextFile(hFind, &ffd) != 0);
+
+            dwError = GetLastError();
+            if (dwError != ERROR_NO_MORE_FILES)
+            {
+                LG(ERR, "Storage::listFilenames : FindNextFile returned %d", dwError);
+            }
+
+            FindClose(hFind);
+        }
+    }
+
+    // use tstrTo up to tstrLen characters as needed...
+    free(tstrTo);
+#else
+    DIR           *d;
+    struct dirent *dir;
+    d = opendir(path.c_str());
+    if (d)
+    {
+        bExists = true;
+        while ((dir = readdir(d)) != NULL)
+        {
+            if (dir->d_type == DT_REG)
+            {
+                filenames.push_back(dir->d_name);
+            }
+        }
+
+        closedir(d);
+    }
+#endif
+
+    LG(INFO, "Storage::listFilenames(%s) found %d files and returns %s", (path.c_str() ? path.c_str() : "NULL"), filenames.size(), (bExists ? "true" : "false"));
+    return bExists;
 }
