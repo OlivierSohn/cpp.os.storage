@@ -316,7 +316,7 @@ eResult Storage::makeDir(const std::string & path)
     return res;
 }
 
-// returns true if dir exists, flase otherwise
+// returns true if dir exists, false otherwise
 bool Storage::listFilenames(const std::string & path, std::vector<std::string> & filenames)
 {
     LG(INFO, "Storage::listFilenames(%s)", (path.c_str() ? path.c_str() : "NULL"));
@@ -365,7 +365,7 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
 
         if (INVALID_HANDLE_VALUE == hFind)
         {
-            LG(ERR, "Storage::listFilenames : FindFirstFile returned INVALID_HANDLE_VALUE");
+            LG(INFO, "Storage::listFilenames : FindFirstFile returned INVALID_HANDLE_VALUE");
         }
         else
         {
@@ -388,9 +388,8 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
             {
                 LG(ERR, "Storage::listFilenames : FindNextFile returned %d", dwError);
             }
-
-            FindClose(hFind);
         }
+        FindClose(hFind);
     }
 
     // use tstrTo up to tstrLen characters as needed...

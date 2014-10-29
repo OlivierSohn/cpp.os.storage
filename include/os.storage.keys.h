@@ -40,14 +40,14 @@ protected:
 
     void ReadAllKeys();
 
-    virtual void LoadCharForKey(char key, char cVal) { LG(ERR, "KeysLoad : LoadCharForKey was not implemented by subClass"); }
-    virtual void LoadStringForKey(char key, std::string & str) { LG(ERR, "KeysLoad : LoadStringForKey was not implemented by subClass"); }
-    virtual void LoadInt32ForKey(char key, int32_t iVal) { LG(ERR, "KeysLoad : LoadInt32ForKey was not implemented by subClass"); }
-    virtual void LoadBoolForKey(char key, bool bVal) { LG(ERR, "KeysLoad : LoadBoolForKey was not implemented by subClass"); }
-    virtual void LoadFloatForKey(char key, float fVal) { LG(ERR, "KeysLoad : LoadFloatForKey was not implemented by subClass"); }
-    virtual void LoadDoubleForKey(char key, double fVal) { LG(ERR, "KeysLoad : LoadDoubleForKey was not implemented by subClass"); }
-    virtual void LoadFloatArrayForKey(char key, float * pfVal, int32_t nElems) { LG(ERR, "KeysLoad : LoadFloatArrayForKey was not implemented by subClass"); }
-    virtual void LoadDoubleArrayForKey(char key, double * pdVal, int32_t nElems) { LG(ERR, "KeysLoad : LoadDoubleArrayForKey was not implemented by subClass"); }
+    virtual void LoadCharForKey(char key, char cVal) = 0;
+    virtual void LoadStringForKey(char key, std::string & str) = 0;
+    virtual void LoadInt32ForKey(char key, int32_t iVal) = 0;
+    virtual void LoadBoolForKey(char key, bool bVal) = 0;
+    virtual void LoadFloatForKey(char key, float fVal) = 0;
+    virtual void LoadDoubleForKey(char key, double fVal) = 0;
+    virtual void LoadFloatArrayForKey(char key, float * pfVal, int32_t nElems) = 0;
+    virtual void LoadDoubleArrayForKey(char key, double * pdVal, int32_t nElems) = 0;
 
 private:
     std::string m_tmpString;

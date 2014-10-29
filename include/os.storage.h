@@ -41,6 +41,7 @@ enum eResult
 #define KEY_FILTER_RATE  'k' // double
 #define KEY_FILTER_CUTOFF 'l' // double
 #define KEY_FILTER_ADAPT 'm' // bool
+#define KEY_FPS          'n' // int32
 #define KEY_VEC_ACC_POS  'P' // n * 4 double
 #define KEY_VEC_INT_POS  'p' // n * 7 double
 #define KEY_VEC_ACC_ROT  'R' // n * 4 double
