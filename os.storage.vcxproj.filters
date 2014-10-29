@@ -24,6 +24,9 @@
     <ClCompile Include="source\os.storage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\os.storage.keys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\win32\stdafx.h">
@@ -37,6 +40,9 @@
     </ClInclude>
     <ClInclude Include="source\os.storage.all.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\os.storage.keys.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

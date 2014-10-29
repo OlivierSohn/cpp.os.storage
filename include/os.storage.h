@@ -17,10 +17,14 @@ enum eResult
 
 // data types
 
-#define DATA_TYPE_BOOL         'b' // fixed length : char
+#define DATA_TYPE_INT32        'a'
+#define DATA_TYPE_BOOL         'b'
+#define DATA_TYPE_DOUBLE       'd'
 #define DATA_TYPE_DOUBLE_ARRAY 'D'
+#define DATA_TYPE_FLOAT        'f'
 #define DATA_TYPE_FLOAT_ARRAY  'F'
-#define DATA_TYPE_STRING       's' // variable length
+#define DATA_TYPE_CHAR         's'
+#define DATA_TYPE_CHAR_ARRAY   'S'
 
 // keys
 
@@ -59,8 +63,10 @@ public:
 
     static bool dirExists(const std::string & path);
     static bool fileExists(const std::string & path);
+    static bool fileCreationDate(const std::string & path, std::string & oDate);
     static eResult makeDir(const std::string & path);
-    // returns true if dir exists, flase otherwise
+    static bool setCurrentDir(const char * dir);
+    // returns true if dir exists, false otherwise
     static bool listFilenames(const std::string & dir, std::vector<std::string> & filenames);
 
 protected:
@@ -72,13 +78,9 @@ protected:
     //          returns ILE_BAD_PARAMETER if the file could not be opened 
     //
     eResult OpenFileForOperation(const std::string & sFilePath, enum FileOperation);
+
     void WriteData(void * p, size_t size, size_t count);
-    int32_t WriteKeyData(char key, std::string & sValue);
-    int32_t WriteKeyData(char key, bool bValue);
-    int32_t WriteKeyData(char key, int32_t iValue);
-    int32_t WriteKeyData(char key, double dValue);
-    int32_t WriteKeyData(char key, double * bValueArray, int size);
-    int32_t WriteKeyData(char key, float * bValueArray, int size);
+
     void ReadData(void * p, size_t size, size_t count);
 
     void Finalize();
@@ -91,13 +93,14 @@ protected:
     // and then restore the file position to the position it had before writing the header
     virtual void DoUpdateFileHeader() = 0;
 
+    void SaveBegin();
+    void SaveEnd();
+
 private:
     FILE* m_pFile;
     std::vector<unsigned char> m_writeBuffer;
     unsigned char m_freadBuffer[SIZE_READ_BUFFER];
     unsigned int m_bufferReadPos;
-
-    int32_t m_totalSizeInBytes;
 
     int  FlushData();
     void FlushMyBuffer();

@@ -1,6 +1,7 @@
 
 #include "os.storage.h"
 #include "os.log.h"
+#include "os.log.format.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -9,16 +10,17 @@
 #else
 #include <dirent.h>
 #include <sys/types.h>
+#include <unistd.h>
 #endif
 
+#include <ctime>
 #include <sys/stat.h>
 #include <stdio.h>
 #include <cassert>
 
 Storage::Storage() :
 m_pFile(NULL),
-m_bufferReadPos(0),
-m_totalSizeInBytes(0)
+m_bufferReadPos(0)
 {}
 
 
@@ -68,6 +70,16 @@ eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOp
 
     LG(INFO, "Storage::OpenFileForOperation() returns %d", ret);
     return ret;
+}
+
+void Storage::SaveBegin()
+{
+    // to reserve the header space (it will be overwritten in ::SaveEnd())
+    DoUpdateFileHeader();
+}
+void Storage::SaveEnd()
+{
+    UpdateFileHeader();
 }
 
 void Storage::UpdateFileHeader()
@@ -175,152 +187,6 @@ int Storage::FlushData()
     return fflush(m_pFile);
 #endif
 }
-
-int32_t Storage::WriteKeyData(char key, std::string & sValue)
-{
-    LG(INFO, "Storage::Write key:%c val:%s", key, sValue.c_str());
-
-    int32_t WriteSize = 0;
-    // write key
-    int32_t size = sizeof(char);
-    WriteData(&key, size, 1);
-    WriteSize += size;
-
-    // write data type
-    size = sizeof(char);
-    char val = DATA_TYPE_STRING;
-    WriteData((void*)&val, size, 1);
-    WriteSize += size;
-
-    // write data size
-    int32_t sizeData = sValue.size();
-    size = sizeof(int32_t);
-    WriteData(&sizeData, size, 1);
-    WriteSize += size;
-
-    // write data
-    size = sizeData;
-    WriteData((void*)sValue.c_str(), size, 1);
-    WriteSize += size;
-
-    return WriteSize;
-}
-
-int32_t Storage::WriteKeyData(char key, bool bValue)
-{
-    LG(INFO, "Storage::Write key:%c val:%s", key, (bValue ? "true" : "false"));
-
-    int32_t WriteSize = 0;
-    // write key
-    int32_t size = sizeof(char);
-    WriteData(&key, size, 1);
-    WriteSize += size;
-
-    // write data
-    size = sizeof(char);
-    char val = (bValue ? 0x01 : 0x00);
-    WriteData(&val, size, 1);
-    WriteSize += size;
-
-    return WriteSize;
-}
-
-int32_t Storage::WriteKeyData(char key, int32_t iValue)
-{
-    LG(INFO, "Storage::Write key:%c val:%d", key, iValue);
-
-    int32_t WriteSize = 0;
-    // write key
-    int32_t size = sizeof(char);
-    WriteData(&key, size, 1);
-    WriteSize += size;
-
-    // write data
-    size = sizeof(int32_t);
-    WriteData(&iValue, size, 1);
-    WriteSize += size;
-
-    return WriteSize;
-}
-
-int32_t Storage::WriteKeyData(char key, double dValue)
-{
-    LG(INFO, "Storage::Write key:%c val:%f", key, dValue);
-
-    int32_t WriteSize = 0;
-    // write key
-    int32_t size = sizeof(char);
-    WriteData(&key, size, 1);
-    WriteSize += size;
-
-    // write data
-    size = sizeof(double);
-    WriteData(&dValue, size, 1);
-    WriteSize += size;
-
-    return WriteSize;
-}
-
-int32_t Storage::WriteKeyData(char key, double * bValueArray, int nElems)
-{
-    LG(INFO, "Storage::Write key:%c, %x elements", key, nElems);
-
-    int32_t WriteSize = 0;
-
-    // write key
-    int32_t size = sizeof(char);
-    WriteData(&key, size, 1);
-    WriteSize += size;
-
-    // write data type
-    size = sizeof(char);
-    char val = DATA_TYPE_DOUBLE_ARRAY;
-    WriteData((void*)&val, size, 1);
-    WriteSize += size;
-
-    // write number of elements
-    size = sizeof(int32_t);
-    WriteData(&nElems, size, 1);
-    WriteSize += size;
-
-    // write data
-    size = nElems * sizeof(double);
-    WriteData((void*)bValueArray, size, 1);
-    WriteSize += size;
-
-    return WriteSize;
-}
-
-int32_t Storage::WriteKeyData(char key, float * bValueArray, int nElems)
-{
-    LG(INFO, "Storage::Write key:%c, %x elements", key, nElems);
-
-    int32_t WriteSize = 0;
-
-    // write key
-    int32_t size = sizeof(char);
-    WriteData(&key, size, 1);
-    WriteSize += size;
-
-    // write data type
-    size = sizeof(char);
-    char val = DATA_TYPE_FLOAT_ARRAY;
-    WriteData((void*)&val, size, 1);
-    WriteSize += size;
-
-    // write number of elements
-    size = sizeof(int32_t);
-    WriteData(&nElems, size, 1);
-    WriteSize += size;
-
-    // write data
-    size = nElems * sizeof(float);
-    WriteData((void*)bValueArray, size, 1);
-    WriteSize += size;
-
-    return WriteSize;
-}
-
 const char * Storage::FileOperationToString(FileOperation op)
 {
     switch (op)
@@ -380,6 +246,31 @@ bool Storage::fileExists(const std::string & path)
     return bExists;
 }
 
+bool Storage::fileCreationDate(const std::string & path, std::string & oDate)
+{
+    LG(INFO, "Storage::fileCreationDate(%s)", (path.c_str() ? path.c_str() : "NULL"));
+    
+    oDate.clear();
+
+    bool bExists = false;
+
+    struct stat info;
+    bExists = (stat(path.c_str(), &info) == 0) && !(info.st_mode & S_IFDIR);
+    if (bExists)
+    {
+        tm * time = gmtime((const time_t*)&(info.st_mtime));
+        FormatDate(time, oDate);
+    }
+    else
+    {
+        LG(ERR, "Storage::fileCreationDate : file does not exist");
+        oDate.assign("../../.. ..:..:..");
+    }
+
+    LG(INFO, "Storage::fileCreationDate(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
+    return bExists;
+}
+
 eResult Storage::makeDir(const std::string & path)
 {
     LG(INFO, "Storage::makeDir(%s)", (path.c_str() ? path.c_str() : "NULL"));
@@ -421,7 +312,7 @@ eResult Storage::makeDir(const std::string & path)
 
 #endif
 
-    LG(INFO, "Storage::makePath(%s) returns %d", (path.c_str() ? path.c_str() : "NULL"), res);
+    LG(INFO, "Storage::makeDir(%s) returns %d", (path.c_str() ? path.c_str() : "NULL"), res);
     return res;
 }
 
@@ -434,7 +325,6 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
 
 #ifdef _WIN32
     WIN32_FIND_DATA ffd;
-    LARGE_INTEGER filesize;
     TCHAR szDir[MAX_PATH];
     size_t length_of_arg;
     HANDLE hFind = INVALID_HANDLE_VALUE;
@@ -485,11 +375,7 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
 
             do
             {
-                if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-                {
-                    //_tprintf(TEXT("  %s   <DIR>\n"), ffd.cFileName);
-                }
-                else
+                if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
                 {
                     std::string cast;
                     string_cast(ffd.cFileName, CP_ACP, cast);
@@ -530,4 +416,41 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
 
     LG(INFO, "Storage::listFilenames(%s) found %d files and returns %s", (path.c_str() ? path.c_str() : "NULL"), filenames.size(), (bExists ? "true" : "false"));
     return bExists;
+}
+
+bool Storage::setCurrentDir(const char * dir)
+{
+    LG(INFO, "Storage::SetCurrentDirectory(%s) begin", (dir ? dir : "NULL"));
+    bool bRet = false;
+
+#ifdef _WIN32
+
+    std::string sName(dir);
+    std::wstring swName = std::wstring(sName.begin(), sName.end());
+    const wchar_t * pwStr = swName.c_str();
+    if (!SetCurrentDirectory(pwStr))
+    {
+        DWORD dwErr = GetLastError();
+        LG(ERR, "Storage::SetCurrentDirectory : SetCurrentDirectory error : %x", dwErr);
+    }
+    else
+    {
+        bRet = true;
+    }
+
+#else
+
+    if (0 != chdir(dir))
+    {
+        LG(ERR, "Storage::SetCurrentDirectory : chdir error : %x", errno);
+    }
+    else
+    {
+        bRet = true;
+    }
+
+#endif
+
+    LG(INFO, "Storage::SetCurrentDirectory(%s) returns %s", (dir ? dir : "NULL"), (bRet?"true":"false"));
+    return bRet;
 }
