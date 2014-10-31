@@ -20,8 +20,12 @@ void KeysPersist::DoUpdateFileHeader()
 }
 int32_t KeysLoad::ReadKeysCount()
 {
+    LG(INFO, "KeysLoad::ReadKeysCount begin");
+
     int32_t n;
     ReadData(&n, sizeof(int32_t), 1);
+
+    LG(INFO, "KeysLoad::ReadKeysCount returns %d", n);
     return n;
 }
 
@@ -41,34 +45,54 @@ int32_t KeysPersist::WriteKey(char key)
 
 char KeysLoad::ReadNextKey()
 {
+    LG(INFO, "KeysLoad::ReadNextKey begin");
+
     char key;
     ReadData(&key, sizeof(char), 1);
+
+    LG(INFO, "KeysLoad::ReadNextKey returns %c", key);
     return key;
 }
 
 int32_t KeysPersist::WriteDataType(char keyDataType)
 {
+    LG(INFO, "KeysLoad::WriteDataType begin");
+
     int32_t size = sizeof(keyDataType);
     WriteData(&keyDataType, size, 1);
+
+    LG(INFO, "KeysLoad::WriteDataType returns %d", size);
     return size;
 }
 char KeysLoad::ReadNextDataType()
 {
+    LG(INFO, "KeysLoad::ReadNextDataType begin");
+
     char dataType;
     ReadData(&dataType, sizeof(dataType), 1);
+
+    LG(INFO, "KeysLoad::ReadNextDataType returns %c", dataType);
     return dataType;
 }
 
 int32_t KeysPersist::WriteArrayElementsCount(int32_t count)
 {
+    LG(INFO, "KeysLoad::WriteArrayElementsCount(%d)", count);
+
     int32_t size = sizeof(count);
     WriteData(&count, size, 1);
+
+    LG(INFO, "KeysLoad::WriteArrayElementsCount returns %d", size);
     return size;
 }
 int32_t KeysLoad::ReadNextElementsCount()
 {
+    LG(INFO, "KeysLoad::ReadNextElementsCount begin");
+
     int32_t count;
     ReadData(&count, sizeof(count), 1);
+
+    LG(INFO, "KeysLoad::ReadNextElementsCount returns %d", count);
     return count;
 }
 
@@ -127,12 +151,13 @@ int32_t KeysPersist::WriteKeyData(char key, double dValue)
     WriteData(&dValue, size, 1);
     WriteSize += size;
 
+    LG(INFO, "KeysPersist::Write returns %d", WriteSize);
     return WriteSize;
 }
 
 int32_t KeysPersist::WriteKeyData(char key, double * bValueArray, int nElems)
 {
-    LG(INFO, "KeysPersist::Write key:%c, %x elements", key, nElems);
+    LG(INFO, "KeysPersist::WriteKeyData key:%c, %x elements", key, nElems);
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_DOUBLE_ARRAY);
@@ -142,12 +167,13 @@ int32_t KeysPersist::WriteKeyData(char key, double * bValueArray, int nElems)
     WriteData((void*)bValueArray, size, 1);
     WriteSize += size;
 
+    LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
     return WriteSize;
 }
 
 int32_t KeysPersist::WriteKeyData(char key, float * bValueArray, int nElems)
 {
-    LG(INFO, "KeysPersist::Write key:%c, %x elements", key, nElems);
+    LG(INFO, "KeysPersist::WriteKeyData key:%c, %x elements", key, nElems);
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_FLOAT_ARRAY);
@@ -158,6 +184,7 @@ int32_t KeysPersist::WriteKeyData(char key, float * bValueArray, int nElems)
     WriteData((void*)bValueArray, size, 1);
     WriteSize += size;
 
+    LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
     return WriteSize;
 }
 
@@ -292,23 +319,32 @@ void KeysLoad::ReadAllKeys()
 
 void KeysLoad::ReadNextCharArrayAsString(int32_t nChars)
 {
-    LG(INFO, "KeysLoad::ReadNextString(%x) begin", nChars);
+    LG(INFO, "KeysLoad::ReadNextString(%d)", nChars);
 
     m_tmpString.resize(nChars);
 
     ReadData((void*)m_tmpString.data(), sizeof(char), nChars);
 
-    LG(INFO, "KeysLoad::ReadNextString(%x) read %s", nChars, m_tmpString.c_str());
+    LG(INFO, "KeysLoad::ReadNextString returns");
 }
 
 void KeysLoad::ReadNextDoubleArray(int32_t nElems)
 {
+    LG(INFO, "KeysLoad::ReadNextDoubleArray(%d)", nElems);
+
     m_tmpDoubles.resize(nElems);
+    LG(INFO, "KeysLoad::ReadNextDoubleArray after resize");
     ReadData((void*)m_tmpDoubles.data(), sizeof(double), nElems);
+
+    LG(INFO, "KeysLoad::ReadNextDoubleArray end");
 }
 
 void KeysLoad::ReadNextFloatArray(int32_t nElems)
 {
+    LG(INFO, "KeysLoad::ReadNextFloatArray(%d)", nElems);
+
     m_tmpFloats.resize(nElems);
     ReadData((void*)m_tmpFloats.data(), sizeof(float), nElems);
+
+    LG(INFO, "KeysLoad::ReadNextFloatArray end");
 }
