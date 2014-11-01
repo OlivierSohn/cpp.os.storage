@@ -145,33 +145,33 @@ void Storage::ReadData(void * p, size_t size, size_t count)
 {
     LG(INFO, "Storage::ReadData(%x, %d, %d)", p, size, count);
 
-    LG(INFO, "Storage::ReadData m_bufferReadPos = %d", m_bufferReadPos);
+    //LG(INFO, "Storage::ReadData m_bufferReadPos = %d", m_bufferReadPos);
 
     size_t total = size * count;
     unsigned int max = m_bufferReadPos + total;
 
-    LG(INFO, "Storage::ReadData max = %d", max);
+    //LG(INFO, "Storage::ReadData max = %d", max);
 
     int secondRead = max - SIZE_READ_BUFFER;
 
-    LG(INFO, "Storage::ReadData secondRead = %d", secondRead);
+    //LG(INFO, "Storage::ReadData secondRead = %d", secondRead);
 
     int i = 0;
 
     if (secondRead > 0)
     {
-        LG(INFO, "Storage::ReadData secondRead > 0");
+        //LG(INFO, "Storage::ReadData secondRead > 0");
 
         for (; m_bufferReadPos < SIZE_READ_BUFFER; i++, m_bufferReadPos++)
         {
-            LG(INFO, "Storage::ReadData l1 b %d/%d", m_bufferReadPos, SIZE_READ_BUFFER);
+            //LG(INFO, "Storage::ReadData l1 b %d/%d", m_bufferReadPos, SIZE_READ_BUFFER);
             ((unsigned char*)p)[i] = m_freadBuffer[m_bufferReadPos];
-            LG(INFO, "Storage::ReadData l1 e %d/%d", m_bufferReadPos, SIZE_READ_BUFFER);
+            //LG(INFO, "Storage::ReadData l1 e %d/%d", m_bufferReadPos, SIZE_READ_BUFFER);
         }
         m_bufferReadPos = 0;
-        LG(INFO, "Storage::ReadData before ReadToBuffer");
+        //LG(INFO, "Storage::ReadData before ReadToBuffer");
         ReadToBuffer();
-        LG(INFO, "Storage::ReadData after ReadToBuffer");
+        //LG(INFO, "Storage::ReadData after ReadToBuffer");
 
         // recurse
         LG(INFO, "Storage::ReadData recursive call");
@@ -187,7 +187,7 @@ void Storage::ReadData(void * p, size_t size, size_t count)
     }
     else
     {
-        LG(INFO, "Storage::ReadData secondRead < 0");
+        //LG(INFO, "Storage::ReadData secondRead < 0");
 
         for (; m_bufferReadPos < max; i++, m_bufferReadPos++)
         {
