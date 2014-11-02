@@ -13,7 +13,7 @@ enum eResult
     ILE_OBJECT_INVALID
 };
 
-#define SIZE_READ_BUFFER 256
+#define SIZE_READ_BUFFER 2048
 
 // data types
 
