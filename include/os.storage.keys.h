@@ -38,6 +38,9 @@
 #define KEY_ACC_SEN_MAX_GRAV    't' // 3 double
 #define KEY_ACC_SEN_MIN_GRAV    'u' // 3 double
 #define KEY_ACC_SEN_NOISE_AMP   'v' // 3 double
+#define KEY_ACC_SEN_NOISE_MIN   'w' // 3 double
+#define KEY_ACC_SEN_NOISE_MAX   'x' // 3 double
+#define KEY_ACC_CALI_FROM_NOISE 'z' // bool
 
 class KeysPersist : public Storage
 {
