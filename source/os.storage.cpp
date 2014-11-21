@@ -143,7 +143,7 @@ void Storage::ReadToBuffer()
 
 void Storage::ReadData(void * p, size_t size, size_t count)
 {
-    LG(INFO, "Storage::ReadData(%x, %d, %d)", p, size, count);
+    //LG(INFO, "Storage::ReadData(%x, %d, %d)", p, size, count);
 
     size_t total = size * count;
     
@@ -188,7 +188,7 @@ void Storage::ReadData(void * p, size_t size, size_t count)
     }
     while(total>0);
     
-    LG(INFO, "Storage::ReadData end");
+    //LG(INFO, "Storage::ReadData end");
 }
 
 void Storage::WriteData(void * p, size_t size, size_t count)
