@@ -8,7 +8,7 @@ KeysPersist::KeysPersist() :
 Storage(),
 m_countLevelZeroKeys(0),
 m_iSubElementIndex(-1),
-m_subElt(fake)
+m_pSubElt(NULL)
 {
 }
 
@@ -26,7 +26,7 @@ void KeysPersist::StartSubElement(char key)
     // it's important to keep the incrementation after the previous Write* calls
     m_iSubElementIndex++;
     m_subElements.resize(m_iSubElementIndex + 1);
-    m_subElt = m_subElements[m_iSubElementIndex];
+    m_pSubElt = &(m_subElements[m_iSubElementIndex]);
 }
 
 void KeysPersist::WriteData(void * p, size_t size, size_t count)
@@ -38,9 +38,10 @@ void KeysPersist::WriteData(void * p, size_t size, size_t count)
     else
     {
         assert(m_iSubElementIndex >= 0);
+        assert(m_pSubElt);
 
         size_t add = size*count;
-        m_subElt.insert(m_subElt.end(), (unsigned char*)p, ((unsigned char*)p) + add);
+        m_pSubElt->insert(m_pSubElt->end(), (unsigned char*)p, ((unsigned char*)p) + add);
     }
 }
 
@@ -49,20 +50,22 @@ void KeysPersist::EndSubElement()
 {
     assert(m_iSubElementIndex >= 0);
 
-    std::vector<char> & finishedSubElt = m_subElt;
+    std::vector<char> * pFinishedSubElt = m_pSubElt;
+
+    assert(pFinishedSubElt);
 
     m_iSubElementIndex--;
     if ( m_iSubElementIndex >= 0)
-        m_subElt = m_subElements[m_iSubElementIndex];
+        m_pSubElt = &m_subElements[m_iSubElementIndex];
     
-    int32_t sizeSubElement = finishedSubElt.size();
+    int32_t sizeSubElement = pFinishedSubElt->size();
 
     WriteArrayElementsCount(sizeSubElement);
 
     if ( sizeSubElement > 0 )
-        WriteData((void*)finishedSubElt.data(), sizeSubElement, 1);
+        WriteData((void*)pFinishedSubElt->data(), sizeSubElement, 1);
 
-    finishedSubElt.clear();
+    pFinishedSubElt->clear();
 }
 
 void KeysPersist::DoUpdateFileHeader()
@@ -105,7 +108,7 @@ char KeysLoad::ReadNextKey()
     char key;
     ReadData(&key, sizeof(char), 1);
 
-    LG(INFO, "KeysLoad::ReadNextKey returns %c", key);
+    LG(INFO, "KeysLoad::ReadNextKey returns %d", key);
     return key;
 }
 
@@ -126,7 +129,7 @@ char KeysLoad::ReadNextDataType()
     char dataType;
     ReadData(&dataType, sizeof(dataType), 1);
 
-    LG(INFO, "KeysLoad::ReadNextDataType returns %c", dataType);
+    LG(INFO, "KeysLoad::ReadNextDataType returns %d", dataType);
     return dataType;
 }
 
@@ -153,7 +156,7 @@ int32_t KeysLoad::ReadNextElementsCount()
 
 int32_t KeysPersist::WriteKeyData(char key, std::string & sValue)
 {
-    LG(INFO, "KeysPersist::WriteKeyData( %c, (string)%s )", key, sValue.c_str());
+    LG(INFO, "KeysPersist::WriteKeyData( %d, (string)%s )", key, sValue.c_str());
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_STRING_AS_CHAR_ARRAY);
@@ -169,7 +172,7 @@ int32_t KeysPersist::WriteKeyData(char key, std::string & sValue)
 
 int32_t KeysPersist::WriteKeyData(char key, bool bValue)
 {
-    LG(INFO, "KeysPersist::WriteKeyData( %c, (bool)%s )", key, (bValue ? "true" : "false"));
+    LG(INFO, "KeysPersist::WriteKeyData( %d, (bool)%s )", key, (bValue ? "true" : "false"));
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_BOOL);
@@ -185,7 +188,7 @@ int32_t KeysPersist::WriteKeyData(char key, bool bValue)
 
 int32_t KeysPersist::WriteKeyData(char key, int32_t iValue)
 {
-    LG(INFO, "KeysPersist::WriteKeyData( %c, (int)%d )", key, iValue);
+    LG(INFO, "KeysPersist::WriteKeyData( %d, (int)%d )", key, iValue);
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_INT32);
@@ -200,7 +203,7 @@ int32_t KeysPersist::WriteKeyData(char key, int32_t iValue)
 
 int32_t KeysPersist::WriteKeyData(char key, double dValue)
 {
-    LG(INFO, "KeysPersist::WriteKeyData( %c, (double)%f )", key, dValue);
+    LG(INFO, "KeysPersist::WriteKeyData( %d, (double)%f )", key, dValue);
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_DOUBLE);
@@ -215,7 +218,7 @@ int32_t KeysPersist::WriteKeyData(char key, double dValue)
 
 int32_t KeysPersist::WriteKeyData(char key, char * cValueArray, int nElems)
 {
-    LG(INFO, "KeysPersist::WriteKeyData( %c, ..., (nElems:)%x )", key, nElems);
+    LG(INFO, "KeysPersist::WriteKeyData( %d, ..., (nElems:)%x )", key, nElems);
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_CHAR_ARRAY);
@@ -231,7 +234,7 @@ int32_t KeysPersist::WriteKeyData(char key, char * cValueArray, int nElems)
 
 int32_t KeysPersist::WriteKeyData(char key, double * dValueArray, int nElems)
 {
-    LG(INFO, "KeysPersist::WriteKeyData( %c, ..., (nElems:)%x )", key, nElems);
+    LG(INFO, "KeysPersist::WriteKeyData( %d, ..., (nElems:)%x )", key, nElems);
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_DOUBLE_ARRAY);
@@ -247,7 +250,7 @@ int32_t KeysPersist::WriteKeyData(char key, double * dValueArray, int nElems)
 
 int32_t KeysPersist::WriteKeyData(char key, float * bValueArray, int nElems)
 {
-    LG(INFO, "KeysPersist::WriteKeyData( %c, ..., (nElems:)%x )", key, nElems);
+    LG(INFO, "KeysPersist::WriteKeyData( %d, ..., (nElems:)%x )", key, nElems);
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_FLOAT_ARRAY);

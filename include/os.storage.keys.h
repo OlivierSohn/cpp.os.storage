@@ -2,7 +2,6 @@
 #include "os.storage.h"
 #include "os.log.h"
 
-
 // data types
 
 #define DATA_TYPE_INT32        'a'
@@ -22,12 +21,12 @@
 #define KEY_IC_DQROT            'a' // 4 double
 #define KEY_IC_DPOS             'b' // 3 double
 #define KEY_IC_SET              'c' // bool
-#define KEY_DATE_CREA           'd' // n * char
-#define KEY_GUID                'e' // n * char
-#define KEY_RAWPATH_GUID        'f' // n * char
-#define KEY_INTPATH_GUID        'g' // n * char
-#define KEY_REGPATH_GUID        'h' // n * char
-#define KEY_NAME                'i' // n * char
+#define KEY_DATE_CREA           'd' // string
+#define KEY_GUID                'e' // string
+#define KEY_RAWPATH_GUID        'f' // string
+#define KEY_INTPATH_GUID        'g' // string
+#define KEY_REGPATH_GUID        'h' // string
+#define KEY_NAME                'i' // string
 #define KEY_ITGR_MODE           'j' // int32
 #define KEY_FILTER_RATE         'k' // double
 #define KEY_FILTER_CUTOFF       'l' // double
@@ -37,6 +36,7 @@
 #define KEY_VEC_INT_POS         'p' // n * 7 double
 #define KEY_VEC_ACC_ROT         'R' // n * 4 double
 #define KEY_VEC_INT_ROT         'r' // n * 5 double
+/////////////////////// keys for accelerometer
 #define KEY_ACC_SEN_BIAS        's' // 3 double
 #define KEY_ACC_SEN_MAX_GRAV    't' // 3 double
 #define KEY_ACC_SEN_MIN_GRAV    'u' // 3 double
@@ -44,15 +44,48 @@
 #define KEY_ACC_SEN_NOISE_MIN   'w' // 3 double
 #define KEY_ACC_SEN_NOISE_MAX   'x' // 3 double
 #define KEY_ACC_CALI_FROM_NOISE 'z' // bool
+/////////////////////// keys for extremity types
+#define KEY_ETY_T_FIXEDPOINTINSPACE       -1 // subelement
+#define KEY_ETY_T_POINTINSPACE            -2 // subelement
+#define KEY_ETY_T_POINTONWIREFROMSTART    -3 // subelement
+#define KEY_ETY_T_POINTONWIREFROMEND      -4 // subelement
+/////////////////////// keys for wire types
+#define KEY_WRE_T_LINE                   -30 // subelement
+#define KEY_WRE_T_ARCOFCIRCLE            -31 // subelement
+#define KEY_WRE_T_BEZIER                 -32 // subelement
+/////////////////////// keys for extremity and wire attributes
+#define KEY_REF                 -50
+/////////////////////// keys for extremity attributes
+#define KEY_ETY_VEC_XYZ             -60 // 3 floats
+#define KEY_ETY_VARNAME_X           -61 // string
+#define KEY_ETY_VARNAME_Y           -62 // string
+#define KEY_ETY_VARNAME_Z           -63 // string
+#define KEY_ETY_VARNAME_RATIO       -64 // string
+#define KEY_ETY_WRE_REF             -65 // int32
+/////////////////////// keys for wire attributes
+#define KEY_WRE_ETY_START_REF   -90 // int32
+#define KEY_WRE_ETY_END_REF     -91 // int32
+#define KEY_WRE_ETY_START_RNDBLE -92 // int32
+#define KEY_WRE_ETY_END_RNDBLE  -93 // int32
+#define KEY_WRE_FIXEDPROJLENGTH -94 // bool
+#define KEY_WRE_PROJLENGTH      -95 // float
+#define KEY_WRE_NORMAL          -96 // 3 floats
+#define KEY_WRE_CENTER          -97 // 3 floats
+#define KEY_WRE_BZR_POINTSBYPAIR -98 // n * wmfloat
+#define KEY_WRE_BZR_OFFSET      -99 // 3 wmfloat
+#define KEY_WRE_SEGMENTS         -100 // subelement
+#define KEY_WRE_SEGMENTS_COUNT  -101 // int32
+#define KEY_WRE_SEGMENT         -102 // subelement
+#define KEY_WRE_SEGMENT_RANGE   -103 // wmfloat
+#define KEY_WRE_SEGMENT_RAWPARAM1 -104 // wmfloat
+#define KEY_WRE_SEGMENT_RAWPARAM2 -105 // wmfloat
+#define KEY_WRE_SEGMENT_COMPLEMENT -106 // int32
 
 class KeysPersist : public Storage
 {
 public:
     KeysPersist();
     virtual ~KeysPersist();
-
-protected:
-    virtual void DoUpdateFileHeader();
 
     int32_t WriteKeyData(char key, bool bValue);
     int32_t WriteKeyData(char key, int32_t iValue);
@@ -65,6 +98,9 @@ protected:
 
     void StartSubElement(char key);
     void EndSubElement();
+
+protected:
+    virtual void DoUpdateFileHeader();
 
     int32_t countWriteKeyOperations() const;
 
@@ -79,7 +115,7 @@ private:
 
     int m_iSubElementIndex;
     std::vector<std::vector<char> > m_subElements;
-    std::vector<char> & m_subElt;
+    std::vector<char> * m_pSubElt;
 };
 
 class KeysLoad : public Storage
