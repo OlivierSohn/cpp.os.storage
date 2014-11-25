@@ -6,13 +6,16 @@
 // data types
 
 #define DATA_TYPE_INT32        'a'
+#define DATA_TYPE_INT32_ARRAY  'A'
 #define DATA_TYPE_BOOL         'b'
+#define DATA_TYPE_CHAR_ARRAY   'c'
+#define DATA_TYPE_SUBELT_AS_CHAR_ARRAY   'C'
 #define DATA_TYPE_DOUBLE       'd'
 #define DATA_TYPE_DOUBLE_ARRAY 'D'
 #define DATA_TYPE_FLOAT        'f'
 #define DATA_TYPE_FLOAT_ARRAY  'F'
 #define DATA_TYPE_CHAR         's'
-#define DATA_TYPE_CHAR_ARRAY   'S'
+#define DATA_TYPE_STRING_AS_CHAR_ARRAY   'S'
 
 // keys
 
@@ -55,17 +58,28 @@ protected:
     int32_t WriteKeyData(char key, int32_t iValue);
     int32_t WriteKeyData(char key, double dValue);
     int32_t WriteKeyData(char key, std::string & sValue);
+    int32_t WriteKeyData(char key, int32_t * iValueArray, int nElems);
+    int32_t WriteKeyData(char key, char * cValueArray, int nElems);
     int32_t WriteKeyData(char key, float * bValueArray, int nElems);
     int32_t WriteKeyData(char key, double * bValueArray, int nElems);
 
+    void StartSubElement(char key);
+    void EndSubElement();
+
     int32_t countWriteKeyOperations() const;
 
+    virtual void WriteData(void * p, size_t size, size_t count);
+
 private:
-    int32_t m_countWriteKeyOperations;
+    int32_t m_countLevelZeroKeys;
 
     int32_t WriteKey(char key);
     int32_t WriteDataType(char keyDataType);
     int32_t WriteArrayElementsCount(int32_t count);
+
+    int m_iSubElementIndex;
+    std::vector<std::vector<char> > m_subElements;
+    std::vector<char> & m_subElt;
 };
 
 class KeysLoad : public Storage
@@ -85,19 +99,27 @@ protected:
     virtual void LoadBoolForKey(char key, bool bVal) = 0;
     virtual void LoadFloatForKey(char key, float fVal) = 0;
     virtual void LoadDoubleForKey(char key, double fVal) = 0;
+    virtual void LoadCharArrayForKey(char key, char * pcVal, int32_t nElems) = 0;
+    virtual void LoadInt32ArrayForKey(char key, int32_t * piVal, int32_t nElems) = 0;
     virtual void LoadFloatArrayForKey(char key, float * pfVal, int32_t nElems) = 0;
     virtual void LoadDoubleArrayForKey(char key, double * pdVal, int32_t nElems) = 0;
+    virtual void StartSubElement(char key);
+    virtual void EndSubElement();
+
+    void ParseCharArray(char * pcVal, int32_t nElems);
 
 private:
     std::string m_tmpString;
     std::vector<double> m_tmpDoubles;
     std::vector<float> m_tmpFloats;
+    std::vector<char> m_tmpChars;
 
     int32_t ReadKeysCount();
     char ReadNextKey();
     char ReadNextDataType();
     int32_t ReadNextElementsCount();
     void ReadNextCharArrayAsString(int32_t nChars);
+    void ReadNextCharArray(int32_t nChars);
     void ReadNextDoubleArray(int32_t nChars);
     void ReadNextFloatArray(int32_t nChars);
 };

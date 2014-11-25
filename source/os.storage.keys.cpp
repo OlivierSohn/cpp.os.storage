@@ -2,15 +2,67 @@
 #include "os.log.h"
 #include <cassert>
 
+std::vector<char> fake;
+
 KeysPersist::KeysPersist() :
 Storage(),
-m_countWriteKeyOperations(0)
+m_countLevelZeroKeys(0),
+m_iSubElementIndex(-1),
+m_subElt(fake)
 {
-
 }
 
 KeysPersist::~KeysPersist()
 {
+}
+
+void KeysPersist::StartSubElement(char key)
+{
+    assert(m_iSubElementIndex >= -1);
+
+    WriteKey(key);
+    WriteDataType(DATA_TYPE_SUBELT_AS_CHAR_ARRAY);
+
+    // it's important to keep the incrementation after the previous Write* calls
+    m_iSubElementIndex++;
+    m_subElements.resize(m_iSubElementIndex + 1);
+    m_subElt = m_subElements[m_iSubElementIndex];
+}
+
+void KeysPersist::WriteData(void * p, size_t size, size_t count)
+{
+    if (-1 == m_iSubElementIndex)
+    {
+        Storage::WriteData(p, size, count);
+    }
+    else
+    {
+        assert(m_iSubElementIndex >= 0);
+
+        size_t add = size*count;
+        m_subElt.insert(m_subElt.end(), (unsigned char*)p, ((unsigned char*)p) + add);
+    }
+}
+
+
+void KeysPersist::EndSubElement()
+{
+    assert(m_iSubElementIndex >= 0);
+
+    std::vector<char> & finishedSubElt = m_subElt;
+
+    m_iSubElementIndex--;
+    if ( m_iSubElementIndex >= 0)
+        m_subElt = m_subElements[m_iSubElementIndex];
+    
+    int32_t sizeSubElement = finishedSubElt.size();
+
+    WriteArrayElementsCount(sizeSubElement);
+
+    if ( sizeSubElement > 0 )
+        WriteData((void*)finishedSubElt.data(), sizeSubElement, 1);
+
+    finishedSubElt.clear();
 }
 
 void KeysPersist::DoUpdateFileHeader()
@@ -32,14 +84,17 @@ int32_t KeysLoad::ReadKeysCount()
 
 int32_t KeysPersist::countWriteKeyOperations() const
 {
-    return m_countWriteKeyOperations;
+    return m_countLevelZeroKeys;
 }
 
 int32_t KeysPersist::WriteKey(char key)
 {
     int32_t size = sizeof(char);
     WriteData(&key, size, 1);
-    m_countWriteKeyOperations++;
+    
+    if ( m_iSubElementIndex == -1 )
+        m_countLevelZeroKeys++;
+    
     return size;
 }
 
@@ -101,7 +156,7 @@ int32_t KeysPersist::WriteKeyData(char key, std::string & sValue)
     LG(INFO, "KeysPersist::WriteKeyData( %c, (string)%s )", key, sValue.c_str());
 
     int32_t WriteSize = WriteKey(key);
-    WriteSize += WriteDataType(DATA_TYPE_CHAR_ARRAY);
+    WriteSize += WriteDataType(DATA_TYPE_STRING_AS_CHAR_ARRAY);
     int32_t nElems = sValue.size();
     WriteSize += WriteArrayElementsCount(nElems);
 
@@ -158,7 +213,23 @@ int32_t KeysPersist::WriteKeyData(char key, double dValue)
     return WriteSize;
 }
 
-int32_t KeysPersist::WriteKeyData(char key, double * bValueArray, int nElems)
+int32_t KeysPersist::WriteKeyData(char key, char * cValueArray, int nElems)
+{
+    LG(INFO, "KeysPersist::WriteKeyData( %c, ..., (nElems:)%x )", key, nElems);
+
+    int32_t WriteSize = WriteKey(key);
+    WriteSize += WriteDataType(DATA_TYPE_CHAR_ARRAY);
+    WriteSize += WriteArrayElementsCount(nElems);
+
+    int32_t size = nElems * sizeof(double);
+    WriteData((void*)cValueArray, size, 1);
+    WriteSize += size;
+
+    LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
+    return WriteSize;
+}
+
+int32_t KeysPersist::WriteKeyData(char key, double * dValueArray, int nElems)
 {
     LG(INFO, "KeysPersist::WriteKeyData( %c, ..., (nElems:)%x )", key, nElems);
 
@@ -167,7 +238,7 @@ int32_t KeysPersist::WriteKeyData(char key, double * bValueArray, int nElems)
     WriteSize += WriteArrayElementsCount(nElems);
 
     int32_t size = nElems * sizeof(double);
-    WriteData((void*)bValueArray, size, 1);
+    WriteData((void*)dValueArray, size, 1);
     WriteSize += size;
 
     LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
@@ -202,6 +273,17 @@ KeysLoad::~KeysLoad()
 {
 }
 
+void KeysLoad::StartSubElement(char key)
+{
+    assert(0);
+    // TODO
+}
+void KeysLoad::EndSubElement()
+{
+    assert(0);
+    // TODO
+}
+
 void KeysLoad::DoUpdateFileHeader()
 {
     assert(0);
@@ -220,7 +302,7 @@ void KeysLoad::ReadAllKeys()
 
         switch (dataType)
         {
-        case DATA_TYPE_CHAR_ARRAY:
+        case DATA_TYPE_STRING_AS_CHAR_ARRAY:
         {
             int32_t nElems = ReadNextElementsCount();
             if (nElems >= 0)
@@ -276,7 +358,7 @@ void KeysLoad::ReadAllKeys()
             break;
         }
 
-        case DATA_TYPE_BOOL :
+        case DATA_TYPE_BOOL:
         {
             char cVal;
             ReadData(&cVal, sizeof(cVal), 1);
@@ -320,15 +402,155 @@ void KeysLoad::ReadAllKeys()
     LG(INFO, "KeysLoad::ReadAllKeys end");
 }
 
+void KeysLoad::ParseCharArray(char * pcVal, int32_t nElems)
+{
+    LG(INFO, "KeysLoad::ParseCharArray begin");
+
+    int nCur = 0;
+    do
+    {
+        char key = ReadNextKey();
+        char dataType = ReadNextDataType();
+
+        switch (dataType)
+        {
+        case DATA_TYPE_STRING_AS_CHAR_ARRAY:
+        {
+            int32_t nElems = ReadNextElementsCount();
+            if (nElems >= 0)
+            {
+                ReadNextCharArrayAsString(nElems);
+                LoadStringForKey(key, m_tmpString);
+            }
+            else
+            {
+                LG(ERR, "KeysLoad::ParseCharArray abort because found negative count of elements : %x", nElems);
+                break;
+            }
+            break;
+        }
+
+        case DATA_TYPE_CHAR_ARRAY:
+        {
+            int32_t nElems = ReadNextElementsCount();
+            if (nElems >= 0)
+            {
+                ReadNextCharArray(nElems);
+                LoadCharArrayForKey(key, m_tmpChars.data(), nElems);
+            }
+            else
+            {
+                LG(ERR, "KeysLoad::ParseCharArray abort because found negative count of elements : %x", nElems);
+                break;
+            }
+            break;
+        }
+
+        case DATA_TYPE_DOUBLE_ARRAY:
+        {
+            int32_t nElems = ReadNextElementsCount();
+            if (nElems >= 0)
+            {
+                ReadNextDoubleArray(nElems);
+                LoadDoubleArrayForKey(key, m_tmpDoubles.data(), nElems);
+            }
+            else
+            {
+                LG(ERR, "KeysLoad::ParseCharArray abort because found negative count of elements : %x", nElems);
+                break;
+            }
+            break;
+        }
+
+        case DATA_TYPE_FLOAT_ARRAY:
+        {
+            int32_t nElems = ReadNextElementsCount();
+            if (nElems >= 0)
+            {
+                ReadNextFloatArray(nElems);
+                LoadFloatArrayForKey(key, m_tmpFloats.data(), nElems);
+            }
+            else
+            {
+                LG(ERR, "KeysLoad::ParseCharArray abort because found negative count of elements : %x", nElems);
+                break;
+            }
+            break;
+        }
+
+        case DATA_TYPE_INT32:
+        {
+            int32_t iVal;
+            ReadData(&iVal, sizeof(iVal), 1);
+            LoadInt32ForKey(key, iVal);
+            break;
+        }
+
+        case DATA_TYPE_BOOL:
+        {
+            char cVal;
+            ReadData(&cVal, sizeof(cVal), 1);
+            bool bVal = false;
+            if (cVal)
+                bVal = true;
+            LoadBoolForKey(key, bVal);
+            break;
+        }
+
+        case DATA_TYPE_DOUBLE:
+        {
+            double dVal;
+            ReadData(&dVal, sizeof(dVal), 1);
+            LoadDoubleForKey(key, dVal);
+            break;
+        }
+
+        case DATA_TYPE_FLOAT:
+        {
+            float fVal;
+            ReadData(&fVal, sizeof(fVal), 1);
+            LoadFloatForKey(key, fVal);
+            break;
+        }
+
+        case DATA_TYPE_CHAR:
+        {
+            char cVal;
+            ReadData(&cVal, sizeof(cVal), 1);
+            LoadCharForKey(key, cVal);
+            break;
+        }
+
+        default:
+            LG(ERR, "KeysLoad::ParseCharArray : unknown dataType %d, assuming it is not an array", dataType);
+            break;
+        }
+    } while (nCur < nElems);
+
+    LG(INFO, "KeysLoad::ParseCharArray end");
+}
+
 void KeysLoad::ReadNextCharArrayAsString(int32_t nChars)
 {
-    LG(INFO, "KeysLoad::ReadNextString(%d)", nChars);
+    LG(INFO, "KeysLoad::ReadNextCharArrayAsString(%d)", nChars);
 
     m_tmpString.resize(nChars);
 
     ReadData((void*)m_tmpString.data(), sizeof(char), nChars);
 
-    LG(INFO, "KeysLoad::ReadNextString returns");
+    LG(INFO, "KeysLoad::ReadNextCharArrayAsString returns");
+}
+
+
+void KeysLoad::ReadNextCharArray(int32_t nChars)
+{
+    LG(INFO, "KeysLoad::ReadNextCharArray(%d)", nChars);
+
+    m_tmpChars.resize(nChars);
+
+    ReadData((void*)m_tmpChars.data(), sizeof(char), nChars);
+
+    LG(INFO, "KeysLoad::ReadNextCharArray returns");
 }
 
 void KeysLoad::ReadNextDoubleArray(int32_t nElems)

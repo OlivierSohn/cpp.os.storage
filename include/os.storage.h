@@ -47,7 +47,7 @@ protected:
     //
     eResult OpenFileForOperation(const std::string & sFilePath, enum FileOperation);
 
-    void WriteData(void * p, size_t size, size_t count);
+    virtual void WriteData(void * p, size_t size, size_t count);
 
     void ReadData(void * p, size_t size, size_t count);
 
