@@ -268,8 +268,9 @@ int32_t KeysPersist::WriteKeyData(char key, float * bValueArray, int nElems)
 
 KeysLoad::KeysLoad() :
 Storage(),
-m_iSubElementIndex(-1),
-m_pSubElt(NULL)
+m_iCurReadSubElementLevel(-1),
+m_firstLevelSubElementDataIt(NULL),
+m_controlSizeAfterIt(0)
 {
 
 }
@@ -281,50 +282,56 @@ KeysLoad::~KeysLoad()
 
 void KeysLoad::ReadData(void * p, size_t size, size_t count)
 {
-    if (-1 == m_iSubElementIndex)
+    if (-1 == m_iCurReadSubElementLevel)
     {
         Storage::ReadData(p, size, count);
     }
     else
     {
-        assert(m_iSubElementIndex >= 0);
-        assert(m_pSubElt);
+        assert(m_iCurReadSubElementLevel >= 0);
+        assert(m_firstLevelSubElementDataIt);
         
         size_t add = size*count;
-        assert( add <= m_pSubElt->size() );
-        
-        ... opposite (read from buffer ) m_pSubElt->insert(m_pSubElt->end(), (unsigned char*)p, ((unsigned char*)p) + add);
+
+        m_controlSizeAfterIt -= add;
+        assert(m_controlSizeAfterIt >= 0);
+
+        memcpy(p, m_firstLevelSubElementDataIt, add);
+        m_firstLevelSubElementDataIt += add;
     }
 }
 
 void KeysLoad::StartSubElement(int32_t nElems)
 {
-    assert(m_iSubElementIndex >= -1);
-    
-    ReadNextCharArray(nElems);
-    
+    assert(m_iCurReadSubElementLevel >= -1);
+
+    if (m_iCurReadSubElementLevel == -1)
+    {
+        ReadNextCharArray(nElems);
+
+        m_firstLevelSubElement.swap(m_tmpChars);
+        m_firstLevelSubElementDataIt = m_firstLevelSubElement.data();
+     
+        m_controlSizeAfterIt = m_firstLevelSubElement.size();
+    }
+
     // it's important to keep incrementation AFTER call to ReadCharArray
-    m_iSubElementIndex++;
-    m_subElements.resize(m_iSubElementIndex + 1);
-    m_pSubElt = &(m_subElements[m_iSubElementIndex]);
-    
-    assert(m_pSubElt->size() == 0);
-    
-    // copies the data read during ReadNextCharArray
-    m_pSubElt->insert(m_pSubElt->end(), m_tmpChars.begin(), m_tmpChars.end() );
+    m_iCurReadSubElementLevel++;
 }
 void KeysLoad::EndSubElement()
 {
-    assert(m_iSubElementIndex >= 0);
+    assert(m_iCurReadSubElementLevel >= 0);
     
-    assert(m_pSubElt);
-    
-    m_pSubElt->clear();
-    
-    m_iSubElementIndex--;
-    if ( m_iSubElementIndex >= 0)
-        m_pSubElt = &m_subElements[m_iSubElementIndex];
-    
+    assert(m_firstLevelSubElementDataIt);
+
+    m_iCurReadSubElementLevel--;
+
+    if (m_iCurReadSubElementLevel == -1)
+    {
+        assert(m_controlSizeAfterIt == 0);
+        m_firstLevelSubElement.clear();
+        m_firstLevelSubElementDataIt = NULL;
+    }    
 }
 
 void KeysLoad::DoUpdateFileHeader()
@@ -336,9 +343,17 @@ void KeysLoad::ReadAllKeys()
 {
     LG(INFO, "KeysLoad::ReadAllKeys begin");
 
-    int32_t nKeys = ReadKeysCount();
+    int32_t nKeys;
+    if (m_iCurReadSubElementLevel == -1)
+    {
+        nKeys = ReadKeysCount();
+    }
+    else
+    {
+        nKeys = -1;// the value is not important, it's never read
+    }
 
-    for (int32_t i = 0; i < nKeys; i++)
+    for (int32_t i = 0; ((m_iCurReadSubElementLevel == -1) && (i < nKeys)) || (m_controlSizeAfterIt!=0); i++)
     {
         char key = ReadNextKey();
         char dataType = ReadNextDataType();
@@ -416,10 +431,12 @@ void KeysLoad::ReadAllKeys()
                 {
                     StartSubElement(nElems);
 
-                    LoadCharForKey(KEY_SUBELT_KEY, key);
+                    LoadCharForKey(KEY_SUBELT_KEY_START, key);
                     
                     ReadAllKeys();
                     
+                    LoadCharForKey(KEY_SUBELT_KEY_END, key);
+
                     EndSubElement();
                 }
                 else

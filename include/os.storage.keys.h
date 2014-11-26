@@ -55,9 +55,9 @@
 #define KEY_WRE_T_ARCOFCIRCLE            -31 // subelement
 #define KEY_WRE_T_BEZIER                 -32 // subelement
 /////////////////////// keys for extremity and wire attributes
-#define KEY_REF                 -50
+#define KEY_REF                     -50 // int32
 /////////////////////// keys for extremity attributes
-#define KEY_ETY_VEC_XYZ             -60 // 3 floats
+#define KEY_ETY_VEC_XYZ             -60 // 3 wmfloats
 #define KEY_ETY_VARNAME_X           -61 // string
 #define KEY_ETY_VARNAME_Y           -62 // string
 #define KEY_ETY_VARNAME_Z           -63 // string
@@ -66,23 +66,23 @@
 /////////////////////// keys for wire attributes
 #define KEY_WRE_ETY_START_REF   -90 // int32
 #define KEY_WRE_ETY_END_REF     -91 // int32
-#define KEY_WRE_ETY_START_RNDBLE -92 // int32
-#define KEY_WRE_ETY_END_RNDBLE  -93 // int32
+#define KEY_WRE_ETY_START_RNDBLE -92 // bool
+#define KEY_WRE_ETY_END_RNDBLE  -93 // bool
 #define KEY_WRE_FIXEDPROJLENGTH -94 // bool
-#define KEY_WRE_PROJLENGTH      -95 // float
-#define KEY_WRE_NORMAL          -96 // 3 floats
-#define KEY_WRE_CENTER          -97 // 3 floats
+#define KEY_WRE_PROJLENGTH      -95 // wmfloat
+#define KEY_WRE_NORMAL          -96 // 3 wmfloats
+#define KEY_WRE_CENTER          -97 // 3 wmfloats
 #define KEY_WRE_BZR_POINTSBYPAIR -98 // n * wmfloat
 #define KEY_WRE_BZR_OFFSET      -99 // 3 wmfloat
 #define KEY_WRE_SEGMENTS         -100 // subelement
-#define KEY_WRE_SEGMENTS_COUNT  -101 // int32
+#define KEY_WRE_SEGMENTSCOUNT  -101 // int32
 #define KEY_WRE_SEGMENT         -102 // subelement
-#define KEY_WRE_SEGMENT_RANGE   -103 // wmfloat
-#define KEY_WRE_SEGMENT_RAWPARAM1 -104 // wmfloat
-#define KEY_WRE_SEGMENT_RAWPARAM2 -105 // wmfloat
-#define KEY_WRE_SEGMENT_COMPLEMENT -106 // int32
-/////////////////////// reand only keys
-#define KEY_SUBELT_KEY              -127
+#define KEY_WRE_SEGMENT_RAWPARAM1 -103 // wmfloat
+#define KEY_WRE_SEGMENT_RAWPARAM2 -104 // wmfloat
+#define KEY_WRE_SEGMENT_COMPLEMENT -105 // int32
+/////////////////////// read only keys
+#define KEY_SUBELT_KEY_START              -126 // char
+#define KEY_SUBELT_KEY_END              -127 // char
 
 class KeysPersist : public Storage
 {
@@ -157,9 +157,10 @@ private:
     std::vector<char> m_tmpChars;
     std::vector<int32_t> m_tmpInts32;
     
-    int m_iSubElementIndex;
-    std::vector<std::deque<char> > m_subElements;
-    std::deque<char> * m_pSubElt;
+    int m_iCurReadSubElementLevel;// -1 : normal (file) / n : nth level subelement 
+    std::vector<char> m_firstLevelSubElement;
+    char * m_firstLevelSubElementDataIt;
+    int m_controlSizeAfterIt;
 
     int32_t ReadKeysCount();
     char ReadNextKey();
