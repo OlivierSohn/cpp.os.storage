@@ -1,6 +1,7 @@
 #pragma once
 #include "os.storage.h"
 #include "os.log.h"
+#include <deque>
 
 // data types
 
@@ -80,6 +81,8 @@
 #define KEY_WRE_SEGMENT_RAWPARAM1 -104 // wmfloat
 #define KEY_WRE_SEGMENT_RAWPARAM2 -105 // wmfloat
 #define KEY_WRE_SEGMENT_COMPLEMENT -106 // int32
+/////////////////////// reand only keys
+#define KEY_SUBELT_KEY              -127
 
 class KeysPersist : public Storage
 {
@@ -139,16 +142,24 @@ protected:
     virtual void LoadInt32ArrayForKey(char key, int32_t * piVal, int32_t nElems) = 0;
     virtual void LoadFloatArrayForKey(char key, float * pfVal, int32_t nElems) = 0;
     virtual void LoadDoubleArrayForKey(char key, double * pdVal, int32_t nElems) = 0;
-    virtual void StartSubElement(char key);
+
+    virtual void StartSubElement(int32_t nElems);
     virtual void EndSubElement();
 
     void ParseCharArray(char * pcVal, int32_t nElems);
 
+    virtual void ReadData(void * p, size_t size, size_t count);
+    
 private:
     std::string m_tmpString;
     std::vector<double> m_tmpDoubles;
     std::vector<float> m_tmpFloats;
     std::vector<char> m_tmpChars;
+    std::vector<int32_t> m_tmpInts32;
+    
+    int m_iSubElementIndex;
+    std::vector<std::deque<char> > m_subElements;
+    std::deque<char> * m_pSubElt;
 
     int32_t ReadKeysCount();
     char ReadNextKey();
@@ -156,6 +167,7 @@ private:
     int32_t ReadNextElementsCount();
     void ReadNextCharArrayAsString(int32_t nChars);
     void ReadNextCharArray(int32_t nChars);
+    void ReadNextInt32Array(int32_t nChars);
     void ReadNextDoubleArray(int32_t nChars);
     void ReadNextFloatArray(int32_t nChars);
 };

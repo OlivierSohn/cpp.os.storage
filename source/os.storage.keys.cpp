@@ -267,7 +267,9 @@ int32_t KeysPersist::WriteKeyData(char key, float * bValueArray, int nElems)
 
 
 KeysLoad::KeysLoad() :
-Storage()
+Storage(),
+m_iSubElementIndex(-1),
+m_pSubElt(NULL)
 {
 
 }
@@ -276,15 +278,53 @@ KeysLoad::~KeysLoad()
 {
 }
 
-void KeysLoad::StartSubElement(char key)
+
+void KeysLoad::ReadData(void * p, size_t size, size_t count)
 {
-    assert(0);
-    // TODO
+    if (-1 == m_iSubElementIndex)
+    {
+        Storage::ReadData(p, size, count);
+    }
+    else
+    {
+        assert(m_iSubElementIndex >= 0);
+        assert(m_pSubElt);
+        
+        size_t add = size*count;
+        assert( add <= m_pSubElt->size() );
+        
+        ... opposite (read from buffer ) m_pSubElt->insert(m_pSubElt->end(), (unsigned char*)p, ((unsigned char*)p) + add);
+    }
+}
+
+void KeysLoad::StartSubElement(int32_t nElems)
+{
+    assert(m_iSubElementIndex >= -1);
+    
+    ReadNextCharArray(nElems);
+    
+    // it's important to keep incrementation AFTER call to ReadCharArray
+    m_iSubElementIndex++;
+    m_subElements.resize(m_iSubElementIndex + 1);
+    m_pSubElt = &(m_subElements[m_iSubElementIndex]);
+    
+    assert(m_pSubElt->size() == 0);
+    
+    // copies the data read during ReadNextCharArray
+    m_pSubElt->insert(m_pSubElt->end(), m_tmpChars.begin(), m_tmpChars.end() );
 }
 void KeysLoad::EndSubElement()
 {
-    assert(0);
-    // TODO
+    assert(m_iSubElementIndex >= 0);
+    
+    assert(m_pSubElt);
+    
+    m_pSubElt->clear();
+    
+    m_iSubElementIndex--;
+    if ( m_iSubElementIndex >= 0)
+        m_pSubElt = &m_subElements[m_iSubElementIndex];
+    
 }
 
 void KeysLoad::DoUpdateFileHeader()
@@ -352,7 +392,60 @@ void KeysLoad::ReadAllKeys()
             }
             break;
         }
+                
+            case DATA_TYPE_CHAR_ARRAY:
+            {
+                int32_t nElems = ReadNextElementsCount();
+                if (nElems >= 0)
+                {
+                    ReadNextCharArray(nElems);
+                    LoadCharArrayForKey(key, m_tmpChars.data(), nElems);
+                }
+                else
+                {
+                    LG(ERR, "KeysLoad::ReadAllKeys abort because found negative count of elements : %x", nElems);
+                    break;
+                }
+                break;
+            }
+                
+            case DATA_TYPE_SUBELT_AS_CHAR_ARRAY:
+            {
+                int32_t nElems = ReadNextElementsCount();
+                if (nElems >= 0)
+                {
+                    StartSubElement(nElems);
 
+                    LoadCharForKey(KEY_SUBELT_KEY, key);
+                    
+                    ReadAllKeys();
+                    
+                    EndSubElement();
+                }
+                else
+                {
+                    LG(ERR, "KeysLoad::ReadAllKeys abort because found negative count of elements : %x", nElems);
+                    break;
+                }
+                break;
+            }
+                
+            case DATA_TYPE_INT32_ARRAY:
+            {
+                int32_t nElems = ReadNextElementsCount();
+                if (nElems >= 0)
+                {
+                    ReadNextInt32Array(nElems);
+                    LoadInt32ArrayForKey(key, m_tmpInts32.data(), nElems);
+                }
+                else
+                {
+                    LG(ERR, "KeysLoad::ReadAllKeys abort because found negative count of elements : %x", nElems);
+                    break;
+                }
+                break;
+            }
+                
         case DATA_TYPE_INT32:
         {
             int32_t iVal;
@@ -397,7 +490,7 @@ void KeysLoad::ReadAllKeys()
         }
 
         default:
-            LG(ERR, "KeysLoad::ReadAllKeys : unknown dataType %d, assuming it is not an array", dataType);
+            LG(ERR, "KeysLoad::ReadAllKeys : unhandled dataType %d", dataType);
             break;
         }
     }
@@ -548,12 +641,23 @@ void KeysLoad::ReadNextCharArrayAsString(int32_t nChars)
 void KeysLoad::ReadNextCharArray(int32_t nChars)
 {
     LG(INFO, "KeysLoad::ReadNextCharArray(%d)", nChars);
-
+    
     m_tmpChars.resize(nChars);
-
+    
     ReadData((void*)m_tmpChars.data(), sizeof(char), nChars);
-
+    
     LG(INFO, "KeysLoad::ReadNextCharArray returns");
+}
+
+void KeysLoad::ReadNextInt32Array(int32_t nInts)
+{
+    LG(INFO, "KeysLoad::ReadNextInt32Array(%d)", nInts);
+    
+    m_tmpInts32.resize(nInts);
+    
+    ReadData((void*)m_tmpInts32.data(), sizeof(int32_t), nInts);
+    
+    LG(INFO, "KeysLoad::ReadNextInt32Array returns");
 }
 
 void KeysLoad::ReadNextDoubleArray(int32_t nElems)

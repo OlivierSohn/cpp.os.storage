@@ -49,7 +49,7 @@ protected:
 
     virtual void WriteData(void * p, size_t size, size_t count);
 
-    void ReadData(void * p, size_t size, size_t count);
+    virtual void ReadData(void * p, size_t size, size_t count);
 
     void Finalize();
     void CloseFile();
