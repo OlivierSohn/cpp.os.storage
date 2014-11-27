@@ -146,8 +146,6 @@ protected:
     virtual void StartSubElement(int32_t nElems);
     virtual void EndSubElement();
 
-    void ParseCharArray(char * pcVal, int32_t nElems);
-
     virtual void ReadData(void * p, size_t size, size_t count);
     
 private:
