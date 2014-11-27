@@ -52,6 +52,19 @@ eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOp
 
     CloseFile();
 
+#ifndef WIN32
+    const int sizeBuf = PATH_MAX+1;
+    char bufCurDirectory[sizeBuf];
+    if (getcwd(bufCurDirectory, sizeBuf))
+    {
+        LG(INFO, "Storage::OpenFileForOperation : current directory %s", bufCurDirectory);
+    }
+    else
+    {
+        LG(INFO, "Storage::OpenFileForOperation : getcwd error %d", errno);
+    }
+#else
+#endif
     m_pFile = fopen(sFilePath.c_str(), op == OP_READ ? "rb" : "wb");
 
     if (!m_pFile)
