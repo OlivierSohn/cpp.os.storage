@@ -54,6 +54,7 @@
 #define KEY_WRE_T_LINE                   -30 // subelement
 #define KEY_WRE_T_ARCOFCIRCLE            -31 // subelement
 #define KEY_WRE_T_BEZIER                 -32 // subelement
+#define KEY_WRE_T_FORMULA                -33 // subelement
 /////////////////////// keys for extremity and wire attributes
 #define KEY_REF                     -50 // int32
 /////////////////////// keys for extremity attributes
