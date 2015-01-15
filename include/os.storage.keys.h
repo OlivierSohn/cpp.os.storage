@@ -1,7 +1,7 @@
 #pragma once
 #include "os.storage.h"
 #include "os.log.h"
-#include <deque>
+#include <stdint.h>
 
 // data types
 
@@ -139,8 +139,8 @@ protected:
     virtual void LoadBoolForKey(char key, bool bVal) = 0;
     virtual void LoadFloatForKey(char key, float fVal) = 0;
     virtual void LoadDoubleForKey(char key, double fVal) = 0;
-    virtual void LoadCharArrayForKey(char key, char * pcVal, int32_t nElems) = 0;
-    virtual void LoadInt32ArrayForKey(char key, int32_t * piVal, int32_t nElems) = 0;
+    virtual void LoadCharArrayForKey(char key, char * /*pcVal*/, int32_t nElems) = 0;
+    virtual void LoadInt32ArrayForKey(char key, int32_t * /*piVal*/, int32_t nElems) = 0;
     virtual void LoadFloatArrayForKey(char key, float * pfVal, int32_t nElems) = 0;
     virtual void LoadDoubleArrayForKey(char key, double * pdVal, int32_t nElems) = 0;
 

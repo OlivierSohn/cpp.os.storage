@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClInclude Include="include\os.storage.h" />
     <ClInclude Include="include\os.storage.keys.h" />
-    <ClInclude Include="source\os.storage.all.h" />
+    <ClInclude Include="include\os.storage.allincludes.h" />
     <ClInclude Include="source\win32\stdafx.h" />
     <ClInclude Include="source\win32\targetver.h" />
   </ItemGroup>

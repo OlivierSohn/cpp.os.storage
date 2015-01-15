@@ -38,11 +38,11 @@
     <ClInclude Include="include\os.storage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\os.storage.all.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\os.storage.keys.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\os.storage.allincludes.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,11 +5,21 @@
 
 #pragma once
 
-#include "targetver.h"
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <tchar.h> 
+#include <strsafe.h>
+#include <ctime>
+#include <sys/stat.h>
+#include <stdio.h>
 
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+// STL
+#include <iostream>
+#include <vector>
+#include <cassert>
 
+// prereqs
+#include "os.log.allincludes.h"
 
-
-
-#include "os.storage.all.h"
+// this module
+#include "os.storage.allincludes.h"

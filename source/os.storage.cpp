@@ -4,6 +4,7 @@
 #include "os.log.format.h"
 
 #ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <tchar.h> 
 #include <strsafe.h>
@@ -32,7 +33,7 @@ Storage::~Storage()
 void Storage::CloseFile()
 {
     if (m_pFile)
-        fclose(m_pFile);
+        fclose((FILE*)m_pFile);
     m_bufferReadPos = 0;
 }
 
@@ -102,9 +103,9 @@ void Storage::UpdateFileHeader()
 
     // now that the data has been written, we can modify the file position
     fpos_t curPos;
-    if (!fgetpos(m_pFile, &curPos))
+    if (!fgetpos((FILE*)m_pFile, &curPos))
     {
-        rewind(m_pFile);
+        rewind((FILE*)m_pFile);
 
         DoUpdateFileHeader();
 
@@ -114,7 +115,7 @@ void Storage::UpdateFileHeader()
             std::cerr << "FlushData returned " << ret << std::endl;
         }
 
-        if (!fsetpos(m_pFile, &curPos))
+        if (!fsetpos((FILE*)m_pFile, &curPos))
         {
 
         }
@@ -137,7 +138,7 @@ void Storage::FlushMyBuffer()
     if (count == 0)
         return;
 #ifdef _WIN32
-    _fwrite_nolock(m_writeBuffer.data(), 1, count, m_pFile);
+    _fwrite_nolock(m_writeBuffer.data(), 1, count, (FILE*)m_pFile);
 #else
     fwrite(m_writeBuffer.data(), 1, count, m_pFile);
 #endif
@@ -148,7 +149,7 @@ void Storage::FlushMyBuffer()
 void Storage::ReadToBuffer()
 {
 #ifdef _WIN32
-    _fread_nolock(m_freadBuffer, 1, SIZE_READ_BUFFER, m_pFile);
+    _fread_nolock(m_freadBuffer, 1, SIZE_READ_BUFFER, (FILE*)m_pFile);
 #else
     fread(m_freadBuffer, 1, SIZE_READ_BUFFER, m_pFile);
 #endif
@@ -215,7 +216,7 @@ int Storage::FlushData()
     FlushMyBuffer();
 
 #ifdef _WIN32
-    return _fflush_nolock(m_pFile);
+    return _fflush_nolock((FILE*)m_pFile);
 #else
     return fflush(m_pFile);
 #endif

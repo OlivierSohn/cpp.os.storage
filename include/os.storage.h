@@ -1,8 +1,7 @@
 #pragma once
 
-#include <iostream>
+#include <string>
 #include <vector>
-#include <stdint.h>
 
 enum eResult
 {
@@ -65,7 +64,7 @@ protected:
     void SaveEnd();
 
 private:
-    FILE* m_pFile;
+    void* m_pFile;
     std::vector<unsigned char> m_writeBuffer;
     unsigned char m_freadBuffer[SIZE_READ_BUFFER];
     unsigned int m_bufferReadPos;
