@@ -1,6 +1,7 @@
 #include "os.storage.keys.h"
 #include "os.log.h"
 #include <cassert>
+#include <cstring> // memcpy
 
 std::vector<char> fake;
 

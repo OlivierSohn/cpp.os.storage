@@ -12,12 +12,14 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <cerrno>
 #endif
 
 #include <ctime>
 #include <sys/stat.h>
 #include <stdio.h>
 #include <cassert>
+#include <cstring> // memcpy
 
 Storage::Storage() :
 m_pFile(NULL),
@@ -112,7 +114,7 @@ void Storage::UpdateFileHeader()
         int ret = FlushData();
         if (ret)
         {
-            std::cerr << "FlushData returned " << ret << std::endl;
+            LG(ERR, "Storage::UpdateFileHeader : FlushData returned %d", ret );
         }
 
         if (!fsetpos((FILE*)m_pFile, &curPos))
@@ -121,13 +123,13 @@ void Storage::UpdateFileHeader()
         }
         else
         {
-            std::cerr << "fsetpos failed : " << errno << std::endl;
+            LG(ERR, "Storage::UpdateFileHeader : fsetpos failed : %d", errno);
             assert(0);
         }
     }
     else
     {
-        std::cerr << "fgetpos failed : " << errno << std::endl;
+        LG(ERR, "Storage::UpdateFileHeader : fgetpos failed : %d", errno);
         assert(0);
     }
 }
@@ -140,7 +142,7 @@ void Storage::FlushMyBuffer()
 #ifdef _WIN32
     _fwrite_nolock(m_writeBuffer.data(), 1, count, (FILE*)m_pFile);
 #else
-    fwrite(m_writeBuffer.data(), 1, count, m_pFile);
+    fwrite(m_writeBuffer.data(), 1, count, (FILE*)m_pFile);
 #endif
 
     m_writeBuffer.clear();
@@ -151,7 +153,7 @@ void Storage::ReadToBuffer()
 #ifdef _WIN32
     _fread_nolock(m_freadBuffer, 1, SIZE_READ_BUFFER, (FILE*)m_pFile);
 #else
-    fread(m_freadBuffer, 1, SIZE_READ_BUFFER, m_pFile);
+    fread(m_freadBuffer, 1, SIZE_READ_BUFFER, (FILE*)m_pFile);
 #endif
 }
 
@@ -218,7 +220,7 @@ int Storage::FlushData()
 #ifdef _WIN32
     return _fflush_nolock((FILE*)m_pFile);
 #else
-    return fflush(m_pFile);
+    return fflush((FILE*)m_pFile);
 #endif
 }
 const char * Storage::FileOperationToString(FileOperation op)
