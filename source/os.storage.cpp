@@ -18,7 +18,6 @@
 #include <ctime>
 #include <sys/stat.h>
 #include <stdio.h>
-#include <cassert>
 #include <cstring> // memcpy
 
 Storage::Storage() :
@@ -124,13 +123,13 @@ void Storage::UpdateFileHeader()
         else
         {
             LG(ERR, "Storage::UpdateFileHeader : fsetpos failed : %d", errno);
-            assert(0);
+            A(0);
         }
     }
     else
     {
         LG(ERR, "Storage::UpdateFileHeader : fgetpos failed : %d", errno);
-        assert(0);
+        A(0);
     }
 }
 
@@ -242,7 +241,7 @@ const char * Storage::FileOperationToString(FileOperation op)
 #ifdef _WIN32
 void Storage::string_cast(const wchar_t* pSource, unsigned int codePage, std::string & oCast)
 {
-    assert(pSource != 0);
+    A(pSource != 0);
     oCast.clear();
     size_t sourceLength = std::wcslen(pSource);
     if (sourceLength > 0)

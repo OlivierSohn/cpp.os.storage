@@ -1,6 +1,5 @@
 #include "os.storage.keys.h"
 #include "os.log.h"
-#include <cassert>
 #include <cstring> // memcpy
 
 std::vector<char> fake;
@@ -19,7 +18,7 @@ KeysPersist::~KeysPersist()
 
 void KeysPersist::StartSubElement(char key)
 {
-    assert(m_iSubElementIndex >= -1);
+    A(m_iSubElementIndex >= -1);
 
     WriteKey(key);
     WriteDataType(DATA_TYPE_SUBELT_AS_CHAR_ARRAY);
@@ -38,8 +37,8 @@ void KeysPersist::WriteData(void * p, size_t size, size_t count)
     }
     else
     {
-        assert(m_iSubElementIndex >= 0);
-        assert(m_pSubElt);
+        A(m_iSubElementIndex >= 0);
+        A(m_pSubElt);
 
         size_t add = size*count;
         m_pSubElt->insert(m_pSubElt->end(), (unsigned char*)p, ((unsigned char*)p) + add);
@@ -49,11 +48,11 @@ void KeysPersist::WriteData(void * p, size_t size, size_t count)
 
 void KeysPersist::EndSubElement()
 {
-    assert(m_iSubElementIndex >= 0);
+    A(m_iSubElementIndex >= 0);
 
     std::vector<char> * pFinishedSubElt = m_pSubElt;
 
-    assert(pFinishedSubElt);
+    A(pFinishedSubElt);
 
     m_iSubElementIndex--;
     if ( m_iSubElementIndex >= 0)
@@ -289,13 +288,13 @@ void KeysLoad::ReadData(void * p, size_t size, size_t count)
     }
     else
     {
-        assert(m_iCurReadSubElementLevel >= 0);
-        assert(m_firstLevelSubElementDataIt);
+        A(m_iCurReadSubElementLevel >= 0);
+        A(m_firstLevelSubElementDataIt);
         
         size_t add = size*count;
 
         m_controlSizeAfterIt -= add;
-        assert(m_controlSizeAfterIt >= 0);
+        A(m_controlSizeAfterIt >= 0);
 
         memcpy(p, m_firstLevelSubElementDataIt, add);
         m_firstLevelSubElementDataIt += add;
@@ -304,7 +303,7 @@ void KeysLoad::ReadData(void * p, size_t size, size_t count)
 
 void KeysLoad::StartSubElement(int32_t nElems)
 {
-    assert(m_iCurReadSubElementLevel >= -1);
+    A(m_iCurReadSubElementLevel >= -1);
 
     if (m_iCurReadSubElementLevel == -1)
     {
@@ -321,15 +320,15 @@ void KeysLoad::StartSubElement(int32_t nElems)
 }
 void KeysLoad::EndSubElement()
 {
-    assert(m_iCurReadSubElementLevel >= 0);
+    A(m_iCurReadSubElementLevel >= 0);
     
-    assert(m_firstLevelSubElementDataIt);
+    A(m_firstLevelSubElementDataIt);
 
     m_iCurReadSubElementLevel--;
 
     if (m_iCurReadSubElementLevel == -1)
     {
-        assert(m_controlSizeAfterIt == 0);
+        A(m_controlSizeAfterIt == 0);
         m_firstLevelSubElement.clear();
         m_firstLevelSubElementDataIt = NULL;
     }    
@@ -337,7 +336,7 @@ void KeysLoad::EndSubElement()
 
 void KeysLoad::DoUpdateFileHeader()
 {
-    assert(0);
+    A(0);
 }
 
 void KeysLoad::ReadAllKeys()

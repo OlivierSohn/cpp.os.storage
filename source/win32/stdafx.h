@@ -16,7 +16,6 @@
 // STL
 #include <iostream>
 #include <vector>
-#include <cassert>
 
 // prereqs
 #include "os.log.allincludes.h"
