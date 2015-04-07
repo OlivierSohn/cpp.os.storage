@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09429D631AD3877D001513DA /* os.storage.allincludes.h in Headers */ = {isa = PBXBuildFile; fileRef = 09429D621AD3877D001513DA /* os.storage.allincludes.h */; };
 		09C2F83319BF17F400472700 /* os.storage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09C2F83219BF17F400472700 /* os.storage.cpp */; };
 		09C2F83519BF17FC00472700 /* os.storage.h in Headers */ = {isa = PBXBuildFile; fileRef = 09C2F83419BF17FC00472700 /* os.storage.h */; };
 		09C2F83D19BF181B00472700 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09C2F83C19BF181B00472700 /* Foundation.framework */; };
@@ -15,7 +16,6 @@
 		09C6C6C91A0186E9003ECAB4 /* os.storage.keys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */; };
 		09C6C6CA1A0186E9003ECAB4 /* os.storage.keys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */; };
 		09C6C6CC1A0186F4003ECAB4 /* os.storage.keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 09C6C6CB1A0186F4003ECAB4 /* os.storage.keys.h */; };
-		09C6C6CE1A018708003ECAB4 /* os.storage.all.h in Headers */ = {isa = PBXBuildFile; fileRef = 09C6C6CD1A018708003ECAB4 /* os.storage.all.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +31,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		09429D621AD3877D001513DA /* os.storage.allincludes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.storage.allincludes.h; path = include/os.storage.allincludes.h; sourceTree = "<group>"; };
 		09C2F82919BF163B00472700 /* os.storage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = os.storage.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		09C2F83219BF17F400472700 /* os.storage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.storage.cpp; path = source/os.storage.cpp; sourceTree = "<group>"; };
 		09C2F83419BF17FC00472700 /* os.storage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.storage.h; path = include/os.storage.h; sourceTree = "<group>"; };
@@ -41,7 +42,6 @@
 		09C2F86019BF185300472700 /* os.storage-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "os.storage-Prefix.pch"; path = "source/os.storage-Prefix.pch"; sourceTree = "<group>"; };
 		09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.storage.keys.cpp; path = source/os.storage.keys.cpp; sourceTree = "<group>"; };
 		09C6C6CB1A0186F4003ECAB4 /* os.storage.keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.storage.keys.h; path = include/os.storage.keys.h; sourceTree = "<group>"; };
-		09C6C6CD1A018708003ECAB4 /* os.storage.all.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.storage.all.h; path = source/os.storage.all.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,7 +85,6 @@
 		09C2F83019BF17DB00472700 /* source */ = {
 			isa = PBXGroup;
 			children = (
-				09C6C6CD1A018708003ECAB4 /* os.storage.all.h */,
 				09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */,
 				09C2F86019BF185300472700 /* os.storage-Prefix.pch */,
 				09C2F83219BF17F400472700 /* os.storage.cpp */,
@@ -97,6 +96,7 @@
 			isa = PBXGroup;
 			children = (
 				09C6C6CB1A0186F4003ECAB4 /* os.storage.keys.h */,
+				09429D621AD3877D001513DA /* os.storage.allincludes.h */,
 				09C2F83419BF17FC00472700 /* os.storage.h */,
 			);
 			name = include;
@@ -120,8 +120,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				09C6C6CC1A0186F4003ECAB4 /* os.storage.keys.h in Headers */,
+				09429D631AD3877D001513DA /* os.storage.allincludes.h in Headers */,
 				09C2F83519BF17FC00472700 /* os.storage.h in Headers */,
-				09C6C6CE1A018708003ECAB4 /* os.storage.all.h in Headers */,
 				09C2F86119BF185300472700 /* os.storage-Prefix.pch in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
