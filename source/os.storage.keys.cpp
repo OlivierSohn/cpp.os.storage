@@ -2,7 +2,31 @@
 #include "os.log.h"
 #include <cstring> // memcpy
 
-std::vector<char> fake;
+// data types
+
+#define DATA_TYPE_INT32        'a'
+#define DATA_TYPE_INT32_ARRAY  'A'
+#define DATA_TYPE_BOOL         'b'
+#define DATA_TYPE_CHAR_ARRAY   'c'
+#define DATA_TYPE_SUBELT_AS_CHAR_ARRAY   'C'
+#define DATA_TYPE_DOUBLE       'd'
+#define DATA_TYPE_DOUBLE_ARRAY 'D'
+#define DATA_TYPE_FLOAT        'f'
+#define DATA_TYPE_FLOAT_ARRAY  'F'
+#define DATA_TYPE_CHAR         's'
+#define DATA_TYPE_STRING_AS_CHAR_ARRAY   'S'
+
+bool keyReadOnly(char key)
+{
+    switch(key)
+    {
+        case KEY_SUBELT_KEY_START:
+        case KEY_SUBELT_KEY_END:
+            return true;
+        default:
+            return false;
+    }
+}
 
 KeysPersist::KeysPersist() :
 Storage(),
@@ -92,6 +116,8 @@ int32_t KeysPersist::countWriteKeyOperations() const
 
 int32_t KeysPersist::WriteKey(char key)
 {
+    A(!keyReadOnly(key));
+    
     int32_t size = sizeof(char);
     WriteData(&key, size, 1);
     
