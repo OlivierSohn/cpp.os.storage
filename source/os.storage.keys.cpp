@@ -28,8 +28,8 @@ bool keyReadOnly(char key)
     }
 }
 
-KeysPersist::KeysPersist() :
-Storage(),
+KeysPersist::KeysPersist(DirectoryPath d, FileName f) :
+Storage(d, f),
 m_countLevelZeroKeys(0),
 m_iSubElementIndex(-1),
 m_pSubElt(NULL)
@@ -292,8 +292,8 @@ int32_t KeysPersist::WriteKeyData(char key, float * bValueArray, int nElems)
 }
 
 
-KeysLoad::KeysLoad() :
-Storage(),
+KeysLoad::KeysLoad(DirectoryPath d, FileName f) :
+Storage(d, f),
 m_iCurReadSubElementLevel(-1),
 m_firstLevelSubElementDataIt(NULL),
 m_controlSizeAfterIt(0)
@@ -365,10 +365,26 @@ void KeysLoad::DoUpdateFileHeader()
     A(0);
 }
 
-void KeysLoad::ReadAllKeys()
+eResult KeysLoad::ReadAllKeys()
 {
     //LG(INFO, "KeysLoad::ReadAllKeys begin");
+    
+    eResult ret = OpenForRead();
+    if (ret != ILE_SUCCESS)
+    {
+        LG(ERR, "PathSuiteLoad::Load : OpenForRead returned %d", ret);
+        goto end;
+    }
+    
+    ReadAllKeysInternal();
+    
+end:
+    //LG(INFO, "KeysLoad::ReadAllKeys end");
+    return ret;
+}
 
+void KeysLoad::ReadAllKeysInternal()
+{
     int32_t nKeys;
     if (m_iCurReadSubElementLevel == -1)
     {
@@ -459,7 +475,7 @@ void KeysLoad::ReadAllKeys()
 
                     LoadCharForKey(KEY_SUBELT_KEY_START, key);
                     
-                    ReadAllKeys();
+                    ReadAllKeysInternal();
                     
                     LoadCharForKey(KEY_SUBELT_KEY_END, key);
 
@@ -594,4 +610,35 @@ void KeysLoad::ReadNextFloatArray(int32_t nElems)
     ReadData((void*)m_tmpFloats.data(), sizeof(float), nElems);
 
     //LG(INFO, "KeysLoad::ReadNextFloatArray end");
+}
+
+void KeysLoad::LoadDoubleArrayForKey(char key, double * pdVal, int32_t nElems){
+    LG(ERR, "KeysLoad::LoadDoubleArrayForKey(%d, ..., %d) should not be called", key, nElems);
+}
+void KeysLoad::LoadBoolForKey(char key, bool bVal){
+    LG(ERR, "KeysLoad::LoadBoolForKey(%d, %s) should not be called", key, bVal?"true":"false");
+}
+void KeysLoad::LoadStringForKey(char key, std::string & str){
+    LG(ERR, "KeysLoad::LoadStringForKey(%d, %s) should not be called", key, str.c_str() ? str.c_str() : "NULL");
+}
+void KeysLoad::LoadInt32ForKey(char key, int32_t iVal){
+    LG(ERR, "KeysLoad::LoadInt32ForKey(%d, %d) should not be called", key, iVal);
+}
+void KeysLoad::LoadDoubleForKey(char key, double fVal){
+    LG(ERR, "KeysLoad::LoadDoubleForKey(%d, %d) should not be called", key, fVal);
+}
+void KeysLoad::LoadCharArrayForKey(char key, char * /*pcVal*/, int32_t nElems) {
+    LG(ERR, "KeysLoad::LoadCharArrayForKey(%d, ..., %d) should not be called", key, nElems);
+}
+void KeysLoad::LoadInt32ArrayForKey(char key, int32_t * /*piVal*/, int32_t nElems) {
+    LG(ERR, "KeysLoad::LoadInt32ArrayForKey(%d, ..., %d) should not be called", key, nElems);
+}
+void KeysLoad::LoadFloatArrayForKey(char key, float * /*pfVal*/, int32_t nElems) {
+    LG(ERR, "KeysLoad::LoadFloatArrayForKey(%d, ..., %d) should not be called", key, nElems);
+}
+void KeysLoad::LoadCharForKey(char key, char cVal) {
+    LG(ERR, "KeysLoad::LoadCharForKey(%d, %d) should not be called", key, cVal);
+}
+void KeysLoad::LoadFloatForKey(char key, float fVal) {
+    LG(ERR, "KeysLoad::LoadFloatForKey(%d, %f) should not be called", key, fVal);
 }

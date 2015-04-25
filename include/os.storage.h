@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <list>
 
 enum eResult
 {
@@ -37,15 +38,19 @@ public:
     static bool listFilenames(const std::string & dir, std::vector<std::string> & filenames);
 
 protected:
-
-    Storage();
+    
+    typedef std::list<std::string> DirectoryPath;
+    typedef std::string FileName;
+    static DirectoryPath curDir();
+    
+    static DirectoryPath m_curDir;
+    
+    Storage(DirectoryPath, FileName);
     virtual ~Storage();
 
-    //
-    //          returns ILE_BAD_PARAMETER if the file could not be opened 
-    //
-    eResult OpenFileForOperation(const std::string & sFilePath, enum FileOperation);
-
+    eResult OpenForRead();
+    eResult OpenForWrite();
+    
     virtual void WriteData(void * p, size_t size, size_t count);
 
     virtual void ReadData(void * p, size_t size, size_t count);
@@ -60,7 +65,7 @@ protected:
     // and then restore the file position to the position it had before writing the header
     virtual void DoUpdateFileHeader() = 0;
 
-    void SaveBegin();
+    eResult SaveBegin();
     void SaveEnd();
 
 private:
@@ -69,10 +74,16 @@ private:
     unsigned char m_freadBuffer[SIZE_READ_BUFFER];
     unsigned int m_bufferReadPos;
 
+protected:
+    DirectoryPath m_directoryPath;
+    FileName m_filename;
+
+private:
     int  FlushData();
     void FlushMyBuffer();
 
     void ReadToBuffer();
+    eResult OpenFileForOperation(const std::string & sFilePath, enum FileOperation);
 
     static const char * FileOperationToString(FileOperation op);
 };

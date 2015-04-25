@@ -20,9 +20,17 @@
 #include <stdio.h>
 #include <cstring> // memcpy
 
-Storage::Storage() :
+Storage::DirectoryPath Storage::m_curDir = std::list<std::string>();
+Storage::DirectoryPath Storage::curDir()
+{
+    return m_curDir;
+}
+
+Storage::Storage(DirectoryPath d, FileName f) :
 m_pFile(NULL),
-m_bufferReadPos(0)
+m_bufferReadPos(0),
+m_directoryPath(d),
+m_filename(f)
 {}
 
 
@@ -87,10 +95,83 @@ eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOp
     return ret;
 }
 
-void Storage::SaveBegin()
+eResult Storage::OpenForRead()
 {
+    std::string filePath;
+    filePath.append("./");
+    
+    auto it = m_directoryPath.begin();
+    auto end = m_directoryPath.end();
+    for(;it!=end;++it)
+    {
+        filePath.append(*it);
+        filePath.append("/");
+    }
+    
+    filePath.append(m_filename);
+    
+    eResult ret = OpenFileForOperation(filePath, OP_READ);
+    if (ret != ILE_SUCCESS)
+    {
+        LG(ERR, "Storage::OpenForRead : OpenFileForOperation returned %d", ret);
+        goto end;
+    }
+
+end:
+    return ret;
+}
+eResult Storage::OpenForWrite()
+{
+    eResult ret = ILE_SUCCESS;
+    {
+        std::string filePath;
+        filePath.append("./");
+        
+        auto it = m_directoryPath.begin();
+        auto end = m_directoryPath.end();
+        for(;it!=end;++it)
+        {
+            filePath.append(*it);
+            filePath.append("/");
+            if (!Storage::dirExists(filePath))
+            {
+                ret = Storage::makeDir(filePath);
+                if (ILE_SUCCESS != ret)
+                {
+                    LG(ERR, "Storage::OpenForWrite : Storage::makeDir(%s) error : %d", filePath.c_str(), ret);
+                    goto end;
+                }
+            }
+        }
+        
+        filePath.append(m_filename);
+        
+        ret = OpenFileForOperation(filePath, OP_WRITE);
+        if (ret != ILE_SUCCESS)
+        {
+            LG(ERR, "Storage::OpenForWrite : OpenFileForOperation returned %d", ret);
+            goto end;
+        }
+    }
+    
+end:
+    return ret;
+}
+
+eResult Storage::SaveBegin()
+{
+    eResult ret = OpenForWrite();
+    if (ret != ILE_SUCCESS)
+    {
+        LG(ERR, "Storage::SaveBegin : OpenForWrite returned %d", ret);
+        goto end;
+    }
+    
     // to reserve the header space (it will be overwritten in ::SaveEnd())
     DoUpdateFileHeader();
+    
+end:
+    return ret;
 }
 void Storage::SaveEnd()
 {

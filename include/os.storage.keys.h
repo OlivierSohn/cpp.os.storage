@@ -11,7 +11,7 @@
 class KeysPersist : public Storage
 {
 public:
-    KeysPersist();
+    KeysPersist(DirectoryPath, FileName);
     virtual ~KeysPersist();
 
     int32_t WriteKeyData(char key, bool bValue);
@@ -48,24 +48,24 @@ private:
 class KeysLoad : public Storage
 {
 public:
-    KeysLoad();
-    virtual ~KeysLoad();
+    KeysLoad(DirectoryPath, FileName);
+    ~KeysLoad();
 
 protected:
     virtual void DoUpdateFileHeader();
 
-    void ReadAllKeys();
+    eResult ReadAllKeys();
 
-    virtual void LoadCharForKey(char key, char cVal) = 0;
-    virtual void LoadStringForKey(char key, std::string & str) = 0;
-    virtual void LoadInt32ForKey(char key, int32_t iVal) = 0;
-    virtual void LoadBoolForKey(char key, bool bVal) = 0;
-    virtual void LoadFloatForKey(char key, float fVal) = 0;
-    virtual void LoadDoubleForKey(char key, double fVal) = 0;
-    virtual void LoadCharArrayForKey(char key, char * /*pcVal*/, int32_t nElems) = 0;
-    virtual void LoadInt32ArrayForKey(char key, int32_t * /*piVal*/, int32_t nElems) = 0;
-    virtual void LoadFloatArrayForKey(char key, float * pfVal, int32_t nElems) = 0;
-    virtual void LoadDoubleArrayForKey(char key, double * pdVal, int32_t nElems) = 0;
+    virtual void LoadCharForKey(char key, char cVal);
+    virtual void LoadStringForKey(char key, std::string & str);
+    virtual void LoadInt32ForKey(char key, int32_t iVal);
+    virtual void LoadBoolForKey(char key, bool bVal);
+    virtual void LoadFloatForKey(char key, float fVal);
+    virtual void LoadDoubleForKey(char key, double fVal);
+    virtual void LoadCharArrayForKey(char key, char * /*pcVal*/, int32_t nElems);
+    virtual void LoadInt32ArrayForKey(char key, int32_t * /*piVal*/, int32_t nElems);
+    virtual void LoadFloatArrayForKey(char key, float * pfVal, int32_t nElems);
+    virtual void LoadDoubleArrayForKey(char key, double * pdVal, int32_t nElems);
 
     virtual void StartSubElement(int32_t nElems);
     virtual void EndSubElement();
@@ -93,4 +93,6 @@ private:
     void ReadNextInt32Array(int32_t nChars);
     void ReadNextDoubleArray(int32_t nChars);
     void ReadNextFloatArray(int32_t nChars);
+    
+    void ReadAllKeysInternal();
 };
