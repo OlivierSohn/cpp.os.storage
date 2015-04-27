@@ -158,7 +158,29 @@ end:
     return ret;
 }
 
-eResult Storage::SaveBegin()
+eResult Storage::Save()
+{
+    eResult ret = doSaveBegin();
+    if (ret != ILE_SUCCESS)
+    {
+        LG(ERR, "Storage::Save : doSaveBegin returned %d", ret);
+        goto end;
+    }
+    
+    ret = doSave();
+    if (ret != ILE_SUCCESS)
+    {
+        LG(ERR, "Storage::Save : doSave returned %d", ret);
+        goto end;
+    }
+
+    doSaveEnd();
+    
+end:
+    return ret;
+}
+
+eResult Storage::doSaveBegin()
 {
     eResult ret = OpenForWrite();
     if (ret != ILE_SUCCESS)
@@ -173,7 +195,11 @@ eResult Storage::SaveBegin()
 end:
     return ret;
 }
-void Storage::SaveEnd()
+eResult Storage::doSave()
+{
+    return ILE_SUCCESS;
+}
+void Storage::doSaveEnd()
 {
     UpdateFileHeader();
 }

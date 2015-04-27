@@ -180,7 +180,7 @@ int32_t KeysLoad::ReadNextElementsCount()
     return count;
 }
 
-int32_t KeysPersist::WriteKeyData(char key, std::string & sValue)
+int32_t KeysPersist::WriteKeyData(char key, const std::string & sValue)
 {
     //LG(INFO, "KeysPersist::WriteKeyData( %d, (string)%s )", key, sValue.c_str());
 

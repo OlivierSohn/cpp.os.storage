@@ -17,7 +17,7 @@ public:
     int32_t WriteKeyData(char key, bool bValue);
     int32_t WriteKeyData(char key, int32_t iValue);
     int32_t WriteKeyData(char key, double dValue);
-    int32_t WriteKeyData(char key, std::string & sValue);
+    int32_t WriteKeyData(char key, const std::string & sValue);
     int32_t WriteKeyData(char key, int32_t * iValueArray, int nElems);
     int32_t WriteKeyData(char key, char * cValueArray, int nElems);
     int32_t WriteKeyData(char key, float * bValueArray, int nElems);
@@ -51,10 +51,10 @@ public:
     KeysLoad(DirectoryPath, FileName);
     ~KeysLoad();
 
+    eResult ReadAllKeys();
+    
 protected:
     virtual void DoUpdateFileHeader();
-
-    eResult ReadAllKeys();
 
     virtual void LoadCharForKey(char key, char cVal);
     virtual void LoadStringForKey(char key, std::string & str);

@@ -37,11 +37,13 @@ public:
     // returns true if dir exists, false otherwise
     static bool listFilenames(const std::string & dir, std::vector<std::string> & filenames);
 
-protected:
-    
+    eResult Save();
+
     typedef std::list<std::string> DirectoryPath;
     typedef std::string FileName;
     static DirectoryPath curDir();
+    
+protected:
     
     static DirectoryPath m_curDir;
     
@@ -65,15 +67,17 @@ protected:
     // and then restore the file position to the position it had before writing the header
     virtual void DoUpdateFileHeader() = 0;
 
-    eResult SaveBegin();
-    void SaveEnd();
-
+protected:
+    eResult doSaveBegin();
 private:
+    virtual eResult doSave();
+    void doSaveEnd();
+
     void* m_pFile;
     std::vector<unsigned char> m_writeBuffer;
     unsigned char m_freadBuffer[SIZE_READ_BUFFER];
     unsigned int m_bufferReadPos;
-
+    
 protected:
     DirectoryPath m_directoryPath;
     FileName m_filename;

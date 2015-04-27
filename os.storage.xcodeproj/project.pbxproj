@@ -34,7 +34,7 @@
 		09429D621AD3877D001513DA /* os.storage.allincludes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.storage.allincludes.h; path = include/os.storage.allincludes.h; sourceTree = "<group>"; };
 		09C2F82919BF163B00472700 /* os.storage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = os.storage.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		09C2F83219BF17F400472700 /* os.storage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.storage.cpp; path = source/os.storage.cpp; sourceTree = "<group>"; };
-		09C2F83419BF17FC00472700 /* os.storage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.storage.h; path = include/os.storage.h; sourceTree = "<group>"; };
+		09C2F83419BF17FC00472700 /* os.storage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = os.storage.h; path = include/os.storage.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		09C2F83A19BF181B00472700 /* os.storage.ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = os.storage.ios.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		09C2F83C19BF181B00472700 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		09C2F84A19BF181B00472700 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
