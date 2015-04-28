@@ -16,6 +16,9 @@
 		09C6C6C91A0186E9003ECAB4 /* os.storage.keys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */; };
 		09C6C6CA1A0186E9003ECAB4 /* os.storage.keys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */; };
 		09C6C6CC1A0186F4003ECAB4 /* os.storage.keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 09C6C6CB1A0186F4003ECAB4 /* os.storage.keys.h */; };
+		09E632391AEF18C80073D796 /* CocoaDialogs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 09E632381AEF18C80073D796 /* CocoaDialogs.mm */; };
+		09E6323A1AEF18C80073D796 /* CocoaDialogs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 09E632381AEF18C80073D796 /* CocoaDialogs.mm */; };
+		09E6323C1AEF19720073D796 /* os.file.dialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 09E6323B1AEF19720073D796 /* os.file.dialog.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,6 +45,8 @@
 		09C2F86019BF185300472700 /* os.storage-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "os.storage-Prefix.pch"; path = "source/os.storage-Prefix.pch"; sourceTree = "<group>"; };
 		09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.storage.keys.cpp; path = source/os.storage.keys.cpp; sourceTree = "<group>"; };
 		09C6C6CB1A0186F4003ECAB4 /* os.storage.keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.storage.keys.h; path = include/os.storage.keys.h; sourceTree = "<group>"; };
+		09E632381AEF18C80073D796 /* CocoaDialogs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaDialogs.mm; path = source/cocoa/CocoaDialogs.mm; sourceTree = "<group>"; };
+		09E6323B1AEF19720073D796 /* os.file.dialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.file.dialog.h; path = include/os.file.dialog.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +90,7 @@
 		09C2F83019BF17DB00472700 /* source */ = {
 			isa = PBXGroup;
 			children = (
+				09E632381AEF18C80073D796 /* CocoaDialogs.mm */,
 				09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */,
 				09C2F86019BF185300472700 /* os.storage-Prefix.pch */,
 				09C2F83219BF17F400472700 /* os.storage.cpp */,
@@ -96,6 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				09C6C6CB1A0186F4003ECAB4 /* os.storage.keys.h */,
+				09E6323B1AEF19720073D796 /* os.file.dialog.h */,
 				09429D621AD3877D001513DA /* os.storage.allincludes.h */,
 				09C2F83419BF17FC00472700 /* os.storage.h */,
 			);
@@ -123,6 +130,7 @@
 				09429D631AD3877D001513DA /* os.storage.allincludes.h in Headers */,
 				09C2F83519BF17FC00472700 /* os.storage.h in Headers */,
 				09C2F86119BF185300472700 /* os.storage-Prefix.pch in Headers */,
+				09E6323C1AEF19720073D796 /* os.file.dialog.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +203,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09E632391AEF18C80073D796 /* CocoaDialogs.mm in Sources */,
 				09C2F83319BF17F400472700 /* os.storage.cpp in Sources */,
 				09C6C6C91A0186E9003ECAB4 /* os.storage.keys.cpp in Sources */,
 			);
@@ -204,6 +213,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09E6323A1AEF18C80073D796 /* CocoaDialogs.mm in Sources */,
 				09C2F86219BF18B400472700 /* os.storage.cpp in Sources */,
 				09C6C6CA1A0186E9003ECAB4 /* os.storage.keys.cpp in Sources */,
 			);
