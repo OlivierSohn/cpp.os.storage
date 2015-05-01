@@ -22,8 +22,8 @@
 #include <shtypes.h>      // for COMDLG_FILTERSPEC
 #include <new>
 
-#include "LLVWin32Dialogs.h"
-#include "gl.resources.h"
+//#include "LLVWin32Dialogs.h"
+//#include "gl.resources.h"
 #include "os.storage.h"
 
 #pragma comment(linker, "\"/manifestdependency:type='Win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -204,7 +204,7 @@ HRESULT CDialogEventHandler_CreateInstance(REFIID riid, void **ppv)
 }
 
 /* Utility Functions *************************************************************************************************************/
-
+/*
 // A helper function that converts UNICODE data to ANSI and writes it to the given file.
 // We write in ANSI format to make it easier to open the output file in Notepad.
 HRESULT _WriteDataToFile(HANDLE hFile, PCWSTR pszDataIn)
@@ -320,11 +320,11 @@ HRESULT _WriteDataToCustomFile(PCWSTR pszFileName)
     }
     return hr;
 }
-
+*/
 /* Common File Dialog Snippets ***************************************************************************************************/
 
 // This code snippet demonstrates how to work with the common file dialog interface
-bool BasicFileOpen(std::string & sFilePath, std::string & fileExt)
+bool BasicFileOpen(std::string & sFilePath, std::string & fileName, const std::string & fileExt)
 {
     bool bRet = false;
 
@@ -368,7 +368,7 @@ bool BasicFileOpen(std::string & sFilePath, std::string & fileExt)
                         {
                             { W2.c_str(), W1.c_str() },
                             { L"All Documents (*.*)", L"*.*" }
-                        }
+                        };
                         
                         // Set the file types to display only. Notice that, this is a 1-based array.
                         hr = pfd->SetFileTypes(ARRAYSIZE(c_rgSaveTypes2), c_rgSaveTypes2);
@@ -398,7 +398,16 @@ bool BasicFileOpen(std::string & sFilePath, std::string & fileExt)
                                             if (SUCCEEDED(hr))
                                             {
                                                 Storage::string_cast(pszFilePath, CP_ACP, sFilePath);
-                                                bRet = true;
+                                                // We are just going to print out the name of the file for sample sake.
+                                                PWSTR pszFilePath2 = NULL;
+                                                hr = psiResult->GetDisplayName(SIGDN_PARENTRELATIVE, &pszFilePath2);
+                                                if (SUCCEEDED(hr))
+                                                {
+                                                    Storage::string_cast(pszFilePath2, CP_ACP, fileName);
+
+                                                    bRet = true;
+                                                    CoTaskMemFree(pszFilePath2);
+                                                }
                                                 CoTaskMemFree(pszFilePath);
                                             }
                                             psiResult->Release();
@@ -418,7 +427,7 @@ bool BasicFileOpen(std::string & sFilePath, std::string & fileExt)
     }
     return bRet;
 }
-
+/*
 // The Common Places area in the File Dialog is extensible.
 // This code snippet demonstrates how to extend the Common Places area.
 // Look at CDialogEventHandler::OnItemSelected to see how messages pertaining to the added
@@ -896,7 +905,7 @@ HRESULT WritePropertiesWithoutUsingHandlers()
     }
     return hr;
 }
-
+*/
 /*
 // Application entry point
 int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
