@@ -18,10 +18,10 @@ public:
     int32_t WriteKeyData(char key, int32_t iValue);
     int32_t WriteKeyData(char key, double dValue);
     int32_t WriteKeyData(char key, const std::string & sValue);
-    int32_t WriteKeyData(char key, int32_t * iValueArray, int nElems);
-    int32_t WriteKeyData(char key, char * cValueArray, int nElems);
-    int32_t WriteKeyData(char key, float * bValueArray, int nElems);
-    int32_t WriteKeyData(char key, double * bValueArray, int nElems);
+    int32_t WriteKeyData(char key, int32_t * iValueArray, size_t nElems);
+    int32_t WriteKeyData(char key, char * cValueArray, size_t nElems);
+    int32_t WriteKeyData(char key, float * bValueArray, size_t nElems);
+    int32_t WriteKeyData(char key, double * bValueArray, size_t nElems);
 
     void StartSubElement(char key);
     void EndSubElement();
@@ -62,10 +62,10 @@ protected:
     virtual void LoadBoolForKey(char key, bool bVal);
     virtual void LoadFloatForKey(char key, float fVal);
     virtual void LoadDoubleForKey(char key, double fVal);
-    virtual void LoadCharArrayForKey(char key, char * /*pcVal*/, int32_t nElems);
-    virtual void LoadInt32ArrayForKey(char key, int32_t * /*piVal*/, int32_t nElems);
-    virtual void LoadFloatArrayForKey(char key, float * pfVal, int32_t nElems);
-    virtual void LoadDoubleArrayForKey(char key, double * pdVal, int32_t nElems);
+    virtual void LoadCharArrayForKey(char key, char * /*pcVal*/, size_t nElems);
+    virtual void LoadInt32ArrayForKey(char key, int32_t * /*piVal*/, size_t nElems);
+    virtual void LoadFloatArrayForKey(char key, float * pfVal, size_t nElems);
+    virtual void LoadDoubleArrayForKey(char key, double * pdVal, size_t nElems);
 
     virtual void StartSubElement(int32_t nElems);
     virtual void EndSubElement();
@@ -82,7 +82,7 @@ private:
     int m_iCurReadSubElementLevel;// -1 : normal (file) / n : nth level subelement 
     std::vector<char> m_firstLevelSubElement;
     char * m_firstLevelSubElementDataIt;
-    int m_controlSizeAfterIt;
+    long m_controlSizeAfterIt;
 
     int32_t ReadKeysCount();
     char ReadNextKey();

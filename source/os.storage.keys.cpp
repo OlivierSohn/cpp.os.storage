@@ -82,7 +82,7 @@ void KeysPersist::EndSubElement()
     if ( m_iSubElementIndex >= 0)
         m_pSubElt = &m_subElements[m_iSubElementIndex];
     
-    int32_t sizeSubElement = pFinishedSubElt->size();
+    int32_t sizeSubElement = static_cast<int32_t>(pFinishedSubElt->size());
 
     WriteArrayElementsCount(sizeSubElement);
 
@@ -186,7 +186,7 @@ int32_t KeysPersist::WriteKeyData(char key, const std::string & sValue)
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_STRING_AS_CHAR_ARRAY);
-    int32_t nElems = sValue.size();
+    int32_t nElems = static_cast<int32_t>(sValue.size());
     WriteSize += WriteArrayElementsCount(nElems);
 
     WriteData((void*)sValue.c_str(), nElems * sizeof(char), 1);
@@ -242,15 +242,15 @@ int32_t KeysPersist::WriteKeyData(char key, double dValue)
     return WriteSize;
 }
 
-int32_t KeysPersist::WriteKeyData(char key, char * cValueArray, int nElems)
+int32_t KeysPersist::WriteKeyData(char key, char * cValueArray, size_t nElems)
 {
     //LG(INFO, "KeysPersist::WriteKeyData( %d, ..., (nElems:)%x )", key, nElems);
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_CHAR_ARRAY);
-    WriteSize += WriteArrayElementsCount(nElems);
+    WriteSize += WriteArrayElementsCount((int32_t)nElems);
 
-    int32_t size = nElems * sizeof(double);
+    int32_t size = (int32_t) nElems * sizeof(double);
     WriteData((void*)cValueArray, size, 1);
     WriteSize += size;
 
@@ -258,15 +258,15 @@ int32_t KeysPersist::WriteKeyData(char key, char * cValueArray, int nElems)
     return WriteSize;
 }
 
-int32_t KeysPersist::WriteKeyData(char key, double * dValueArray, int nElems)
+int32_t KeysPersist::WriteKeyData(char key, double * dValueArray, size_t nElems)
 {
     //LG(INFO, "KeysPersist::WriteKeyData( %d, ..., (nElems:)%x )", key, nElems);
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_DOUBLE_ARRAY);
-    WriteSize += WriteArrayElementsCount(nElems);
+    WriteSize += WriteArrayElementsCount((int32_t)nElems);
 
-    int32_t size = nElems * sizeof(double);
+    int32_t size = (int32_t) nElems * sizeof(double);
     WriteData((void*)dValueArray, size, 1);
     WriteSize += size;
 
@@ -274,16 +274,16 @@ int32_t KeysPersist::WriteKeyData(char key, double * dValueArray, int nElems)
     return WriteSize;
 }
 
-int32_t KeysPersist::WriteKeyData(char key, float * bValueArray, int nElems)
+int32_t KeysPersist::WriteKeyData(char key, float * bValueArray, size_t nElems)
 {
     //LG(INFO, "KeysPersist::WriteKeyData( %d, ..., (nElems:)%x )", key, nElems);
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_FLOAT_ARRAY);
-    WriteSize += WriteArrayElementsCount(nElems);
+    WriteSize += WriteArrayElementsCount((int32_t)nElems);
 
     // write data
-    int32_t size = nElems * sizeof(float);
+    int32_t size = (int32_t) nElems * sizeof(float);
     WriteData((void*)bValueArray, size, 1);
     WriteSize += size;
 
@@ -612,7 +612,7 @@ void KeysLoad::ReadNextFloatArray(int32_t nElems)
     //LG(INFO, "KeysLoad::ReadNextFloatArray end");
 }
 
-void KeysLoad::LoadDoubleArrayForKey(char key, double * pdVal, int32_t nElems){
+void KeysLoad::LoadDoubleArrayForKey(char key, double * pdVal, size_t nElems){
     LG(ERR, "KeysLoad::LoadDoubleArrayForKey(%d, ..., %d) should not be called", key, nElems);
 }
 void KeysLoad::LoadBoolForKey(char key, bool bVal){
@@ -627,13 +627,13 @@ void KeysLoad::LoadInt32ForKey(char key, int32_t iVal){
 void KeysLoad::LoadDoubleForKey(char key, double fVal){
     LG(ERR, "KeysLoad::LoadDoubleForKey(%d, %d) should not be called", key, fVal);
 }
-void KeysLoad::LoadCharArrayForKey(char key, char * /*pcVal*/, int32_t nElems) {
+void KeysLoad::LoadCharArrayForKey(char key, char * /*pcVal*/, size_t nElems) {
     LG(ERR, "KeysLoad::LoadCharArrayForKey(%d, ..., %d) should not be called", key, nElems);
 }
-void KeysLoad::LoadInt32ArrayForKey(char key, int32_t * /*piVal*/, int32_t nElems) {
+void KeysLoad::LoadInt32ArrayForKey(char key, int32_t * /*piVal*/, size_t nElems) {
     LG(ERR, "KeysLoad::LoadInt32ArrayForKey(%d, ..., %d) should not be called", key, nElems);
 }
-void KeysLoad::LoadFloatArrayForKey(char key, float * /*pfVal*/, int32_t nElems) {
+void KeysLoad::LoadFloatArrayForKey(char key, float * /*pfVal*/, size_t nElems) {
     LG(ERR, "KeysLoad::LoadFloatArrayForKey(%d, ..., %d) should not be called", key, nElems);
 }
 void KeysLoad::LoadCharForKey(char key, char cVal) {

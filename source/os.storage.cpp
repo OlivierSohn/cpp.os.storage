@@ -273,11 +273,11 @@ void Storage::ReadData(void * p, size_t size, size_t count)
     {
         //LG(INFO, "Storage::ReadData m_bufferReadPos = %d", m_bufferReadPos);
         
-        unsigned int max = m_bufferReadPos + total;
+        size_t max = m_bufferReadPos + total;
         
         //LG(INFO, "Storage::ReadData max = %d", max);
         
-        int secondRead = max - SIZE_READ_BUFFER;
+        long secondRead = max - SIZE_READ_BUFFER;
         
         //LG(INFO, "Storage::ReadData secondRead = %d", secondRead);
         
@@ -285,7 +285,7 @@ void Storage::ReadData(void * p, size_t size, size_t count)
         {
             //LG(INFO, "Storage::ReadData secondRead > 0");
             
-            int i = SIZE_READ_BUFFER - m_bufferReadPos;
+            long i = SIZE_READ_BUFFER - m_bufferReadPos;
             
             memcpy(p, &m_freadBuffer[m_bufferReadPos], i);
             

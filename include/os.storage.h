@@ -76,7 +76,7 @@ private:
     void* m_pFile;
     std::vector<unsigned char> m_writeBuffer;
     unsigned char m_freadBuffer[SIZE_READ_BUFFER];
-    unsigned int m_bufferReadPos;
+    size_t m_bufferReadPos;
     
 protected:
     DirectoryPath m_directoryPath;
