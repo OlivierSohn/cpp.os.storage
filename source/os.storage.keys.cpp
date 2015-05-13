@@ -15,6 +15,7 @@
 #define DATA_TYPE_FLOAT_ARRAY  'F'
 #define DATA_TYPE_CHAR         's'
 #define DATA_TYPE_STRING_AS_CHAR_ARRAY   'S'
+#define DATA_TYPE_STRING_ARRAY   'r'
 
 bool keyReadOnly(char key)
 {
@@ -245,15 +246,36 @@ int32_t KeysPersist::WriteKeyData(char key, double dValue)
 int32_t KeysPersist::WriteKeyData(char key, char * cValueArray, size_t nElems)
 {
     //LG(INFO, "KeysPersist::WriteKeyData( %d, ..., (nElems:)%x )", key, nElems);
-
+    
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_CHAR_ARRAY);
     WriteSize += WriteArrayElementsCount((int32_t)nElems);
-
-    int32_t size = (int32_t) nElems * sizeof(double);
+    
+    int32_t size = (int32_t) nElems * sizeof(char);
     WriteData((void*)cValueArray, size, 1);
     WriteSize += size;
+    
+    //LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
+    return WriteSize;
+}
 
+int32_t KeysPersist::WriteKeyData(char key, const std::vector<std::string> & sValueArray)
+{
+    //LG(INFO, "KeysPersist::WriteKeyData( %d, ..., (nElems:)%x )", key, nElems);
+
+    size_t nElems = sValueArray.size();
+    
+    int32_t WriteSize = WriteKey(key);
+    WriteSize += WriteDataType(DATA_TYPE_STRING_ARRAY);
+    WriteSize += WriteArrayElementsCount((int32_t)nElems);
+    
+    for(auto const & s : sValueArray )
+    {
+        int32_t sizeWithEnd = (int32_t) (s.size()+1) * sizeof(char);
+        WriteData((void*)s.c_str(), sizeWithEnd, 1);
+        WriteSize += sizeWithEnd;
+    }
+    
     //LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
     return WriteSize;
 }
@@ -504,6 +526,22 @@ void KeysLoad::ReadAllKeysInternal()
                 }
                 break;
             }
+            
+            case DATA_TYPE_STRING_ARRAY:
+            {
+                int32_t nElems = ReadNextElementsCount();
+                if (nElems >= 0)
+                {
+                    ReadNextStringArray(nElems);
+                    LoadStringArrayForKey(key, m_tmpStrings);
+                }
+                else
+                {
+                    LG(ERR, "KeysLoad::ReadAllKeys abort because found negative count of elements : %x", nElems);
+                    break;
+                }
+                break;
+            }
                 
         case DATA_TYPE_INT32:
         {
@@ -590,6 +628,27 @@ void KeysLoad::ReadNextInt32Array(int32_t nInts)
     
     //LG(INFO, "KeysLoad::ReadNextInt32Array returns");
 }
+void KeysLoad::ReadNextStringArray(int32_t nElts)
+{
+    //LG(INFO, "KeysLoad::ReadNextStringArray(%d)", nElts);
+    
+    m_tmpStrings.clear();
+
+    m_tmpStrings.resize(nElts);
+    
+    for(auto & s : m_tmpStrings)
+    {
+        char c;
+        do
+        {
+            ReadData((void*)&c, sizeof(char), 1);
+            s.push_back(c);
+        }
+        while (c); // assume string ends with 0
+    }
+    
+    //LG(INFO, "KeysLoad::ReadNextStringArray returns");
+}
 
 void KeysLoad::ReadNextDoubleArray(int32_t nElems)
 {
@@ -632,6 +691,10 @@ void KeysLoad::LoadCharArrayForKey(char key, char * /*pcVal*/, size_t nElems) {
 }
 void KeysLoad::LoadInt32ArrayForKey(char key, int32_t * /*piVal*/, size_t nElems) {
     LG(ERR, "KeysLoad::LoadInt32ArrayForKey(%d, ..., %d) should not be called", key, nElems);
+}
+void KeysLoad::LoadStringArrayForKey(char key, const std::vector<std::string> &)
+{
+    LG(ERR, "KeysLoad::LoadStringArrayForKey(%d, ...) should not be called", key);
 }
 void KeysLoad::LoadFloatArrayForKey(char key, float * /*pfVal*/, size_t nElems) {
     LG(ERR, "KeysLoad::LoadFloatArrayForKey(%d, ..., %d) should not be called", key, nElems);

@@ -20,6 +20,7 @@ public:
     int32_t WriteKeyData(char key, const std::string & sValue);
     int32_t WriteKeyData(char key, int32_t * iValueArray, size_t nElems);
     int32_t WriteKeyData(char key, char * cValueArray, size_t nElems);
+    int32_t WriteKeyData(char key, std::vector<std::string> const &);
     int32_t WriteKeyData(char key, float * bValueArray, size_t nElems);
     int32_t WriteKeyData(char key, double * bValueArray, size_t nElems);
 
@@ -62,6 +63,7 @@ protected:
     virtual void LoadBoolForKey(char key, bool bVal);
     virtual void LoadFloatForKey(char key, float fVal);
     virtual void LoadDoubleForKey(char key, double fVal);
+    virtual void LoadStringArrayForKey(char key, const std::vector<std::string> &);
     virtual void LoadCharArrayForKey(char key, char * /*pcVal*/, size_t nElems);
     virtual void LoadInt32ArrayForKey(char key, int32_t * /*piVal*/, size_t nElems);
     virtual void LoadFloatArrayForKey(char key, float * pfVal, size_t nElems);
@@ -78,6 +80,7 @@ private:
     std::vector<float> m_tmpFloats;
     std::vector<char> m_tmpChars;
     std::vector<int32_t> m_tmpInts32;
+    std::vector<std::string> m_tmpStrings;
     
     int m_iCurReadSubElementLevel;// -1 : normal (file) / n : nth level subelement 
     std::vector<char> m_firstLevelSubElement;
@@ -91,6 +94,7 @@ private:
     void ReadNextCharArrayAsString(int32_t nChars);
     void ReadNextCharArray(int32_t nChars);
     void ReadNextInt32Array(int32_t nChars);
+    void ReadNextStringArray(int32_t nElts);
     void ReadNextDoubleArray(int32_t nChars);
     void ReadNextFloatArray(int32_t nChars);
     
