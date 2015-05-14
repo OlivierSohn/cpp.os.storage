@@ -642,7 +642,8 @@ void KeysLoad::ReadNextStringArray(int32_t nElts)
         do
         {
             ReadData((void*)&c, sizeof(char), 1);
-            s.push_back(c);
+            if(c)
+                s.push_back(c);
         }
         while (c); // assume string ends with 0
     }
