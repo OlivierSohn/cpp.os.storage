@@ -13,7 +13,7 @@
 #import <AppKit/NSOpenPanel.h>
 #include <string>
 
-bool BasicFileOpen(std::string & sPath, std::string & sFileName, const std::string & sFileExt)
+bool BasicFileOpen(std::string & sPathWithFileName, std::string & sFileName, const std::string & sFileExt)
 {
     bool bRet = false;
     
@@ -35,7 +35,7 @@ bool BasicFileOpen(std::string & sPath, std::string & sFileName, const std::stri
             // do something with the url here.
 
             NSString *myString = [url path];
-            sPath = [myString UTF8String];
+            sPathWithFileName = [myString UTF8String];
             
             NSString *filename = [url lastPathComponent];
             sFileName = [filename UTF8String];

@@ -1,13 +1,10 @@
-//
-//  CocoaDialogs.h
-//
-//  Created by Olivier on 09/08/2014.
-//
-//
 
-#ifndef CocoaDialogs_h
-#define CocoaDialogs_h
+#pragma once
+
+#include <string>
+#include "os.storage.h"
 
 bool BasicFileOpen(std::string & sPath, std::string & fileName, const std::string & sFileExt);
+bool BasicFileOpen2(Storage::DirectoryPath & pathToDirectory, Storage::FileName & filename, const std::string & sFileExt);
 
-#endif
+void ReplaceStringInPlace(std::string& subject, const std::string& search, const std::string& replace);

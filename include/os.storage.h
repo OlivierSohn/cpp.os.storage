@@ -42,6 +42,7 @@ public:
     typedef std::list<std::string> DirectoryPath;
     typedef std::string FileName;
     static DirectoryPath curDir();
+    static DirectoryPath toDirPath(const std::string &);
     
 protected:
     

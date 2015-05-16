@@ -19,6 +19,8 @@
 #include <sys/stat.h>
 #include <stdio.h>
 #include <cstring> // memcpy
+#include <sstream>
+#include <iostream>
 
 Storage::DirectoryPath Storage::m_curDir = std::list<std::string>();
 Storage::DirectoryPath Storage::curDir()
@@ -98,7 +100,6 @@ eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOp
 eResult Storage::OpenForRead()
 {
     std::string filePath;
-    filePath.append("./");
     
     auto it = m_directoryPath.begin();
     auto end = m_directoryPath.end();
@@ -109,7 +110,9 @@ eResult Storage::OpenForRead()
     }
     
     filePath.append(m_filename);
-    
+    std::string search("//");
+    std::string replace("/");
+    ReplaceStringInPlace(filePath, search, replace );
     eResult ret = OpenFileForOperation(filePath, OP_READ);
     if (ret != ILE_SUCCESS)
     {
@@ -592,6 +595,24 @@ bool Storage::setCurrentDir(const char * dir)
 
 #endif
 
+    if(bRet)
+    {
+        std::string path(dir);
+        m_curDir = toDirPath(path);
+    }
+    
     LG(INFO, "Storage::SetCurrentDirectory(%s) returns %s", (dir ? dir : "NULL"), (bRet?"true":"false"));
     return bRet;
+}
+
+Storage::DirectoryPath Storage::toDirPath(const std::string & sInput)
+{
+    DirectoryPath strings;
+    std::istringstream f(sInput);
+    std::string s;
+    while (getline(f, s, ';')) {
+        strings.push_back(s);
+    }
+    
+    return strings;
 }
