@@ -30,6 +30,9 @@
     <ClCompile Include="source\win32\Win32Dialogs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\os.file.dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\win32\stdafx.h">

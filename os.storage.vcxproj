@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\os.file.dialog.cpp" />
     <ClCompile Include="source\os.storage.cpp" />
     <ClCompile Include="source\os.storage.keys.cpp" />
     <ClCompile Include="source\win32\stdafx.cpp">
