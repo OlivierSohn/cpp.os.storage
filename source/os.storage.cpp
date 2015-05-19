@@ -617,3 +617,15 @@ Storage::DirectoryPath Storage::toDirPath(const std::string & sInput)
     
     return strings;
 }
+
+std::string Storage::toString(const DirectoryPath & dir)
+{
+    std::string ret;
+    for(auto&st:dir)
+    {
+        ret.append(st);
+        ret.append("/");
+    }
+    
+    return ret;
+}

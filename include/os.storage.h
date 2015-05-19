@@ -43,6 +43,7 @@ public:
     typedef std::string FileName;
     static DirectoryPath curDir();
     static DirectoryPath toDirPath(const std::string &);
+    static std::string toString(const DirectoryPath &);
     
 protected:
     
