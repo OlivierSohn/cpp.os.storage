@@ -465,7 +465,7 @@ eResult Storage::makeDir(const std::string & path)
 // returns true if dir exists, false otherwise
 bool Storage::listFilenames(const std::string & path, std::vector<std::string> & filenames)
 {
-    LG(INFO, "Storage::listFilenames(%s)", (path.c_str() ? path.c_str() : "NULL"));
+    //LG(INFO, "Storage::listFilenames(%s)", (path.c_str() ? path.c_str() : "NULL"));
     bool bExists = false;
     filenames.clear();
 
@@ -559,7 +559,7 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
     }
 #endif
 
-    LG(INFO, "Storage::listFilenames(%s) found %d files and returns %s", (path.c_str() ? path.c_str() : "NULL"), filenames.size(), (bExists ? "true" : "false"));
+    //LG(INFO, "Storage::listFilenames(%s) found %d files and returns %s", (path.c_str() ? path.c_str() : "NULL"), filenames.size(), (bExists ? "true" : "false"));
     return bExists;
 }
 
