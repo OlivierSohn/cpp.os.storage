@@ -43,3 +43,15 @@ bool BasicFileOpen2(Storage::DirectoryPath & pathToDirectory, Storage::FileName 
     
     return bRet;
 }
+
+bool BasicDirectoryOpen2(Storage::DirectoryPath & pathToDirectory)
+{
+    std::string path;
+    bool bRet = BasicDirectoryOpen(path);
+    if(bRet)
+    {
+        pathToDirectory = Storage::toDirPath(path);
+    }
+    
+    return bRet;
+}

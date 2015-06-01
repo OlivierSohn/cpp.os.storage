@@ -23,7 +23,7 @@ bool BasicFileOpen(std::string & sPathWithFileName, std::string & sFileName, con
     [panel setAllowsMultipleSelection:NO];
     
     NSString *fileExt = [NSString stringWithCString:sFileExt.c_str()
-                                                encoding:[NSString defaultCStringEncoding]];
+                                           encoding:[NSString defaultCStringEncoding]];
     NSArray *tarr = [NSArray arrayWithObjects:fileExt, nil];
     [panel setAllowedFileTypes:tarr ];
     
@@ -33,12 +33,41 @@ bool BasicFileOpen(std::string & sPathWithFileName, std::string & sFileName, con
         for (NSURL *url in [panel URLs])
         {
             // do something with the url here.
-
+            
             NSString *myString = [url path];
             sPathWithFileName = [myString UTF8String];
             
             NSString *filename = [url lastPathComponent];
             sFileName = [filename UTF8String];
+            
+            bRet = true;
+        }
+    }
+    
+    return bRet;
+}
+
+bool BasicDirectoryOpen(std::string & sPath)
+{
+    bool bRet = false;
+    
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    [panel setCanChooseFiles:NO];
+    [panel setCanChooseDirectories:YES];
+    [panel setResolvesAliases:YES];
+    [panel setAllowsMultipleSelection:NO];
+    
+    [panel setAllowedFileTypes:nil ];
+    
+    NSInteger clicked = [panel runModal];
+    
+    if (clicked == NSFileHandlingPanelOKButton) {
+        for (NSURL *url in [panel URLs])
+        {
+            // do something with the url here.
+            
+            NSString *myString = [url path];
+            sPath = [myString UTF8String];
             
             bRet = true;
         }

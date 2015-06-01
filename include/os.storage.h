@@ -36,6 +36,7 @@ public:
     static bool setCurrentDir(const char * dir);
     // returns true if dir exists, false otherwise
     static bool listFilenames(const std::string & dir, std::vector<std::string> & filenames);
+    static bool isGUID(std::string & str);
 
     eResult Save();
 

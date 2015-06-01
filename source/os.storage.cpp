@@ -563,6 +563,49 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
     return bExists;
 }
 
+bool Storage::isGUID(std::string & str)
+{
+    bool bIsGUID = true;
+    
+    for(char&c:str)
+    {
+        bool bOK = true;
+        switch(c)
+        {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+            case 'F':
+                break;
+            case '-':
+            case '{':
+            case '}':
+                break;
+            default:
+                bOK = false;
+                break;
+        }
+        if (!bOK) {
+            bIsGUID = false;
+            break;
+        }
+    }
+
+    return bIsGUID;
+}
+
 bool Storage::setCurrentDir(const char * dir)
 {
     LG(INFO, "Storage::SetCurrentDirectory(%s) begin", (dir ? dir : "NULL"));
