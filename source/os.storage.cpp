@@ -129,7 +129,6 @@ eResult Storage::OpenForWrite()
     eResult ret = ILE_SUCCESS;
     {
         std::string filePath;
-        filePath.append("./");
         
         auto it = m_directoryPath.begin();
         auto end = m_directoryPath.end();
