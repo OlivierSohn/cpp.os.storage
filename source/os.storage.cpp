@@ -566,8 +566,13 @@ bool Storage::isGUID(std::string & str)
 {
     bool bIsGUID = true;
     
+    int count = 0;
+    int count_parenthesis_open = -1;
+    int count_parenthesis_close = -1;
     for(char&c:str)
     {
+        count++;
+
         bool bOK = true;
         switch(c)
         {
@@ -589,8 +594,18 @@ bool Storage::isGUID(std::string & str)
             case 'F':
                 break;
             case '-':
+                break;
             case '{':
+                if(count_parenthesis_open != -1)
+                    bOK = false;
+                else
+                    count_parenthesis_open = count;
+                break;
             case '}':
+                if(count_parenthesis_close != -1)
+                    bOK = false;
+                else
+                    count_parenthesis_close = count;
                 break;
             default:
                 bOK = false;
@@ -602,6 +617,13 @@ bool Storage::isGUID(std::string & str)
         }
     }
 
+    if(bIsGUID)
+    {
+        if(count_parenthesis_open != 1)
+            bIsGUID = false;
+        else if(count_parenthesis_close != count)
+            bIsGUID = false;
+    }
     return bIsGUID;
 }
 
