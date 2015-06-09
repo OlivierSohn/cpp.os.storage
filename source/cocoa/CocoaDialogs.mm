@@ -54,6 +54,7 @@ bool BasicDirectoryOpen(std::string & sPath)
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     [panel setCanChooseFiles:NO];
     [panel setCanChooseDirectories:YES];
+    [panel setCanCreateDirectories:YES];
     [panel setResolvesAliases:YES];
     [panel setAllowsMultipleSelection:NO];
     
