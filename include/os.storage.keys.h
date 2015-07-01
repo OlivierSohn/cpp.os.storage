@@ -28,11 +28,11 @@ public:
     void EndSubElement();
 
 protected:
-    virtual void DoUpdateFileHeader();
+    void DoUpdateFileHeader() override;
 
     int32_t countWriteKeyOperations() const;
 
-    virtual void WriteData(void * p, size_t size, size_t count);
+    void WriteData(void * p, size_t size, size_t count) override;
 
 private:
     int32_t m_countLevelZeroKeys;
