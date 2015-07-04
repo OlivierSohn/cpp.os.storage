@@ -23,6 +23,8 @@
 #include <sstream>
 #include <iostream>
 
+using namespace imajuscule;
+
 Storage::DirectoryPath Storage::m_curDir = std::list<std::string>();
 Storage::DirectoryPath Storage::curDir()
 {
