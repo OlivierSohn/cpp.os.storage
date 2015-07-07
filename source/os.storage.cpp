@@ -658,8 +658,9 @@ bool Storage::setCurrentDir(const char * dir)
     else
     {
         DWORD dwRet;
-        
-        dwRet = GetCurrentDirectory(BUFSIZE, bufCurDirectory);
+        TCHAR cArray[BUFSIZE];
+
+        dwRet = GetCurrentDirectory(BUFSIZE, cArray);
         
         if( dwRet == 0 )
         {
@@ -672,6 +673,7 @@ bool Storage::setCurrentDir(const char * dir)
         else
         {
             bRet = true;
+            wcstombs(bufCurDirectory, cArray, wcslen(cArray) + 1);
         }
     }
 
