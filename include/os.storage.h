@@ -3,10 +3,12 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <set>
 
 enum eResult
 {
     ILE_SUCCESS = 0,
+    ILE_RECURSIVITY,
     ILE_ERROR,
     ILE_NOT_IMPLEMENTED,
     ILE_BAD_PARAMETER,
@@ -70,9 +72,9 @@ protected:
     // and then restore the file position to the position it had before writing the header
     virtual void DoUpdateFileHeader() = 0;
 
-protected:
     eResult doSaveBegin();
 private:
+    bool isBeingSaved();
     virtual eResult doSave();
     void doSaveEnd();
 
@@ -81,11 +83,12 @@ private:
     unsigned char m_freadBuffer[SIZE_READ_BUFFER];
     size_t m_bufferReadPos;
     
-protected:
     DirectoryPath m_directoryPath;
     FileName m_filename;
-
-private:
+    
+    static std::set<std::string> m_openedForWrite;
+    std::string m_filePath;
+    
     int  FlushData();
     void FlushMyBuffer();
 

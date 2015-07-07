@@ -2,7 +2,8 @@
 #include "os.storage.h"
 #include "os.log.h"
 #include <stdint.h>
-
+#include <list>
+#include <set>
 
 /////////////////////// read only keys
 #define KEY_SUBELT_KEY_START              -126 // char
@@ -41,15 +42,22 @@ private:
     int32_t WriteDataType(char keyDataType);
     int32_t WriteArrayElementsCount(int32_t count);
 
-    int m_iSubElementIndex;
-    std::vector<std::vector<char> > m_subElements;
-    std::vector<char> * m_pSubElt;
+    struct SubElement
+    {
+        std::vector<char> content;
+        std::set<char> keys;
+    };
+    typedef std::list< SubElement > subElts;
+    subElts m_subElements;
+    subElts::iterator m_curSubElt;
+
+    std::set<char> rootKeys;
 };
 
 class KeysLoad : public Storage
 {
 public:
-    KeysLoad(DirectoryPath, FileName);
+    KeysLoad(DirectoryPath, FileName,bool bExhaustive = true);
     ~KeysLoad();
 
     eResult ReadAllKeys();
@@ -74,6 +82,7 @@ protected:
 
     virtual void ReadData(void * p, size_t size, size_t count);
     
+    virtual void onLoadFinished() {};
 private:
     std::string m_tmpString;
     std::vector<double> m_tmpDoubles;
@@ -87,6 +96,8 @@ private:
     char * m_firstLevelSubElementDataIt;
     long m_controlSizeAfterIt;
 
+    bool m_bExhaustive;
+    
     int32_t ReadKeysCount();
     char ReadNextKey();
     char ReadNextDataType();

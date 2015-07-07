@@ -25,6 +25,8 @@
 
 using namespace imajuscule;
 
+std::set<std::string> Storage::m_openedForWrite;
+
 Storage::DirectoryPath Storage::m_curDir = std::list<std::string>();
 Storage::DirectoryPath Storage::curDir()
 {
@@ -61,25 +63,12 @@ void Storage::Finalize()
 
 eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOperation op)
 {
-    LG(INFO, "Storage::OpenFileForOperation( %s, %s) begin", sFilePath.c_str(), FileOperationToString(op));
+    //LG(INFO, "Storage::OpenFileForOperation( %s, %s) begin", sFilePath.c_str(), FileOperationToString(op));
 
     eResult ret = ILE_SUCCESS;
 
     CloseFile();
 
-#ifndef WIN32
-    const int sizeBuf = PATH_MAX+1;
-    char bufCurDirectory[sizeBuf];
-    if (getcwd(bufCurDirectory, sizeBuf))
-    {
-        LG(INFO, "Storage::OpenFileForOperation : current directory %s", bufCurDirectory);
-    }
-    else
-    {
-        LG(INFO, "Storage::OpenFileForOperation : getcwd error %d", errno);
-    }
-#else
-#endif
     m_pFile = fopen(sFilePath.c_str(), op == OP_READ ? "rb" : "wb");
 
     if (!m_pFile)
@@ -96,7 +85,7 @@ eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOp
         }
     }
 
-    LG(INFO, "Storage::OpenFileForOperation() returns %d", ret);
+    //LG(INFO, "Storage::OpenFileForOperation() returns %d", ret);
     return ret;
 }
 
@@ -130,28 +119,34 @@ eResult Storage::OpenForWrite()
 {
     eResult ret = ILE_SUCCESS;
     {
-        std::string filePath;
-        
         auto it = m_directoryPath.begin();
         auto end = m_directoryPath.end();
         for(;it!=end;++it)
         {
-            filePath.append(*it);
-            filePath.append("/");
-            if (!Storage::dirExists(filePath))
+            m_filePath.append(*it);
+            m_filePath.append("/");
+            if (!Storage::dirExists(m_filePath))
             {
-                ret = Storage::makeDir(filePath);
+                ret = Storage::makeDir(m_filePath);
                 if (ILE_SUCCESS != ret)
                 {
-                    LG(ERR, "Storage::OpenForWrite : Storage::makeDir(%s) error : %d", filePath.c_str(), ret);
+                    LG(ERR, "Storage::OpenForWrite : Storage::makeDir(%s) error : %d", m_filePath.c_str(), ret);
                     goto end;
                 }
             }
         }
         
-        filePath.append(m_filename);
+        m_filePath.append(m_filename);
         
-        ret = OpenFileForOperation(filePath, OP_WRITE);
+        auto it2 = m_openedForWrite.find(m_filePath);
+        if(it2 != m_openedForWrite.end())
+        {
+            ret = ILE_RECURSIVITY;
+            goto end;
+        }
+        m_openedForWrite.insert(m_filePath);
+        
+        ret = OpenFileForOperation(m_filePath, OP_WRITE);
         if (ret != ILE_SUCCESS)
         {
             LG(ERR, "Storage::OpenForWrite : OpenFileForOperation returned %d", ret);
@@ -165,10 +160,13 @@ end:
 
 eResult Storage::Save()
 {
+    m_filePath.clear();
+    
     eResult ret = doSaveBegin();
     if (ret != ILE_SUCCESS)
     {
-        LG(ERR, "Storage::Save : doSaveBegin returned %d", ret);
+        if(ret != ILE_RECURSIVITY)
+            LG(ERR, "Storage::Save : doSaveBegin returned %d", ret);
         goto end;
     }
     
@@ -182,6 +180,9 @@ eResult Storage::Save()
     doSaveEnd();
     
 end:
+    if(!m_filePath.empty())
+        m_openedForWrite.erase(m_filePath);
+    
     return ret;
 }
 
@@ -190,7 +191,8 @@ eResult Storage::doSaveBegin()
     eResult ret = OpenForWrite();
     if (ret != ILE_SUCCESS)
     {
-        LG(ERR, "Storage::SaveBegin : OpenForWrite returned %d", ret);
+        if(ret != ILE_RECURSIVITY)
+            LG(ERR, "Storage::SaveBegin : OpenForWrite returned %d", ret);
         goto end;
     }
     
@@ -371,31 +373,31 @@ void Storage::string_cast(const wchar_t* pSource, unsigned int codePage, std::st
 
 bool Storage::dirExists(const std::string & path)
 {
-    LG(INFO, "Storage::dirExists(%s)", (path.c_str() ? path.c_str() : "NULL"));
+    //LG(INFO, "Storage::dirExists(%s)", (path.c_str() ? path.c_str() : "NULL"));
     bool bExists = false;
 
     struct stat info;
     bExists = ((stat(path.c_str(), &info) == 0) && (info.st_mode & S_IFDIR));
 
-    LG(INFO, "Storage::dirExists(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
+    //LG(INFO, "Storage::dirExists(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
     return bExists;
 }
 
 bool Storage::fileExists(const std::string & path)
 {
-    LG(INFO, "Storage::fileExists(%s)", (path.c_str() ? path.c_str() : "NULL"));
+    //LG(INFO, "Storage::fileExists(%s)", (path.c_str() ? path.c_str() : "NULL"));
     bool bExists = false;
 
     struct stat info;
     bExists = (stat(path.c_str(), &info) == 0) && !(info.st_mode & S_IFDIR);
 
-    LG(INFO, "Storage::fileExists(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
+    //LG(INFO, "Storage::fileExists(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
     return bExists;
 }
 
 bool Storage::fileCreationDate(const std::string & path, std::string & oDate)
 {
-    LG(INFO, "Storage::fileCreationDate(%s)", (path.c_str() ? path.c_str() : "NULL"));
+    //LG(INFO, "Storage::fileCreationDate(%s)", (path.c_str() ? path.c_str() : "NULL"));
     
     oDate.clear();
 
@@ -414,19 +416,19 @@ bool Storage::fileCreationDate(const std::string & path, std::string & oDate)
         oDate.assign("../../.. ..:..:..");
     }
 
-    LG(INFO, "Storage::fileCreationDate(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
+    //LG(INFO, "Storage::fileCreationDate(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
     return bExists;
 }
 
 eResult Storage::makeDir(const std::string & path)
 {
-    LG(INFO, "Storage::makeDir(%s)", (path.c_str() ? path.c_str() : "NULL"));
+    //LG(INFO, "Storage::makeDir(%s)", (path.c_str() ? path.c_str() : "NULL"));
     eResult res = ILE_SUCCESS;
 
 #ifdef _WIN32
     std::wstring swName = std::wstring(path.begin(), path.end());
     const wchar_t * pwStr = swName.c_str();
-    LG(INFO, "Storage::makeDir : before CreateDirectory");
+    //LG(INFO, "Storage::makeDir : before CreateDirectory");
     if (!CreateDirectory(pwStr, NULL))
     {
         DWORD dwErr = GetLastError();
@@ -437,7 +439,7 @@ eResult Storage::makeDir(const std::string & path)
         }
         else
         {
-            LG(INFO, "Storage::makeDir : directory already exists");
+            //LG(INFO, "Storage::makeDir : directory already exists");
         }
     }
 #else
@@ -453,13 +455,13 @@ eResult Storage::makeDir(const std::string & path)
         }
         else
         {
-            LG(INFO, "Storage::makeDir : directory already exists");
+            //LG(INFO, "Storage::makeDir : directory already exists");
         }
     }
 
 #endif
 
-    LG(INFO, "Storage::makeDir(%s) returns %d", (path.c_str() ? path.c_str() : "NULL"), res);
+    //LG(INFO, "Storage::makeDir(%s) returns %d", (path.c_str() ? path.c_str() : "NULL"), res);
     return res;
 }
 
@@ -634,8 +636,17 @@ bool Storage::setCurrentDir(const char * dir)
     LG(INFO, "Storage::SetCurrentDirectory(%s) begin", (dir ? dir : "NULL"));
     bool bRet = false;
 
-#ifdef _WIN32
+    const int BUFSIZE = 1 +
+#ifndef _WIN32
+    PATH_MAX
+#else
+    MAX_PATH
+#endif
+    ;
+    
+    char bufCurDirectory[BUFSIZE];
 
+#ifdef _WIN32
     std::string sName(dir);
     std::wstring swName = std::wstring(sName.begin(), sName.end());
     const wchar_t * pwStr = swName.c_str();
@@ -646,7 +657,22 @@ bool Storage::setCurrentDir(const char * dir)
     }
     else
     {
-        bRet = true;
+        DWORD dwRet;
+        
+        dwRet = GetCurrentDirectory(BUFSIZE, bufCurDirectory);
+        
+        if( dwRet == 0 )
+        {
+            LG(ERR,"GetCurrentDirectory failed (%d)", GetLastError());
+        }
+        else if(dwRet > BUFSIZE)
+        {
+            LG(ERR,"Buffer too small; need %d characters", dwRet);
+        }
+        else
+        {
+            bRet = true;
+        }
     }
 
 #else
@@ -657,15 +683,23 @@ bool Storage::setCurrentDir(const char * dir)
     }
     else
     {
-        bRet = true;
+        if (getcwd(bufCurDirectory, BUFSIZE))
+        {
+            //LG(INFO, "Storage::OpenFileForOperation : current directory %s", bufCurDirectory);
+            bRet = true;
+        }
+        else
+        {
+            LG(ERR, "Storage::setCurrentDir : getcwd error %d", errno);
+            A(0);
+        }
     }
 
 #endif
 
     if(bRet)
     {
-        std::string path(dir);
-        m_curDir = toDirPath(path);
+        m_curDir = toDirPath(bufCurDirectory);
     }
     
     LG(INFO, "Storage::SetCurrentDirectory(%s) returns %s", (dir ? dir : "NULL"), (bRet?"true":"false"));
@@ -677,7 +711,7 @@ Storage::DirectoryPath Storage::toDirPath(const std::string & sInput)
     DirectoryPath strings;
     std::istringstream f(sInput);
     std::string s;
-    while (getline(f, s, ';')) {
+    while (getline(f, s, '/')) {
         strings.push_back(s);
     }
     

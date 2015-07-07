@@ -31,10 +31,9 @@ bool keyReadOnly(char key)
 
 KeysPersist::KeysPersist(DirectoryPath d, FileName f) :
 Storage(d, f),
-m_countLevelZeroKeys(0),
-m_iSubElementIndex(-1),
-m_pSubElt(NULL)
+m_countLevelZeroKeys(0)
 {
+    m_curSubElt = m_subElements.begin();
 }
 
 KeysPersist::~KeysPersist()
@@ -43,46 +42,36 @@ KeysPersist::~KeysPersist()
 
 void KeysPersist::StartSubElement(char key)
 {
-    A(m_iSubElementIndex >= -1);
-
     WriteKey(key);
     WriteDataType(DATA_TYPE_SUBELT_AS_CHAR_ARRAY);
 
     // it's important to keep the incrementation after the previous Write* calls
-    m_iSubElementIndex++;
-    m_subElements.resize(m_iSubElementIndex + 1);
-    m_pSubElt = &(m_subElements[m_iSubElementIndex]);
+    m_subElements.push_front(SubElement());
+    m_curSubElt = m_subElements.begin();
 }
 
 void KeysPersist::WriteData(void * p, size_t size, size_t count)
 {
-    if (-1 == m_iSubElementIndex)
+    if (m_curSubElt == m_subElements.end())
     {
         Storage::WriteData(p, size, count);
     }
     else
     {
-        A(m_iSubElementIndex >= 0);
-        A(m_pSubElt);
-
         size_t add = size*count;
-        m_pSubElt->insert(m_pSubElt->end(), (unsigned char*)p, ((unsigned char*)p) + add);
+        m_curSubElt->content.insert(m_curSubElt->content.end(), (unsigned char*)p, ((unsigned char*)p) + add);
     }
 }
 
 
 void KeysPersist::EndSubElement()
 {
-    A(m_iSubElementIndex >= 0);
+    A(!m_subElements.empty());
 
-    std::vector<char> * pFinishedSubElt = m_pSubElt;
+    std::vector<char> * pFinishedSubElt = &m_curSubElt->content;
 
-    A(pFinishedSubElt);
-
-    m_iSubElementIndex--;
-    if ( m_iSubElementIndex >= 0)
-        m_pSubElt = &m_subElements[m_iSubElementIndex];
-    
+    m_curSubElt++;
+        
     int32_t sizeSubElement = static_cast<int32_t>(pFinishedSubElt->size());
 
     WriteArrayElementsCount(sizeSubElement);
@@ -90,7 +79,7 @@ void KeysPersist::EndSubElement()
     if ( sizeSubElement > 0 )
         WriteData((void*)pFinishedSubElt->data(), sizeSubElement, 1);
 
-    pFinishedSubElt->clear();
+    m_subElements.pop_front();
 }
 
 void KeysPersist::DoUpdateFileHeader()
@@ -122,8 +111,28 @@ int32_t KeysPersist::WriteKey(char key)
     int32_t size = sizeof(char);
     WriteData(&key, size, 1);
     
-    if ( m_iSubElementIndex == -1 )
+    if ( m_curSubElt == m_subElements.end() )
+    {
         m_countLevelZeroKeys++;
+
+        // check that no key in rootelement is written twice
+
+        auto it = rootKeys.find(key);
+        if_A( it ==rootKeys.end())
+        {
+            rootKeys.insert(key);
+        }
+    }
+    else
+    {
+        // check that no key in subelement is written twice
+
+        auto it = m_curSubElt->keys.find(key);
+        if_A( it ==m_curSubElt->keys.end())
+        {
+            m_curSubElt->keys.insert(key);
+        }
+    }
     
     return size;
 }
@@ -314,11 +323,12 @@ int32_t KeysPersist::WriteKeyData(char key, float * bValueArray, size_t nElems)
 }
 
 
-KeysLoad::KeysLoad(DirectoryPath d, FileName f) :
+KeysLoad::KeysLoad(DirectoryPath d, FileName f,bool bExhaustive) :
 Storage(d, f),
 m_iCurReadSubElementLevel(-1),
 m_firstLevelSubElementDataIt(NULL),
 m_controlSizeAfterIt(0)
+, m_bExhaustive(bExhaustive)
 {
 
 }
@@ -399,6 +409,8 @@ eResult KeysLoad::ReadAllKeys()
     }
     
     ReadAllKeysInternal();
+    
+    onLoadFinished();
     
 end:
     //LG(INFO, "KeysLoad::ReadAllKeys end");
@@ -673,36 +685,80 @@ void KeysLoad::ReadNextFloatArray(int32_t nElems)
 }
 
 void KeysLoad::LoadDoubleArrayForKey(char key, double * pdVal, size_t nElems){
-    LG(ERR, "KeysLoad::LoadDoubleArrayForKey(%d, ..., %d) should not be called", key, nElems);
+    if(m_bExhaustive)
+    {
+        LG(ERR, "KeysLoad::LoadDoubleArrayForKey(%d, ..., %d) should not be called", key, nElems);
+        A(0);
+    }
 }
 void KeysLoad::LoadBoolForKey(char key, bool bVal){
-    LG(ERR, "KeysLoad::LoadBoolForKey(%d, %s) should not be called", key, bVal?"true":"false");
+    if(m_bExhaustive)
+    {
+        LG(ERR, "KeysLoad::LoadBoolForKey(%d, %s) should not be called", key, bVal?"true":"false");
+        A(0);
+    }
 }
 void KeysLoad::LoadStringForKey(char key, std::string & str){
-    LG(ERR, "KeysLoad::LoadStringForKey(%d, %s) should not be called", key, str.c_str() ? str.c_str() : "NULL");
+    if(m_bExhaustive)
+    {
+        LG(ERR, "KeysLoad::LoadStringForKey(%d, %s) should not be called", key, str.c_str() ? str.c_str() : "NULL");
+        A(0);
+    }
 }
 void KeysLoad::LoadInt32ForKey(char key, int32_t iVal){
-    LG(ERR, "KeysLoad::LoadInt32ForKey(%d, %d) should not be called", key, iVal);
+    if(m_bExhaustive)
+    {
+        LG(ERR, "KeysLoad::LoadInt32ForKey(%d, %d) should not be called", key, iVal);
+        A(0);
+    }
 }
 void KeysLoad::LoadDoubleForKey(char key, double fVal){
-    LG(ERR, "KeysLoad::LoadDoubleForKey(%d, %d) should not be called", key, fVal);
+    if(m_bExhaustive)
+    {
+        LG(ERR, "KeysLoad::LoadDoubleForKey(%d, %d) should not be called", key, fVal);
+        A(0);
+    }
 }
 void KeysLoad::LoadCharArrayForKey(char key, char * /*pcVal*/, size_t nElems) {
-    LG(ERR, "KeysLoad::LoadCharArrayForKey(%d, ..., %d) should not be called", key, nElems);
+    if(m_bExhaustive)
+    {
+        LG(ERR, "KeysLoad::LoadCharArrayForKey(%d, ..., %d) should not be called", key, nElems);
+        A(0);
+    }
 }
 void KeysLoad::LoadInt32ArrayForKey(char key, int32_t * /*piVal*/, size_t nElems) {
-    LG(ERR, "KeysLoad::LoadInt32ArrayForKey(%d, ..., %d) should not be called", key, nElems);
+    if(m_bExhaustive)
+    {
+        LG(ERR, "KeysLoad::LoadInt32ArrayForKey(%d, ..., %d) should not be called", key, nElems);
+        A(0);
+    }
 }
 void KeysLoad::LoadStringArrayForKey(char key, const std::vector<std::string> &)
 {
-    LG(ERR, "KeysLoad::LoadStringArrayForKey(%d, ...) should not be called", key);
+    if(m_bExhaustive)
+    {
+        LG(ERR, "KeysLoad::LoadStringArrayForKey(%d, ...) should not be called", key);
+        A(0);
+    }
 }
 void KeysLoad::LoadFloatArrayForKey(char key, float * /*pfVal*/, size_t nElems) {
-    LG(ERR, "KeysLoad::LoadFloatArrayForKey(%d, ..., %d) should not be called", key, nElems);
+    if(m_bExhaustive)
+    {
+        LG(ERR, "KeysLoad::LoadFloatArrayForKey(%d, ..., %d) should not be called", key, nElems);
+        A(0);
+    }
 }
 void KeysLoad::LoadCharForKey(char key, char cVal) {
-    LG(ERR, "KeysLoad::LoadCharForKey(%d, %d) should not be called", key, cVal);
+    if(m_bExhaustive)
+    {
+        LG(ERR, "KeysLoad::LoadCharForKey(%d, %d) should not be called", key, cVal);
+        A(0);
+    }
 }
 void KeysLoad::LoadFloatForKey(char key, float fVal) {
-    LG(ERR, "KeysLoad::LoadFloatForKey(%d, %f) should not be called", key, fVal);
+    if(m_bExhaustive)
+    {
+        LG(ERR, "KeysLoad::LoadFloatForKey(%d, %f) should not be called", key, fVal);
+        A(0);
+    }
 }
