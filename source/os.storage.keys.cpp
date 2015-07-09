@@ -42,7 +42,7 @@ KeysPersist::~KeysPersist()
 
 void KeysPersist::StartSubElement(char key)
 {
-    WriteKey(key);
+    WriteKey(key, false);
     WriteDataType(DATA_TYPE_SUBELT_AS_CHAR_ARRAY);
 
     // it's important to keep the incrementation after the previous Write* calls
@@ -104,7 +104,7 @@ int32_t KeysPersist::countWriteKeyOperations() const
     return m_countLevelZeroKeys;
 }
 
-int32_t KeysPersist::WriteKey(char key)
+int32_t KeysPersist::WriteKey(char key, bool bCheckUnicity)
 {
     A(!keyReadOnly(key));
     
@@ -117,21 +117,23 @@ int32_t KeysPersist::WriteKey(char key)
 
         // check that no key in rootelement is written twice
 
-        auto it = rootKeys.find(key);
-        if_A( it ==rootKeys.end())
+        if(bCheckUnicity)
         {
-            rootKeys.insert(key);
+            auto it = rootKeys.find(key);
+            A( it == rootKeys.end());
         }
+        rootKeys.insert(key);
     }
     else
     {
         // check that no key in subelement is written twice
 
-        auto it = m_curSubElt->keys.find(key);
-        if_A( it ==m_curSubElt->keys.end())
+        if(bCheckUnicity)
         {
-            m_curSubElt->keys.insert(key);
+            auto it = m_curSubElt->keys.find(key);
+            A( it == m_curSubElt->keys.end());
         }
+        m_curSubElt->keys.insert(key);
     }
     
     return size;

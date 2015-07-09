@@ -38,20 +38,20 @@ protected:
 private:
     int32_t m_countLevelZeroKeys;
 
-    int32_t WriteKey(char key);
+    int32_t WriteKey(char key, bool bCheckUnicity = true);
     int32_t WriteDataType(char keyDataType);
     int32_t WriteArrayElementsCount(int32_t count);
 
     struct SubElement
     {
         std::vector<char> content;
-        std::set<char> keys;
+        std::multiset<char> keys;
     };
     typedef std::list< SubElement > subElts;
     subElts m_subElements;
     subElts::iterator m_curSubElt;
 
-    std::set<char> rootKeys;
+    std::multiset<char> rootKeys;
 };
 
 class KeysLoad : public Storage
