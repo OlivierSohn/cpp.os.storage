@@ -254,6 +254,22 @@ int32_t KeysPersist::WriteKeyData(char key, double dValue)
     return WriteSize;
 }
 
+int32_t KeysPersist::WriteKeyData(char key, int32_t * iValueArray, size_t nElems)
+{
+    //LG(INFO, "KeysPersist::WriteKeyData( %d, ..., (nElems:)%x )", key, nElems);
+    
+    int32_t WriteSize = WriteKey(key);
+    WriteSize += WriteDataType(DATA_TYPE_INT32_ARRAY);
+    WriteSize += WriteArrayElementsCount((int32_t)nElems);
+    
+    int32_t size = (int32_t) nElems * sizeof(int32_t);
+    WriteData((void*)iValueArray, size, 1);
+    WriteSize += size;
+    
+    //LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
+    return WriteSize;
+}
+
 int32_t KeysPersist::WriteKeyData(char key, char * cValueArray, size_t nElems)
 {
     //LG(INFO, "KeysPersist::WriteKeyData( %d, ..., (nElems:)%x )", key, nElems);
