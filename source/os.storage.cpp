@@ -25,7 +25,7 @@
 
 using namespace imajuscule;
 
-std::set<std::string> Storage::m_openedForWrite;
+std::set<std::string> Storage::g_openedForWrite;
 
 Storage::DirectoryPath Storage::m_curDir = std::list<std::string>();
 Storage::DirectoryPath Storage::curDir()
@@ -138,13 +138,13 @@ eResult Storage::OpenForWrite()
         
         m_filePath.append(m_filename);
         
-        auto it2 = m_openedForWrite.find(m_filePath);
-        if(it2 != m_openedForWrite.end())
+        auto it2 = g_openedForWrite.find(m_filePath);
+        if(it2 != g_openedForWrite.end())
         {
             ret = ILE_RECURSIVITY;
             goto end;
         }
-        m_openedForWrite.insert(m_filePath);
+        g_openedForWrite.insert(m_filePath);
         
         ret = OpenFileForOperation(m_filePath, OP_WRITE);
         if (ret != ILE_SUCCESS)
@@ -180,9 +180,6 @@ eResult Storage::Save()
     doSaveEnd();
     
 end:
-    if(!m_filePath.empty())
-        m_openedForWrite.erase(m_filePath);
-    
     return ret;
 }
 
@@ -209,6 +206,9 @@ eResult Storage::doSave()
 void Storage::doSaveEnd()
 {
     UpdateFileHeader();
+
+    if(!m_filePath.empty())
+        g_openedForWrite.erase(m_filePath);
 }
 
 void Storage::UpdateFileHeader()

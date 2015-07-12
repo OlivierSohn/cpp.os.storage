@@ -86,7 +86,7 @@ private:
     DirectoryPath m_directoryPath;
     FileName m_filename;
     
-    static std::set<std::string> m_openedForWrite;
+    static std::set<std::string> g_openedForWrite;
     std::string m_filePath;
     
     int  FlushData();
