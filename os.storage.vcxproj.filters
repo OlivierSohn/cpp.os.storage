@@ -33,6 +33,9 @@
     <ClCompile Include="source\os.file.dialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\os.abstraction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\win32\stdafx.h">
@@ -51,6 +54,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="include\os.file.dialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\os.abstraction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

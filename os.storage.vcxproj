@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\os.abstraction.cpp" />
     <ClCompile Include="source\os.file.dialog.cpp" />
     <ClCompile Include="source\os.storage.cpp" />
     <ClCompile Include="source\os.storage.keys.cpp" />
@@ -21,6 +22,7 @@
     <ClCompile Include="source\win32\Win32Dialogs.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\os.abstraction.h" />
     <ClInclude Include="include\os.file.dialog.h" />
     <ClInclude Include="include\os.storage.h" />
     <ClInclude Include="include\os.storage.keys.h" />
