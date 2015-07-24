@@ -10,13 +10,16 @@
 
 #import <Foundation/Foundation.h>
 #import <Foundation/NSUrl.h>
+#import <AppKit/NSColor.h>
 #import <AppKit/NSOpenPanel.h>
 #include <string>
+#include <functional>
+#include "os.file.dialog.h"
 
 bool BasicFileOpen(std::string & sPathWithFileName, std::string & sFileName, const std::string & sFileExt)
 {
     bool bRet = false;
-    
+
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     [panel setCanChooseFiles:YES];
     [panel setCanChooseDirectories:NO];
@@ -45,6 +48,44 @@ bool BasicFileOpen(std::string & sPathWithFileName, std::string & sFileName, con
     }
     
     return bRet;
+}
+
+void fAsyncDirectoryOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, std::function<void(void)> fEnd)
+{
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    
+    [panel setTitlebarAppearsTransparent:YES];
+    
+    // using the button (prompt) instead
+    [panel setTitleVisibility:NSWindowTitleHidden];
+    [panel setPrompt:[NSString stringWithUTF8String:title.c_str()]];
+
+    [panel setAlphaValue:0.9f];
+    [panel setShowsResizeIndicator:NO];
+    [panel setTreatsFilePackagesAsDirectories:YES];
+    
+    [panel setCanChooseFiles:NO];
+    [panel setCanChooseDirectories:YES];
+    [panel setCanCreateDirectories:YES];
+    [panel setResolvesAliases:YES];
+    [panel setAllowsMultipleSelection:NO];
+    
+    [panel setAllowedFileTypes:nil ];
+    
+    [panel beginWithCompletionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton) {
+            for (NSURL *url in [panel URLs])
+            {
+                NSString *myString = [url path];
+                std::string sPath = [myString UTF8String];
+                f(OperationResult::SUCCESS, sPath);
+            }
+        }
+        else
+            f(OperationResult::CANCELED, std::string());
+
+        fEnd();
+    }];
 }
 
 bool BasicDirectoryOpen(std::string & sPath)

@@ -7,7 +7,9 @@
 //
 
 #include "os.file.dialog.h"
+#include "os.abstraction.h"
 
+using namespace imajuscule;
 
 void ReplaceStringInPlace(std::string& subject, const std::string& search,
                           const std::string& replace) {
@@ -54,4 +56,20 @@ bool BasicDirectoryOpen2(Storage::DirectoryPath & pathToDirectory)
     }
     
     return bRet;
+}
+
+AsyncDirectoryOperation::AsyncDirectoryOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f)
+{
+    if(OSAbstraction * os = OSAbstraction::get() )
+        os->PauseInteractions(true);
+
+    fAsyncDirectoryOperation(title, f, [](){
+        if(OSAbstraction * os = OSAbstraction::get() )
+            os->PauseInteractions(false);
+    });
+}
+
+AsyncDirectoryOperation::~AsyncDirectoryOperation()
+{
+    
 }
