@@ -15,6 +15,9 @@
 #include <string>
 #include <functional>
 #include "os.file.dialog.h"
+#include "os.abstraction.h"
+
+using namespace imajuscule;
 
 bool BasicFileOpen(std::string & sPathWithFileName, std::string & sFileName, const std::string & sFileExt)
 {
@@ -54,25 +57,28 @@ void fAsyncDirectoryOperation(const std::string & title, std::function<void(Oper
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     
-    [panel setTitlebarAppearsTransparent:YES];
+    [panel setLevel:NSFloatingWindowLevel];
     
-    // using the button (prompt) instead
     [panel setTitleVisibility:NSWindowTitleHidden];
     [panel setPrompt:[NSString stringWithUTF8String:title.c_str()]];
 
     [panel setAlphaValue:0.9f];
-    [panel setShowsResizeIndicator:NO];
-    [panel setTreatsFilePackagesAsDirectories:YES];
     
+    // not sure they have any effect
+    [panel setTitlebarAppearsTransparent:YES];
+    [panel setShowsResizeIndicator:NO];
+
+    [panel setTreatsFilePackagesAsDirectories:YES];
     [panel setCanChooseFiles:NO];
     [panel setCanChooseDirectories:YES];
     [panel setCanCreateDirectories:YES];
     [panel setResolvesAliases:YES];
     [panel setAllowsMultipleSelection:NO];
-    
     [panel setAllowedFileTypes:nil ];
     
-    [panel beginWithCompletionHandler:^(NSInteger result) {
+    NSWindow * w = (__bridge NSWindow*)OSAbstraction::get()->getNativeWindowHandle();
+
+    void (^handler)(NSInteger result) = ^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton) {
             for (NSURL *url in [panel URLs])
             {
@@ -83,9 +89,18 @@ void fAsyncDirectoryOperation(const std::string & title, std::function<void(Oper
         }
         else
             f(OperationResult::CANCELED, std::string());
+        
+        // both following calls in that order needed to return focus to the main window
+        [panel orderOut:nil];
+        if(w) [w makeKeyAndOrderFront:nil];
 
         fEnd();
-    }];
+    };
+
+    if(w)
+        [panel beginSheetModalForWindow: w completionHandler: handler ];
+    else
+        [panel beginWithCompletionHandler: handler ];
 }
 
 bool BasicDirectoryOpen(std::string & sPath)

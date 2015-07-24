@@ -16,6 +16,8 @@ namespace imajuscule
 
         virtual void PauseInteractions(bool) = 0;
 
+        virtual void * getNativeWindowHandle() = 0;
+
     private:
         static OSAbstraction * m_registered;
     };
