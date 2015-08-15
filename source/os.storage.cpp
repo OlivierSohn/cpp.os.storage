@@ -494,9 +494,13 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
     tstrLen = strlen(tstrTo);
 #endif
 
-    StringCchLength(tstrTo, MAX_PATH, &length_of_arg);
+    HRESULT hr=StringCchLength(tstrTo, MAX_PATH, &length_of_arg);
 
-    if (length_of_arg > (MAX_PATH - 3))
+	if (FAILED(hr))
+	{
+		LG(ERR, "Storage::listFilenames : StringCchLength failed (%x)", hr);
+	}
+    else if (length_of_arg > (MAX_PATH - 3))
     {
         LG(ERR, "Storage::listFilenames : Directory path is too long");
     }
