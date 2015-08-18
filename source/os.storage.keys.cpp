@@ -17,6 +17,8 @@
 #define DATA_TYPE_STRING_AS_CHAR_ARRAY   'S'
 #define DATA_TYPE_STRING_ARRAY   'r'
 
+using namespace imajuscule;
+
 bool keyReadOnly(char key)
 {
     switch(key)
