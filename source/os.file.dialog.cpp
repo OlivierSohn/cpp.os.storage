@@ -46,17 +46,6 @@ bool BasicFileOpen2(Storage::DirectoryPath & pathToDirectory, Storage::FileName 
     return bRet;
 }
 
-bool BasicDirectoryOpen2(Storage::DirectoryPath & pathToDirectory)
-{
-    std::string path;
-    bool bRet = BasicDirectoryOpen(path);
-    if(bRet)
-    {
-        pathToDirectory = Storage::toDirPath(path);
-    }
-    
-    return bRet;
-}
 
 AsyncFileSystemOperation::AsyncFileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, const std::vector<std::string> & extensions)
 {

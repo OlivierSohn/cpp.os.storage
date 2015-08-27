@@ -48,6 +48,8 @@
 #define IDC_WRITEPROPERTIESUSINGHANDLERS        104
 #define IDC_WRITEPROPERTIESWITHOUTUSINGHANDLERS 105
 
+using namespace imajuscule;
+
 /* File Dialog Event Handler *****************************************************************************************************/
 
 class CDialogEventHandler : public IFileDialogEvents,
@@ -231,7 +233,8 @@ HRESULT _WriteDataToFile(HANDLE hFile, PCWSTR pszDataIn)
 
 /* Common File Dialog Snippets ***************************************************************************************************/
 
-bool BasicDirectoryOpen(std::string & sPath)
+
+bool Open(AsyncFileSystemOperation::Kind k, const std::vector<std::string> & extensions, std::string & sPath)
 {
     bool bRet = false;
 
@@ -257,32 +260,87 @@ bool BasicDirectoryOpen(std::string & sPath)
                 hr = pfd->GetOptions(&dwFlags);
                 if (SUCCEEDED(hr))
                 {
-                    // In this case, get shell items only for file system items.
-                    hr = pfd->SetOptions(dwFlags | FOS_FORCEFILESYSTEM | FOS_PICKFOLDERS);
+                    bool bFilter = true;
+
+                    FILEOPENDIALOGOPTIONS  opts = dwFlags | FOS_FORCEFILESYSTEM;
+                    
+                    if (k == AsyncFileSystemOperation::Kind::OP_DIR)
+                    {
+                        opts |= FOS_PICKFOLDERS;
+                        bFilter = false;
+                    }
+
+                    hr = pfd->SetOptions(opts);
                     if (SUCCEEDED(hr))
                     {
-                        // Show the dialog
-                        hr = pfd->Show(NULL);
+                        std::vector<std::wstring *> allocated;
+                        COMDLG_FILTERSPEC * rgSpec = NULL;
+                        if (bFilter)
+                        {
+                            size_t nElems;
+                            if (extensions.empty())
+                            {
+                                nElems = 1;
+                                rgSpec = new COMDLG_FILTERSPEC[nElems];
+
+                                rgSpec[0].pszName = L"Any";
+                                rgSpec[0].pszSpec = L"*.*";
+                            }
+                            else
+                            {
+                                nElems = extensions.size();
+                                rgSpec = new COMDLG_FILTERSPEC[nElems];
+                                int i = 0;
+                                for (auto & ext : extensions)
+                                {
+                                    std::wstring * WfileExt = new std::wstring;
+
+                                    WfileExt->append(L"*.");
+                                    WfileExt->append(ext.begin(), ext.end());
+
+                                    allocated.push_back(WfileExt);
+
+                                    rgSpec[i].pszName = L"";
+                                    rgSpec[i].pszSpec = WfileExt->c_str();
+                                }
+                            }
+
+                            // Set the file types to display only. Notice that, this is a 1-based array.
+                            hr = pfd->SetFileTypes(nElems, rgSpec);
+                        }
+                        
                         if (SUCCEEDED(hr))
                         {
-                            // Obtain the result, once the user clicks the 'Open' button.
-                            // The result is an IShellItem object.
-                            IShellItem *psiResult;
-                            hr = pfd->GetResult(&psiResult);
+                            // Show the dialog
+                            hr = pfd->Show(NULL);
                             if (SUCCEEDED(hr))
                             {
-                                // We are just going to print out the name of the file for sample sake.
-                                PWSTR pszFilePath = NULL;
-                                hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+                                // Obtain the result, once the user clicks the 'Open' button.
+                                // The result is an IShellItem object.
+                                IShellItem *psiResult;
+                                hr = pfd->GetResult(&psiResult);
                                 if (SUCCEEDED(hr))
                                 {
-                                    Storage::string_cast(pszFilePath, CP_ACP, sPath);
+                                    // We are just going to print out the name of the file for sample sake.
+                                    PWSTR pszFilePath = NULL;
+                                    hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+                                    if (SUCCEEDED(hr))
+                                    {
+                                        Storage::string_cast(pszFilePath, CP_ACP, sPath);
 
-                                    bRet = true;
-                                    CoTaskMemFree(pszFilePath);
+                                        bRet = true;
+                                        CoTaskMemFree(pszFilePath);
+                                    }
+                                    psiResult->Release();
                                 }
-                                psiResult->Release();
                             }
+                        }
+
+                        if(rgSpec)
+                            delete[] rgSpec;
+                        for (auto a : allocated)
+                        {
+                            delete a;
                         }
                     }
                 }
@@ -339,53 +397,42 @@ bool BasicFileOpen(std::string & sFilePath, std::string & fileName, const std::s
                         
                         const COMDLG_FILTERSPEC c_rgSaveTypes2[] =
                         {
-                            { W2.c_str(), W1.c_str() },
-                            { L"All Documents (*.*)", L"*.*" }
+                            { W2.c_str(), W1.c_str() }
                         };
-                        
+
                         // Set the file types to display only. Notice that, this is a 1-based array.
                         hr = pfd->SetFileTypes(ARRAYSIZE(c_rgSaveTypes2), c_rgSaveTypes2);
                         if (SUCCEEDED(hr))
                         {
-                            // Set the selected file type index to Word Docs for this example.
-                            hr = pfd->SetFileTypeIndex(INDEX_WORDDOC);
+                            // Show the dialog
+                            hr = pfd->Show(NULL);
                             if (SUCCEEDED(hr))
                             {
-                                // Set the default extension to be ".doc" file.
-                                hr = pfd->SetDefaultExtension(L"doc");
+                                // Obtain the result, once the user clicks the 'Open' button.
+                                // The result is an IShellItem object.
+                                IShellItem *psiResult;
+                                hr = pfd->GetResult(&psiResult);
                                 if (SUCCEEDED(hr))
                                 {
-                                    // Show the dialog
-                                    hr = pfd->Show(NULL);
+                                    // We are just going to print out the name of the file for sample sake.
+                                    PWSTR pszFilePath = NULL;
+                                    hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
                                     if (SUCCEEDED(hr))
                                     {
-                                        // Obtain the result, once the user clicks the 'Open' button.
-                                        // The result is an IShellItem object.
-                                        IShellItem *psiResult;
-                                        hr = pfd->GetResult(&psiResult);
+                                        Storage::string_cast(pszFilePath, CP_ACP, sFilePath);
+                                        // We are just going to print out the name of the file for sample sake.
+                                        PWSTR pszFilePath2 = NULL;
+                                        hr = psiResult->GetDisplayName(SIGDN_PARENTRELATIVE, &pszFilePath2);
                                         if (SUCCEEDED(hr))
                                         {
-                                            // We are just going to print out the name of the file for sample sake.
-                                            PWSTR pszFilePath = NULL;
-                                            hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
-                                            if (SUCCEEDED(hr))
-                                            {
-                                                Storage::string_cast(pszFilePath, CP_ACP, sFilePath);
-                                                // We are just going to print out the name of the file for sample sake.
-                                                PWSTR pszFilePath2 = NULL;
-                                                hr = psiResult->GetDisplayName(SIGDN_PARENTRELATIVE, &pszFilePath2);
-                                                if (SUCCEEDED(hr))
-                                                {
-                                                    Storage::string_cast(pszFilePath2, CP_ACP, fileName);
+                                            Storage::string_cast(pszFilePath2, CP_ACP, fileName);
 
-                                                    bRet = true;
-                                                    CoTaskMemFree(pszFilePath2);
-                                                }
-                                                CoTaskMemFree(pszFilePath);
-                                            }
-                                            psiResult->Release();
+                                            bRet = true;
+                                            CoTaskMemFree(pszFilePath2);
                                         }
+                                        CoTaskMemFree(pszFilePath);
                                     }
+                                    psiResult->Release();
                                 }
                             }
                         }
@@ -401,13 +448,15 @@ bool BasicFileOpen(std::string & sFilePath, std::string & fileName, const std::s
     return bRet;
 }
 
-void fAsyncDirectoryOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, std::function<void(void)> fEnd)
+namespace imajuscule
 {
-    std::string path;
-    if (BasicDirectoryOpen(path))
-        f(OperationResult::SUCCESS, path);
-    else
-        f(OperationResult::CANCELED, std::string());
-
-    fEnd();
+    void fAsyncFileSystemOperation(AsyncFileSystemOperation::Kind k, const std::vector<std::string> & extensions, const std::string & title, std::function<void(OperationResult, const std::string &)> f, std::function<void(void)> fEnd)
+    {
+        std::string path;
+        if (Open(k, extensions, path))
+            f(OperationResult::SUCCESS, path);
+        else
+            f(OperationResult::CANCELED, std::string());
+        fEnd();
+    }
 }
