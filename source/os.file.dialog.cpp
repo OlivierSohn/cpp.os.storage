@@ -58,18 +58,28 @@ bool BasicDirectoryOpen2(Storage::DirectoryPath & pathToDirectory)
     return bRet;
 }
 
-AsyncDirectoryOperation::AsyncDirectoryOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f)
+AsyncFileSystemOperation::AsyncFileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, const std::vector<std::string> & extensions)
+{
+    go(title, f, Kind::OP_FILE, extensions);
+}
+AsyncFileSystemOperation::AsyncFileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, Kind k)
+{
+    std::vector<std::string> extensions;
+    go(title, f, k, extensions);
+}
+
+void AsyncFileSystemOperation::go(const std::string &title, std::function<void (OperationResult, const std::string &)> f, AsyncFileSystemOperation::Kind k, const std::vector<std::string> &extensions)
 {
     if(OSAbstraction * os = OSAbstraction::get() )
         os->PauseInteractions(true);
 
-    fAsyncDirectoryOperation(title, f, [](){
+    fAsyncFileSystemOperation(k, extensions, title, f, [](){
         if(OSAbstraction * os = OSAbstraction::get() )
             os->PauseInteractions(false);
     });
 }
 
-AsyncDirectoryOperation::~AsyncDirectoryOperation()
+AsyncFileSystemOperation::~AsyncFileSystemOperation()
 {
     
 }
