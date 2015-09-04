@@ -54,7 +54,7 @@ bool BasicFileOpen(std::string & sPathWithFileName, std::string & sFileName, con
 }
 
 namespace imajuscule {
-    void fAsyncFileSystemOperation(AsyncFileSystemOperation::Kind k, const std::vector<std::string> & extensions, const std::string & title, std::function<void(OperationResult, const std::string &)> f, std::function<void(void)> fEnd)
+    FileSystemOperation::Nature fFileSystemOperation(FileSystemOperation::Kind k, const std::vector<std::string> & extensions, const std::string & title, std::function<void(OperationResult, const std::string &)> f, std::function<void(void)> fEnd)
     {
         NSOpenPanel *panel = [NSOpenPanel openPanel];
         
@@ -71,8 +71,8 @@ namespace imajuscule {
         
         [panel setTreatsFilePackagesAsDirectories:YES];
         
-        [panel setCanChooseFiles:(k == AsyncFileSystemOperation::Kind::OP_DIR)?NO:YES];
-        [panel setCanChooseDirectories:(k == AsyncFileSystemOperation::Kind::OP_FILE)?NO:YES];
+        [panel setCanChooseFiles:(k == FileSystemOperation::Kind::OP_DIR)?NO:YES];
+        [panel setCanChooseDirectories:(k == FileSystemOperation::Kind::OP_FILE)?NO:YES];
         
         if(!extensions.empty())
         {
@@ -115,6 +115,8 @@ namespace imajuscule {
             [panel beginSheetModalForWindow: w completionHandler: handler ];
         else
             [panel beginWithCompletionHandler: handler ];
+        
+        return FileSystemOperation::Nature::NON_BLOCKING;
     }
 }
 
