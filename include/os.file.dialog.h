@@ -14,7 +14,7 @@ enum OperationResult
 
 namespace imajuscule
 {
-    class AsyncFileSystemOperation
+    class FileSystemOperation
     {
     public:
         enum Kind
@@ -23,15 +23,23 @@ namespace imajuscule
             OP_DIR,
             OP_BOTH
         };
-        AsyncFileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, const std::vector<std::string> & extensions);
-        AsyncFileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, Kind k);
-        virtual ~AsyncFileSystemOperation();
+        FileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, const std::vector<std::string> & extensions);
+        FileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, Kind k);
+        virtual ~FileSystemOperation();
         
+        enum Nature
+        {
+            BLOCKING,
+            NON_BLOCKING
+        };
+        Nature getNature() const;
+
     private:
-        void go(const std::string & title, std::function<void(OperationResult, const std::string &)> f, Kind k, const std::vector<std::string> & extensions);
+        Nature go(const std::string & title, std::function<void(OperationResult, const std::string &)> f, Kind k, const std::vector<std::string> & extensions) const;
+        Nature mNature;
     };
 
-    void fAsyncFileSystemOperation(AsyncFileSystemOperation::Kind, const std::vector<std::string> & extensions, const std::string & title, std::function<void(OperationResult, const std::string &)> f, std::function<void(void)> fEnd);
+    FileSystemOperation::Nature fFileSystemOperation(FileSystemOperation::Kind, const std::vector<std::string> & extensions, const std::string & title, std::function<void(OperationResult, const std::string &)> f, std::function<void(void)> fEnd);
 }
 
 

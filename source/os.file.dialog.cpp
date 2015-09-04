@@ -47,28 +47,33 @@ bool BasicFileOpen2(Storage::DirectoryPath & pathToDirectory, Storage::FileName 
 }
 
 
-AsyncFileSystemOperation::AsyncFileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, const std::vector<std::string> & extensions)
+FileSystemOperation::FileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, const std::vector<std::string> & extensions)
 {
-    go(title, f, Kind::OP_FILE, extensions);
+    mNature = go(title, f, Kind::OP_FILE, extensions);
 }
-AsyncFileSystemOperation::AsyncFileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, Kind k)
+FileSystemOperation::FileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, Kind k)
 {
     std::vector<std::string> extensions;
-    go(title, f, k, extensions);
+    mNature = go(title, f, k, extensions);
 }
 
-void AsyncFileSystemOperation::go(const std::string &title, std::function<void (OperationResult, const std::string &)> f, AsyncFileSystemOperation::Kind k, const std::vector<std::string> &extensions)
+auto FileSystemOperation::go(const std::string &title, std::function<void (OperationResult, const std::string &)> f, FileSystemOperation::Kind k, const std::vector<std::string> &extensions) const -> Nature
 {
     if(OSAbstraction * os = OSAbstraction::get() )
         os->PauseInteractions(true);
 
-    fAsyncFileSystemOperation(k, extensions, title, f, [](){
+    return fFileSystemOperation(k, extensions, title, f, [](){
         if(OSAbstraction * os = OSAbstraction::get() )
             os->PauseInteractions(false);
     });
 }
 
-AsyncFileSystemOperation::~AsyncFileSystemOperation()
+FileSystemOperation::~FileSystemOperation()
 {
     
+}
+
+auto FileSystemOperation::getNature () const -> Nature
+{
+    return mNature;
 }

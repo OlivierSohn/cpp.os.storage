@@ -234,122 +234,128 @@ HRESULT _WriteDataToFile(HANDLE hFile, PCWSTR pszDataIn)
 /* Common File Dialog Snippets ***************************************************************************************************/
 
 
-bool Open(AsyncFileSystemOperation::Kind k, const std::vector<std::string> & extensions, std::string & sPath)
+bool Open(FileSystemOperation::Kind k, const std::vector<std::string> & extensions, std::string & sPath)
 {
     bool bRet = false;
 
-    // CoCreate the File Open Dialog object.
-    IFileDialog *pfd = NULL;
-    HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pfd));
-    if (SUCCEEDED(hr))
+    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    if_A(SUCCEEDED(hr))
     {
-        // Create an event handling object, and hook it up to the dialog.
-        IFileDialogEvents *pfde = NULL;
-        hr = CDialogEventHandler_CreateInstance(IID_PPV_ARGS(&pfde));
-        if (SUCCEEDED(hr))
+        // CoCreate the File Open Dialog object.
+        IFileDialog *pfd = NULL;
+        hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pfd));
+        if_A(SUCCEEDED(hr))
         {
-            // Hook up the event handler.
-            DWORD dwCookie;
-            hr = pfd->Advise(pfde, &dwCookie);
-            if (SUCCEEDED(hr))
+            // Create an event handling object, and hook it up to the dialog.
+            IFileDialogEvents *pfde = NULL;
+            hr = CDialogEventHandler_CreateInstance(IID_PPV_ARGS(&pfde));
+            if_A(SUCCEEDED(hr))
             {
-                // Set the options on the dialog.
-                DWORD dwFlags;
-
-                // Before setting, always get the options first in order not to override existing options.
-                hr = pfd->GetOptions(&dwFlags);
-                if (SUCCEEDED(hr))
+                // Hook up the event handler.
+                DWORD dwCookie;
+                hr = pfd->Advise(pfde, &dwCookie);
+                if_A(SUCCEEDED(hr))
                 {
-                    bool bFilter = true;
+                    // Set the options on the dialog.
+                    DWORD dwFlags;
 
-                    FILEOPENDIALOGOPTIONS  opts = dwFlags | FOS_FORCEFILESYSTEM;
-                    
-                    if (k == AsyncFileSystemOperation::Kind::OP_DIR)
+                    // Before setting, always get the options first in order not to override existing options.
+                    hr = pfd->GetOptions(&dwFlags);
+                    if_A(SUCCEEDED(hr))
                     {
-                        opts |= FOS_PICKFOLDERS;
-                        bFilter = false;
-                    }
+                        bool bFilter = true;
 
-                    hr = pfd->SetOptions(opts);
-                    if (SUCCEEDED(hr))
-                    {
-                        std::vector<std::wstring *> allocated;
-                        COMDLG_FILTERSPEC * rgSpec = NULL;
-                        if (bFilter)
+                        FILEOPENDIALOGOPTIONS  opts = dwFlags | FOS_FORCEFILESYSTEM;
+
+                        if (k == FileSystemOperation::Kind::OP_DIR)
                         {
-                            size_t nElems;
-                            if (extensions.empty())
-                            {
-                                nElems = 1;
-                                rgSpec = new COMDLG_FILTERSPEC[nElems];
-
-                                rgSpec[0].pszName = L"Any";
-                                rgSpec[0].pszSpec = L"*.*";
-                            }
-                            else
-                            {
-                                nElems = extensions.size();
-                                rgSpec = new COMDLG_FILTERSPEC[nElems];
-                                int i = 0;
-                                for (auto & ext : extensions)
-                                {
-                                    std::wstring * WfileExt = new std::wstring;
-
-                                    WfileExt->append(L"*.");
-                                    WfileExt->append(ext.begin(), ext.end());
-
-                                    allocated.push_back(WfileExt);
-
-                                    rgSpec[i].pszName = L"";
-                                    rgSpec[i].pszSpec = WfileExt->c_str();
-                                }
-                            }
-
-                            // Set the file types to display only. Notice that, this is a 1-based array.
-                            hr = pfd->SetFileTypes(nElems, rgSpec);
+                            opts |= FOS_PICKFOLDERS;
+                            bFilter = false;
                         }
-                        
-                        if (SUCCEEDED(hr))
+
+                        hr = pfd->SetOptions(opts);
+                        if_A(SUCCEEDED(hr))
                         {
-                            // Show the dialog
-                            hr = pfd->Show(NULL);
-                            if (SUCCEEDED(hr))
+                            std::vector<std::wstring *> allocated;
+                            COMDLG_FILTERSPEC * rgSpec = NULL;
+                            if (bFilter)
                             {
-                                // Obtain the result, once the user clicks the 'Open' button.
-                                // The result is an IShellItem object.
-                                IShellItem *psiResult;
-                                hr = pfd->GetResult(&psiResult);
-                                if (SUCCEEDED(hr))
+                                size_t nElems;
+                                if (extensions.empty())
                                 {
-                                    // We are just going to print out the name of the file for sample sake.
-                                    PWSTR pszFilePath = NULL;
-                                    hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
-                                    if (SUCCEEDED(hr))
+                                    nElems = 1;
+                                    rgSpec = new COMDLG_FILTERSPEC[nElems];
+
+                                    rgSpec[0].pszName = L"Any";
+                                    rgSpec[0].pszSpec = L"*.*";
+                                }
+                                else
+                                {
+                                    nElems = extensions.size();
+                                    rgSpec = new COMDLG_FILTERSPEC[nElems];
+                                    int i = 0;
+                                    for (auto & ext : extensions)
                                     {
-                                        Storage::string_cast(pszFilePath, CP_ACP, sPath);
+                                        std::wstring * WfileExt = new std::wstring;
 
-                                        bRet = true;
-                                        CoTaskMemFree(pszFilePath);
+                                        WfileExt->append(L"*.");
+                                        WfileExt->append(ext.begin(), ext.end());
+
+                                        allocated.push_back(WfileExt);
+
+                                        rgSpec[i].pszName = L"";
+                                        rgSpec[i].pszSpec = WfileExt->c_str();
                                     }
-                                    psiResult->Release();
+                                }
+
+                                // Set the file types to display only. Notice that, this is a 1-based array.
+                                hr = pfd->SetFileTypes(nElems, rgSpec);
+                            }
+
+                            if_A(SUCCEEDED(hr))
+                            {
+                                // Show the dialog
+                                hr = pfd->Show(NULL);
+                                if(SUCCEEDED(hr))
+                                {
+                                    // Obtain the result, once the user clicks the 'Open' button.
+                                    // The result is an IShellItem object.
+                                    IShellItem *psiResult;
+                                    hr = pfd->GetResult(&psiResult);
+                                    if_A(SUCCEEDED(hr))
+                                    {
+                                        // We are just going to print out the name of the file for sample sake.
+                                        PWSTR pszFilePath = NULL;
+                                        hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+                                        if_A(SUCCEEDED(hr))
+                                        {
+                                            Storage::string_cast(pszFilePath, CP_ACP, sPath);
+
+                                            bRet = true;
+                                            CoTaskMemFree(pszFilePath);
+                                        }
+                                        psiResult->Release();
+                                    }
                                 }
                             }
-                        }
 
-                        if(rgSpec)
-                            delete[] rgSpec;
-                        for (auto a : allocated)
-                        {
-                            delete a;
+                            if (rgSpec)
+                                delete[] rgSpec;
+                            for (auto a : allocated)
+                            {
+                                delete a;
+                            }
                         }
                     }
+                    // Unhook the event handler.
+                    pfd->Unadvise(dwCookie);
                 }
-                // Unhook the event handler.
-                pfd->Unadvise(dwCookie);
+                pfde->Release();
             }
-            pfde->Release();
+            pfd->Release();
         }
-        pfd->Release();
+
+        CoUninitialize();
     }
     return bRet;
 
@@ -450,7 +456,7 @@ bool BasicFileOpen(std::string & sFilePath, std::string & fileName, const std::s
 
 namespace imajuscule
 {
-    void fAsyncFileSystemOperation(AsyncFileSystemOperation::Kind k, const std::vector<std::string> & extensions, const std::string & title, std::function<void(OperationResult, const std::string &)> f, std::function<void(void)> fEnd)
+    FileSystemOperation::Nature fFileSystemOperation(FileSystemOperation::Kind k, const std::vector<std::string> & extensions, const std::string & title, std::function<void(OperationResult, const std::string &)> f, std::function<void(void)> fEnd)
     {
         std::string path;
         if (Open(k, extensions, path))
@@ -458,5 +464,7 @@ namespace imajuscule
         else
             f(OperationResult::CANCELED, std::string());
         fEnd();
+
+        return FileSystemOperation::Nature::BLOCKING;
     }
 }
