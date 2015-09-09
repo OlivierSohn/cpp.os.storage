@@ -59,11 +59,11 @@ FileSystemOperation::FileSystemOperation(const std::string & title, std::functio
 
 auto FileSystemOperation::go(const std::string &title, std::function<void (OperationResult, const std::string &)> f, FileSystemOperation::Kind k, const std::vector<std::string> &extensions) const -> Nature
 {
-    if(OSAbstraction * os = OSAbstraction::get() )
+    if(OSAbstraction * os = OSAbstraction::edit() )
         os->PauseInteractions(true);
 
     return fFileSystemOperation(k, extensions, title, f, [](){
-        if(OSAbstraction * os = OSAbstraction::get() )
+        if(OSAbstraction * os = OSAbstraction::edit() )
             os->PauseInteractions(false);
     });
 }

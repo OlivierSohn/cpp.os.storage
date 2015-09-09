@@ -90,7 +90,7 @@ namespace imajuscule {
         [panel setResolvesAliases:YES];
         [panel setAllowsMultipleSelection:YES];
         
-        NSWindow * w = (__bridge NSWindow*)OSAbstraction::get()->getNativeWindowHandle();
+        NSWindow * w = (__bridge NSWindow*)OSAbstraction::edit()->getNativeWindowHandle();
         
         void (^handler)(NSInteger result) = ^(NSInteger result) {
             if (result == NSFileHandlingPanelOKButton) {
