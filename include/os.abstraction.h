@@ -19,12 +19,9 @@ namespace imajuscule
 
         virtual void * getNativeWindowHandle() = 0;
 
-        static void pushModifier();
-        static void popModifier();
-        static bool hasModifier();
+        virtual bool getCursorPos(int&x, int&y) const = 0;
+        
     private:
         static OSAbstraction * m_registered;
-        
-        static int nModifiers;
     };
 }
