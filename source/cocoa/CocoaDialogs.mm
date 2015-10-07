@@ -10,7 +10,6 @@
 
 #import <Foundation/Foundation.h>
 #import <Foundation/NSUrl.h>
-#import <AppKit/NSColor.h>
 #import <AppKit/NSOpenPanel.h>
 #include <string>
 #include <functional>

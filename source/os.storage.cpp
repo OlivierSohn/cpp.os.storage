@@ -218,19 +218,19 @@ void Storage::UpdateFileHeader()
 
     // now that the data has been written, we can modify the file position
     fpos_t curPos;
-    if (!fgetpos((FILE*)m_pFile, &curPos))
+    if (likely(!fgetpos((FILE*)m_pFile, &curPos)))
     {
         rewind((FILE*)m_pFile);
 
         DoUpdateFileHeader();
 
         int ret = FlushData();
-        if (ret)
+        if (unlikely(ret))
         {
             LG(ERR, "Storage::UpdateFileHeader : FlushData returned %d", ret );
         }
 
-        if (!fsetpos((FILE*)m_pFile, &curPos))
+        if (likely(!fsetpos((FILE*)m_pFile, &curPos)))
         {
 
         }
@@ -358,10 +358,10 @@ void Storage::string_cast(const wchar_t* pSource, unsigned int codePage, std::st
     A(pSource != 0);
     oCast.clear();
     size_t sourceLength = std::wcslen(pSource);
-    if (sourceLength > 0)
+    if (likely(sourceLength > 0))
     {
         int length = ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, NULL, 0, NULL, NULL);
-        if (length != 0)
+        if (likely(length != 0))
         {
             std::vector<char> buffer(length);
             ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, &buffer[0], length, NULL, NULL);
@@ -405,7 +405,7 @@ bool Storage::fileCreationDate(const std::string & path, std::string & oDate)
 
     struct stat info;
     bExists = (stat(path.c_str(), &info) == 0) && !(info.st_mode & S_IFDIR);
-    if (bExists)
+    if (likely(bExists))
     {
         tm * time = gmtime((const time_t*)&(info.st_mtime));
         FormatDate(time, oDate);
@@ -432,7 +432,7 @@ eResult Storage::makeDir(const std::string & path)
     if (!CreateDirectory(pwStr, NULL))
     {
         DWORD dwErr = GetLastError();
-        if (dwErr != ERROR_ALREADY_EXISTS)
+        if (unlikely(dwErr != ERROR_ALREADY_EXISTS))
         {
             LG(ERR, "Storage::makeDir : CreateDirectory error %x", dwErr);
             res = ILE_ERROR;
@@ -448,7 +448,7 @@ eResult Storage::makeDir(const std::string & path)
     ret = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
     if (ret != 0)
     {
-        if( errno != EEXIST)
+        if( unlikely(errno != EEXIST))
         {
             LG(ERR, "Storage::makeDir : CreateDirectory error %x", errno);
             res = ILE_ERROR;
@@ -496,11 +496,11 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
 
     HRESULT hr=StringCchLength(tstrTo, MAX_PATH, &length_of_arg);
 
-	if (FAILED(hr))
+	if (unlikely(FAILED(hr)))
 	{
 		LG(ERR, "Storage::listFilenames : StringCchLength failed (%x)", hr);
 	}
-    else if (length_of_arg > (MAX_PATH - 3))
+    else if (unlikely(length_of_arg > (MAX_PATH - 3)))
     {
         LG(ERR, "Storage::listFilenames : Directory path is too long");
     }
@@ -516,7 +516,7 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
 
         hFind = FindFirstFile(szDir, &ffd);
 
-        if (INVALID_HANDLE_VALUE == hFind)
+        if (unlikely(INVALID_HANDLE_VALUE == hFind))
         {
             LG(INFO, "Storage::listFilenames : FindFirstFile returned INVALID_HANDLE_VALUE");
         }
@@ -537,7 +537,7 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
             } while (FindNextFile(hFind, &ffd) != 0);
 
             dwError = GetLastError();
-            if (dwError != ERROR_NO_MORE_FILES)
+            if (unlikely(dwError != ERROR_NO_MORE_FILES))
             {
                 LG(ERR, "Storage::listFilenames : FindNextFile returned %d", dwError);
             }
@@ -551,7 +551,7 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
     DIR           *d;
     struct dirent *dir;
     d = opendir(path.c_str());
-    if (d)
+    if (likely(d))
     {
         bExists = true;
         while ((dir = readdir(d)) != NULL)
@@ -654,7 +654,7 @@ bool Storage::setCurrentDir(const char * dir)
     std::string sName(dir);
     std::wstring swName = std::wstring(sName.begin(), sName.end());
     const wchar_t * pwStr = swName.c_str();
-    if (!SetCurrentDirectory(pwStr))
+    if (unlikely(!SetCurrentDirectory(pwStr)))
     {
         DWORD dwErr = GetLastError();
         LG(ERR, "Storage::SetCurrentDirectory : SetCurrentDirectory error : %x", dwErr);
@@ -666,11 +666,11 @@ bool Storage::setCurrentDir(const char * dir)
 
         dwRet = GetCurrentDirectory(BUFSIZE, cArray);
         
-        if( dwRet == 0 )
+        if( unlikely(dwRet == 0) )
         {
             LG(ERR,"GetCurrentDirectory failed (%d)", GetLastError());
         }
-        else if(dwRet > BUFSIZE)
+        else if(unlikely(dwRet > BUFSIZE))
         {
             LG(ERR,"Buffer too small; need %d characters", dwRet);
         }
@@ -683,13 +683,13 @@ bool Storage::setCurrentDir(const char * dir)
 
 #else
 
-    if (0 != chdir(dir))
+    if (unlikely(0 != chdir(dir)))
     {
         LG(ERR, "Storage::SetCurrentDirectory : chdir error : %x", errno);
     }
     else
     {
-        if (getcwd(bufCurDirectory, BUFSIZE))
+        if (likely(getcwd(bufCurDirectory, BUFSIZE)))
         {
             //LG(INFO, "Storage::OpenFileForOperation : current directory %s", bufCurDirectory);
             bRet = true;
@@ -703,7 +703,7 @@ bool Storage::setCurrentDir(const char * dir)
 
 #endif
 
-    if(bRet)
+    if(likely(bRet))
     {
         m_curDir = toDirPath(bufCurDirectory);
     }
