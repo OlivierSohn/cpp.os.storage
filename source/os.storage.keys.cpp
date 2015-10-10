@@ -422,7 +422,7 @@ eResult KeysLoad::ReadAllKeys()
     //LG(INFO, "KeysLoad::ReadAllKeys begin");
     
     eResult ret = OpenForRead();
-    if (ret != ILE_SUCCESS)
+    if ( unlikely(ret != ILE_SUCCESS))
     {
         LG(ERR, "PathSuiteLoad::Load : OpenForRead returned %d", ret);
         goto end;
@@ -459,7 +459,7 @@ void KeysLoad::ReadAllKeysInternal()
         case DATA_TYPE_STRING_AS_CHAR_ARRAY:
         {
             int32_t nElems = ReadNextElementsCount();
-            if (nElems >= 0)
+            if ( likely(nElems >= 0))
             {
                 ReadNextCharArrayAsString(nElems);
                 LoadStringForKey(key, m_tmpString);
@@ -475,7 +475,7 @@ void KeysLoad::ReadAllKeysInternal()
         case DATA_TYPE_DOUBLE_ARRAY:
         {
             int32_t nElems = ReadNextElementsCount();
-            if (nElems >= 0)
+            if ( likely(nElems >= 0))
             {
                 ReadNextDoubleArray(nElems);
                 LoadDoubleArrayForKey(key, m_tmpDoubles.data(), nElems);
@@ -491,7 +491,7 @@ void KeysLoad::ReadAllKeysInternal()
         case DATA_TYPE_FLOAT_ARRAY:
         {
             int32_t nElems = ReadNextElementsCount();
-            if (nElems >= 0)
+            if ( likely(nElems >= 0))
             {
                 ReadNextFloatArray(nElems);
                 LoadFloatArrayForKey(key, m_tmpFloats.data(), nElems);
@@ -507,7 +507,7 @@ void KeysLoad::ReadAllKeysInternal()
             case DATA_TYPE_CHAR_ARRAY:
             {
                 int32_t nElems = ReadNextElementsCount();
-                if (nElems >= 0)
+                if ( likely(nElems >= 0))
                 {
                     ReadNextCharArray(nElems);
                     LoadCharArrayForKey(key, m_tmpChars.data(), nElems);
@@ -523,7 +523,7 @@ void KeysLoad::ReadAllKeysInternal()
             case DATA_TYPE_SUBELT_AS_CHAR_ARRAY:
             {
                 int32_t nElems = ReadNextElementsCount();
-                if (nElems >= 0)
+                if (likely(nElems >= 0))
                 {
                     StartSubElement(nElems);
 
@@ -546,7 +546,7 @@ void KeysLoad::ReadAllKeysInternal()
             case DATA_TYPE_INT32_ARRAY:
             {
                 int32_t nElems = ReadNextElementsCount();
-                if (nElems >= 0)
+                if (likely(nElems >= 0))
                 {
                     ReadNextInt32Array(nElems);
                     LoadInt32ArrayForKey(key, m_tmpInts32.data(), nElems);
@@ -562,7 +562,7 @@ void KeysLoad::ReadAllKeysInternal()
             case DATA_TYPE_STRING_ARRAY:
             {
                 int32_t nElems = ReadNextElementsCount();
-                if (nElems >= 0)
+                if (likely(nElems >= 0))
                 {
                     ReadNextStringArray(nElems);
                     LoadStringArrayForKey(key, m_tmpStrings);

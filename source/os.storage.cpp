@@ -71,7 +71,7 @@ eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOp
 
     m_pFile = fopen(sFilePath.c_str(), op == OP_READ ? "rb" : "wb");
 
-    if (!m_pFile)
+    if ( unlikely(!m_pFile))
     {
         LG(ERR, "Storage::OpenFileForOperation : fopen failed : %d", errno);
         ret = ILE_BAD_PARAMETER;
@@ -106,13 +106,11 @@ eResult Storage::OpenForRead()
     std::string replace("/");
     ReplaceStringInPlace(filePath, search, replace );
     eResult ret = OpenFileForOperation(filePath, OP_READ);
-    if (ret != ILE_SUCCESS)
+    if ( unlikely(ret != ILE_SUCCESS))
     {
         LG(ERR, "Storage::OpenForRead : OpenFileForOperation returned %d", ret);
-        goto end;
     }
 
-end:
     return ret;
 }
 eResult Storage::OpenForWrite()
@@ -128,10 +126,10 @@ eResult Storage::OpenForWrite()
             if (!Storage::dirExists(m_filePath))
             {
                 ret = Storage::makeDir(m_filePath);
-                if (ILE_SUCCESS != ret)
+                if ( unlikely(ILE_SUCCESS != ret))
                 {
                     LG(ERR, "Storage::OpenForWrite : Storage::makeDir(%s) error : %d", m_filePath.c_str(), ret);
-                    goto end;
+                    return ret;
                 }
             }
         }
@@ -141,20 +139,17 @@ eResult Storage::OpenForWrite()
         auto it2 = g_openedForWrite.find(m_filePath);
         if(it2 != g_openedForWrite.end())
         {
-            ret = ILE_RECURSIVITY;
-            goto end;
+            return ILE_RECURSIVITY;
         }
         g_openedForWrite.insert(m_filePath);
         
         ret = OpenFileForOperation(m_filePath, OP_WRITE);
-        if (ret != ILE_SUCCESS)
+        if ( unlikely(ret != ILE_SUCCESS))
         {
             LG(ERR, "Storage::OpenForWrite : OpenFileForOperation returned %d", ret);
-            goto end;
         }
     }
     
-end:
     return ret;
 }
 
@@ -165,39 +160,39 @@ eResult Storage::Save()
     eResult ret = doSaveBegin();
     if (ret != ILE_SUCCESS)
     {
-        if(ret != ILE_RECURSIVITY)
+        if( unlikely(ret != ILE_RECURSIVITY))
             LG(ERR, "Storage::Save : doSaveBegin returned %d", ret);
-        goto end;
+        return ret;
     }
     
     ret = doSave();
-    if (ret != ILE_SUCCESS)
+    if (unlikely(ret != ILE_SUCCESS))
     {
         LG(ERR, "Storage::Save : doSave returned %d", ret);
-        goto end;
+        return ret;
     }
 
     doSaveEnd();
     
-end:
-    return ret;
+    return ILE_SUCCESS;
 }
 
 eResult Storage::doSaveBegin()
 {
-    eResult ret = OpenForWrite();
-    if (ret != ILE_SUCCESS)
     {
-        if(ret != ILE_RECURSIVITY)
-            LG(ERR, "Storage::SaveBegin : OpenForWrite returned %d", ret);
-        goto end;
+        eResult ret = OpenForWrite();
+        if ( ret != ILE_SUCCESS )
+        {
+            if ( unlikely(ret != ILE_RECURSIVITY) )
+                LG(ERR, "Storage::SaveBegin : OpenForWrite returned %d", ret);
+            return ret;
+        }
     }
-    
+
     // to reserve the header space (it will be overwritten in ::SaveEnd())
     DoUpdateFileHeader();
     
-end:
-    return ret;
+    return ILE_SUCCESS;
 }
 eResult Storage::doSave()
 {
