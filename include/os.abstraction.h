@@ -21,6 +21,8 @@ namespace imajuscule
 
         virtual bool getCursorPos(int&x, int&y) const = 0;
         
+        virtual bool hasKeyboard() const {return true;}
+        
     private:
         static OSAbstraction * m_registered;
     };
