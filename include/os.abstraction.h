@@ -4,11 +4,12 @@ namespace imajuscule
 {
     class OSAbstraction
     {
-    public:
+    protected:
         OSAbstraction();
         
         virtual ~OSAbstraction();
-        
+
+    public:
         static const OSAbstraction * get();
         static OSAbstraction * edit();
         
@@ -22,7 +23,6 @@ namespace imajuscule
         virtual bool getCursorPos(int&x, int&y) const = 0;
         
         virtual bool hasKeyboard() const {return true;}
-        
     private:
         static OSAbstraction * m_registered;
     };
