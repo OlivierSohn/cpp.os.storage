@@ -27,7 +27,7 @@ using namespace imajuscule;
 
 std::set<std::string> Storage::g_openedForWrite;
 
-Storage::DirectoryPath Storage::m_curDir = std::list<std::string>();
+Storage::DirectoryPath Storage::m_curDir = std::vector<std::string>();
 Storage::DirectoryPath Storage::curDir()
 {
     return m_curDir;

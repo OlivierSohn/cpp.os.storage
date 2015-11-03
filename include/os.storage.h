@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <list>
 #include <set>
 
 enum eResult
@@ -42,7 +41,7 @@ public:
 
     eResult Save();
 
-    typedef std::list<std::string> DirectoryPath;
+    typedef std::vector<std::string> DirectoryPath;
     typedef std::string FileName;
     static DirectoryPath curDir();
     static DirectoryPath toDirPath(const std::string &);
