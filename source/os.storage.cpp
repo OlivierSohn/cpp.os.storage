@@ -477,16 +477,27 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
     // Check that the input path plus 3 is not longer than MAX_PATH.
     // Three characters are for the "\*" plus NULL appended below.
 
-    TCHAR *tstrTo;
+    TCHAR tstrTo[MAX_PATH*2];
+    const int nMax = sizeof(tstrTo) / sizeof(tstrTo[0]);
     int tstrLen;
 #ifdef UNICODE
     tstrLen = MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), NULL, 0);
-    tstrTo = (TCHAR*)malloc((tstrLen+1) * sizeof(TCHAR));
+    if ( unlikely(tstrLen >= nMax) ) {
+        LG(ERR, "Storage::listFilenames : string %s is tool long", path.c_str());
+        A(0);
+        return false;
+    }
     tstrTo[tstrLen] = 0;
     MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), tstrTo, tstrLen);
 #else
-    tstrTo = strdup(dllPath);
-    tstrLen = strlen(tstrTo);
+    int err = strcpy_s( tstrTo, nMax, path.c_str() );
+    if ( err != 0 )
+    {
+        LG(ERR, "Storage::listFilenames : strcpy_s error %d", err);
+        A(0);
+        return false;
+    }
+    tstrLen = strlen( tstrTo );
 #endif
 
     HRESULT hr=StringCchLength(tstrTo, MAX_PATH, &length_of_arg);
@@ -497,6 +508,7 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
 	}
     else if (unlikely(length_of_arg > (MAX_PATH - 3)))
     {
+        // can fix this by using unicode version of FindFirstFile and prepending \\?\ to the path
         LG(ERR, "Storage::listFilenames : Directory path is too long");
     }
     else
@@ -540,8 +552,6 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
         FindClose(hFind);
     }
 
-    // use tstrTo up to tstrLen characters as needed...
-    free(tstrTo);
 #else
     DIR           *d;
     struct dirent *dir;
