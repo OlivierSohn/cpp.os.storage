@@ -52,6 +52,15 @@
 		09C2F86019BF185300472700 /* os.storage-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "os.storage-Prefix.pch"; path = "source/os.storage-Prefix.pch"; sourceTree = "<group>"; };
 		09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.storage.keys.cpp; path = source/os.storage.keys.cpp; sourceTree = "<group>"; };
 		09C6C6CB1A0186F4003ECAB4 /* os.storage.keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.storage.keys.h; path = include/os.storage.keys.h; sourceTree = "<group>"; };
+		09C84A621C271DC4002CF5B7 /* os.storage.Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = os.storage.Debug.xcconfig; sourceTree = "<group>"; };
+		09C84A631C271DC4002CF5B7 /* os.storage.ios.Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = os.storage.ios.Debug.xcconfig; sourceTree = "<group>"; };
+		09C84A641C271DC4002CF5B7 /* os.storage.ios.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = os.storage.ios.Release.xcconfig; sourceTree = "<group>"; };
+		09C84A651C271DC4002CF5B7 /* os.storage.ios.Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = os.storage.ios.Shared.xcconfig; sourceTree = "<group>"; };
+		09C84A661C271DC4002CF5B7 /* os.storage.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = os.storage.Release.xcconfig; sourceTree = "<group>"; };
+		09C84A671C271DC4002CF5B7 /* os.storage.Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = os.storage.Shared.xcconfig; sourceTree = "<group>"; };
+		09C84A681C271DC4002CF5B7 /* Project.Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Debug.xcconfig; sourceTree = "<group>"; };
+		09C84A691C271DC4002CF5B7 /* Project.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Release.xcconfig; sourceTree = "<group>"; };
+		09C84A6A1C271DC4002CF5B7 /* Project.Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Shared.xcconfig; sourceTree = "<group>"; };
 		09DBDCB91B07EF8800870E0A /* os.file.dialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.file.dialog.cpp; path = source/os.file.dialog.cpp; sourceTree = "<group>"; };
 		09E632381AEF18C80073D796 /* CocoaDialogs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaDialogs.mm; path = source/cocoa/CocoaDialogs.mm; sourceTree = "<group>"; };
 		09E6323B1AEF19720073D796 /* os.file.dialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.file.dialog.h; path = include/os.file.dialog.h; sourceTree = "<group>"; };
@@ -78,6 +87,7 @@
 		09C2F82019BF163A00472700 = {
 			isa = PBXGroup;
 			children = (
+				09C84A611C271DC4002CF5B7 /* xcode.config */,
 				09C2F83119BF17E100472700 /* include */,
 				09C2F83019BF17DB00472700 /* source */,
 				09C2F83B19BF181B00472700 /* Frameworks */,
@@ -128,6 +138,22 @@
 				09C2F84D19BF181B00472700 /* UIKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		09C84A611C271DC4002CF5B7 /* xcode.config */ = {
+			isa = PBXGroup;
+			children = (
+				09C84A621C271DC4002CF5B7 /* os.storage.Debug.xcconfig */,
+				09C84A631C271DC4002CF5B7 /* os.storage.ios.Debug.xcconfig */,
+				09C84A641C271DC4002CF5B7 /* os.storage.ios.Release.xcconfig */,
+				09C84A651C271DC4002CF5B7 /* os.storage.ios.Shared.xcconfig */,
+				09C84A661C271DC4002CF5B7 /* os.storage.Release.xcconfig */,
+				09C84A671C271DC4002CF5B7 /* os.storage.Shared.xcconfig */,
+				09C84A681C271DC4002CF5B7 /* Project.Debug.xcconfig */,
+				09C84A691C271DC4002CF5B7 /* Project.Release.xcconfig */,
+				09C84A6A1C271DC4002CF5B7 /* Project.Shared.xcconfig */,
+			);
+			path = xcode.config;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -240,135 +266,43 @@
 /* Begin XCBuildConfiguration section */
 		09C2F82B19BF163B00472700 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 09C84A681C271DC4002CF5B7 /* Project.Debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(PROJECT_DIR)/../os.log/include\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				ONLY_ACTIVE_ARCH = NO;
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
 		09C2F82C19BF163B00472700 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 09C84A691C271DC4002CF5B7 /* Project.Release.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(PROJECT_DIR)/../os.log/include\"",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
 		09C2F82E19BF163B00472700 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 09C84A621C271DC4002CF5B7 /* os.storage.Debug.xcconfig */;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
 		09C2F82F19BF163B00472700 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 09C84A661C271DC4002CF5B7 /* os.storage.Release.xcconfig */;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
 		09C2F85B19BF181B00472700 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 09C84A631C271DC4002CF5B7 /* os.storage.ios.Debug.xcconfig */;
 			buildSettings = {
-				DSTROOT = /tmp/os_storage_ios.dst;
-				EXECUTABLE_PREFIX = "";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "source/os.storage-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
 		09C2F85C19BF181B00472700 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 09C84A641C271DC4002CF5B7 /* os.storage.ios.Release.xcconfig */;
 			buildSettings = {
-				DSTROOT = /tmp/os_storage_ios.dst;
-				EXECUTABLE_PREFIX = "";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "source/os.storage-Prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
