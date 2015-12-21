@@ -7,7 +7,12 @@
 //
 
 // for ios, see https://developer.apple.com/library/ios/documentation/FileManagement/Conceptual/DocumentPickerProgrammingGuide/AccessingDocuments/AccessingDocuments.html#//apple_ref/doc/uid/TP40014451-CH2-SW4
-using namespace imajuscule;
+
+#include <string>
+#include <vector>
+#include <functional>
+
+#include "os.file.dialog.h"
 
 bool BasicFileOpen(std::string & sPathWithFileName, std::string & sFileName, const std::string & sFileExt)
 {
@@ -20,11 +25,4 @@ namespace imajuscule {
     {
         return FileSystemOperation::Nature::NON_BLOCKING;
     }
-}
-
-bool BasicDirectoryOpen(std::string & sPath)
-{
-    bool bRet = false;
-    
-    return bRet;
 }

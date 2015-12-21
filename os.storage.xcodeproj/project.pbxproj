@@ -45,7 +45,7 @@
 		09C2F82919BF163B00472700 /* libos.storage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libos.storage.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		09C2F83219BF17F400472700 /* os.storage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.storage.cpp; path = source/os.storage.cpp; sourceTree = "<group>"; };
 		09C2F83419BF17FC00472700 /* os.storage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = os.storage.h; path = include/os.storage.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		09C2F83A19BF181B00472700 /* os.storage.ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = os.storage.ios.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		09C2F83A19BF181B00472700 /* libos.storage.ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libos.storage.ios.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		09C2F83C19BF181B00472700 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		09C2F84A19BF181B00472700 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		09C2F84D19BF181B00472700 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -99,7 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				09C2F82919BF163B00472700 /* libos.storage.a */,
-				09C2F83A19BF181B00472700 /* os.storage.ios.a */,
+				09C2F83A19BF181B00472700 /* libos.storage.ios.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -206,7 +206,7 @@
 			);
 			name = os.storage.ios;
 			productName = os.storage.ios;
-			productReference = 09C2F83A19BF181B00472700 /* os.storage.ios.a */;
+			productReference = 09C2F83A19BF181B00472700 /* libos.storage.ios.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */

@@ -119,32 +119,3 @@ namespace imajuscule {
     }
 }
 
-bool BasicDirectoryOpen(std::string & sPath)
-{
-    bool bRet = false;
-    
-    NSOpenPanel *panel = [NSOpenPanel openPanel];
-    [panel setCanChooseFiles:NO];
-    [panel setCanChooseDirectories:YES];
-    [panel setCanCreateDirectories:YES];
-    [panel setResolvesAliases:YES];
-    [panel setAllowsMultipleSelection:NO];
-    
-    [panel setAllowedFileTypes:nil ];
-    
-    NSInteger clicked = [panel runModal];
-    
-    if (clicked == NSFileHandlingPanelOKButton) {
-        for (NSURL *url in [panel URLs])
-        {
-            // do something with the url here.
-            
-            NSString *myString = [url path];
-            sPath = [myString UTF8String];
-            
-            bRet = true;
-        }
-    }
-    
-    return bRet;
-}
