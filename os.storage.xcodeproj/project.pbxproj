@@ -52,12 +52,12 @@
 		09C2F86019BF185300472700 /* os.storage-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "os.storage-Prefix.pch"; path = "source/os.storage-Prefix.pch"; sourceTree = "<group>"; };
 		09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.storage.keys.cpp; path = source/os.storage.keys.cpp; sourceTree = "<group>"; };
 		09C6C6CB1A0186F4003ECAB4 /* os.storage.keys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.storage.keys.h; path = include/os.storage.keys.h; sourceTree = "<group>"; };
-		09C84A621C271DC4002CF5B7 /* os.storage.Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = os.storage.Debug.xcconfig; sourceTree = "<group>"; };
-		09C84A631C271DC4002CF5B7 /* os.storage.ios.Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = os.storage.ios.Debug.xcconfig; sourceTree = "<group>"; };
-		09C84A641C271DC4002CF5B7 /* os.storage.ios.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = os.storage.ios.Release.xcconfig; sourceTree = "<group>"; };
-		09C84A651C271DC4002CF5B7 /* os.storage.ios.Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = os.storage.ios.Shared.xcconfig; sourceTree = "<group>"; };
-		09C84A661C271DC4002CF5B7 /* os.storage.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = os.storage.Release.xcconfig; sourceTree = "<group>"; };
-		09C84A671C271DC4002CF5B7 /* os.storage.Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = os.storage.Shared.xcconfig; sourceTree = "<group>"; };
+		09C84A621C271DC4002CF5B7 /* osx.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = osx.debug.xcconfig; sourceTree = "<group>"; };
+		09C84A631C271DC4002CF5B7 /* ios.debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.debug.xcconfig; sourceTree = "<group>"; };
+		09C84A641C271DC4002CF5B7 /* ios.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.release.xcconfig; sourceTree = "<group>"; };
+		09C84A651C271DC4002CF5B7 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
+		09C84A661C271DC4002CF5B7 /* osx.release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = osx.release.xcconfig; sourceTree = "<group>"; };
+		09C84A671C271DC4002CF5B7 /* osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = osx.xcconfig; sourceTree = "<group>"; };
 		09C84A681C271DC4002CF5B7 /* Project.Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Debug.xcconfig; sourceTree = "<group>"; };
 		09C84A691C271DC4002CF5B7 /* Project.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Release.xcconfig; sourceTree = "<group>"; };
 		09C84A6A1C271DC4002CF5B7 /* Project.Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Shared.xcconfig; sourceTree = "<group>"; };
@@ -143,12 +143,12 @@
 		09C84A611C271DC4002CF5B7 /* xcode.config */ = {
 			isa = PBXGroup;
 			children = (
-				09C84A621C271DC4002CF5B7 /* os.storage.Debug.xcconfig */,
-				09C84A631C271DC4002CF5B7 /* os.storage.ios.Debug.xcconfig */,
-				09C84A641C271DC4002CF5B7 /* os.storage.ios.Release.xcconfig */,
-				09C84A651C271DC4002CF5B7 /* os.storage.ios.Shared.xcconfig */,
-				09C84A661C271DC4002CF5B7 /* os.storage.Release.xcconfig */,
-				09C84A671C271DC4002CF5B7 /* os.storage.Shared.xcconfig */,
+				09C84A631C271DC4002CF5B7 /* ios.debug.xcconfig */,
+				09C84A641C271DC4002CF5B7 /* ios.release.xcconfig */,
+				09C84A651C271DC4002CF5B7 /* ios.xcconfig */,
+				09C84A621C271DC4002CF5B7 /* osx.debug.xcconfig */,
+				09C84A661C271DC4002CF5B7 /* osx.release.xcconfig */,
+				09C84A671C271DC4002CF5B7 /* osx.xcconfig */,
 				09C84A681C271DC4002CF5B7 /* Project.Debug.xcconfig */,
 				09C84A691C271DC4002CF5B7 /* Project.Release.xcconfig */,
 				09C84A6A1C271DC4002CF5B7 /* Project.Shared.xcconfig */,
@@ -280,28 +280,28 @@
 		};
 		09C2F82E19BF163B00472700 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09C84A621C271DC4002CF5B7 /* os.storage.Debug.xcconfig */;
+			baseConfigurationReference = 09C84A621C271DC4002CF5B7 /* osx.debug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		09C2F82F19BF163B00472700 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09C84A661C271DC4002CF5B7 /* os.storage.Release.xcconfig */;
+			baseConfigurationReference = 09C84A661C271DC4002CF5B7 /* osx.release.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
 		};
 		09C2F85B19BF181B00472700 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09C84A631C271DC4002CF5B7 /* os.storage.ios.Debug.xcconfig */;
+			baseConfigurationReference = 09C84A631C271DC4002CF5B7 /* ios.debug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		09C2F85C19BF181B00472700 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09C84A641C271DC4002CF5B7 /* os.storage.ios.Release.xcconfig */;
+			baseConfigurationReference = 09C84A641C271DC4002CF5B7 /* ios.release.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
