@@ -13,8 +13,8 @@ namespace imajuscule
         static const OSAbstraction * get();
         static OSAbstraction * edit();
         
-        void registerAbstraction(OSAbstraction *);
-        void unregisterAbstraction(OSAbstraction *);
+        static void registerAbstraction(OSAbstraction *);
+        static void unregisterAbstraction(OSAbstraction *);
 
         virtual void PauseInteractions(bool) = 0;
 
