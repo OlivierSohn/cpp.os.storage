@@ -11,7 +11,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(MSBuildProjectDirectory)/../os.storage/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>os.storage.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>os.storage.lib;Propsys.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
