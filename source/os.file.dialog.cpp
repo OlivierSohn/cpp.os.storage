@@ -9,7 +9,7 @@
 #include "os.file.dialog.h"
 #include "os.abstraction.h"
 
-using namespace imajuscule;
+namespace imajuscule {
 
 void ReplaceStringInPlace(std::string& subject, const std::string& search,
                           const std::string& replace) {
@@ -46,7 +46,6 @@ bool BasicFileOpen2(Storage::DirectoryPath & pathToDirectory, Storage::FileName 
     return bRet;
 }
 
-
 FileSystemOperation::FileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, const std::vector<std::string> & extensions)
 {
     mNature = go(title, f, Kind::OP_FILE, extensions);
@@ -76,4 +75,7 @@ FileSystemOperation::~FileSystemOperation()
 auto FileSystemOperation::getNature () const -> Nature
 {
     return mNature;
+}
+
+    
 }

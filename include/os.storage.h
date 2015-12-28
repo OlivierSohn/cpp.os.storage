@@ -4,6 +4,8 @@
 #include <vector>
 #include <set>
 
+namespace imajuscule {
+    
 enum eResult
 {
     ILE_SUCCESS = 0,
@@ -96,3 +98,6 @@ private:
 
     static const char * FileOperationToString(FileOperation op);
 };
+    
+    
+}

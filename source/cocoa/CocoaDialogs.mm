@@ -16,7 +16,7 @@
 #include "os.file.dialog.h"
 #include "os.abstraction.h"
 
-using namespace imajuscule;
+namespace imajuscule {
 
 bool BasicFileOpen(std::string & sPathWithFileName, std::string & sFileName, const std::string & sFileExt)
 {
@@ -52,7 +52,6 @@ bool BasicFileOpen(std::string & sPathWithFileName, std::string & sFileName, con
     return bRet;
 }
 
-namespace imajuscule {
     FileSystemOperation::Nature fFileSystemOperation(FileSystemOperation::Kind k, const std::vector<std::string> & extensions, const std::string & title, std::function<void(OperationResult, const std::string &)> f, std::function<void(void)> fEnd)
     {
         NSOpenPanel *panel = [NSOpenPanel openPanel];
