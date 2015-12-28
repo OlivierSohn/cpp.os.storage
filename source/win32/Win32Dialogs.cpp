@@ -48,7 +48,7 @@
 #define IDC_WRITEPROPERTIESUSINGHANDLERS        104
 #define IDC_WRITEPROPERTIESWITHOUTUSINGHANDLERS 105
 
-using namespace imajuscule;
+namespace imajuscule {
 
 /* File Dialog Event Handler *****************************************************************************************************/
 
@@ -454,8 +454,6 @@ bool BasicFileOpen(std::string & sFilePath, std::string & fileName, const std::s
     return bRet;
 }
 
-namespace imajuscule
-{
     FileSystemOperation::Nature fFileSystemOperation(FileSystemOperation::Kind k, const std::vector<std::string> & extensions, const std::string & title, std::function<void(OperationResult, const std::string &)> f, std::function<void(void)> fEnd)
     {
         std::string path;
