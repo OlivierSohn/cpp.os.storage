@@ -37,9 +37,9 @@ public:
     static bool fileCreationDate(const std::string & path, std::string & oDate);
     static eResult makeDir(const std::string & path);
     static bool setCurrentDir(const char * dir);
-    // returns true if dir exists, false otherwise
-    static bool listFilenames(const std::string & dir, std::vector<std::string> & filenames);
-    static bool isGUID(std::string & str);
+    static std::vector< std::string > listFilenames( const std::string & path );
+
+    static bool isGUID(std::string const & str);
 
     eResult Save();
 

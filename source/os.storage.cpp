@@ -461,11 +461,11 @@ eResult Storage::makeDir(const std::string & path)
 }
 
 // returns true if dir exists, false otherwise
-bool Storage::listFilenames(const std::string & path, std::vector<std::string> & filenames)
+std::vector< std::string > Storage::listFilenames( const std::string & path )
 {
     //LG(INFO, "Storage::listFilenames(%s)", (path.c_str() ? path.c_str() : "NULL"));
     bool bExists = false;
-    filenames.clear();
+    std::vector<std::string> filenames;
 
 #ifdef _WIN32
     WIN32_FIND_DATA ffd;
@@ -485,7 +485,7 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
     if ( unlikely(tstrLen >= nMax) ) {
         LG(ERR, "Storage::listFilenames : string %s is tool long", path.c_str());
         A(0);
-        return false;
+        return filenames;
     }
     tstrTo[tstrLen] = 0;
     MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), tstrTo, tstrLen);
@@ -495,7 +495,7 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
     {
         LG(ERR, "Storage::listFilenames : strcpy_s error %d", err);
         A(0);
-        return false;
+        return filenames;
     }
     tstrLen = strlen( tstrTo );
 #endif
@@ -572,17 +572,17 @@ bool Storage::listFilenames(const std::string & path, std::vector<std::string> &
 #endif
 
     //LG(INFO, "Storage::listFilenames(%s) found %d files and returns %s", (path.c_str() ? path.c_str() : "NULL"), filenames.size(), (bExists ? "true" : "false"));
-    return bExists;
+    return filenames;
 }
 
-bool Storage::isGUID(std::string & str)
+bool Storage::isGUID(std::string const & str)
 {
     bool bIsGUID = true;
     
     int count = 0;
     int count_parenthesis_open = -1;
     int count_parenthesis_close = -1;
-    for(char&c:str)
+    for(char const &c:str)
     {
         count++;
 
