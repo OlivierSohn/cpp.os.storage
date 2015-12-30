@@ -19,7 +19,7 @@
 
 using namespace imajuscule;
 
-bool keyReadOnly(char key)
+static bool keyReadOnly(char key)
 {
     switch(key)
     {

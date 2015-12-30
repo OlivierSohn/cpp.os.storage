@@ -20,7 +20,7 @@ void ReplaceStringInPlace(std::string& subject, const std::string& search,
     }
 }
 
-bool hasEnding (std::string const &fullString, std::string const &ending) {
+static bool hasEnding (std::string const &fullString, std::string const &ending) {
     if (fullString.length() >= ending.length()) {
         return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
     } else {
