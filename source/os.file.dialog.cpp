@@ -75,7 +75,5 @@ FileSystemOperation::~FileSystemOperation()
 auto FileSystemOperation::getNature () const -> Nature
 {
     return mNature;
-}
-
-    
+}    
 }
