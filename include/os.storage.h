@@ -97,6 +97,9 @@ private:
     eResult OpenFileForOperation(const std::string & sFilePath, enum FileOperation);
 
     static const char * FileOperationToString(FileOperation op);
+    
+    static DirectoryPath getOSCurrentDir();
+    static bool getOSCurrentDir( DirectoryPath& );
 };
     
     

@@ -27,7 +27,7 @@ using namespace imajuscule;
 
 std::set<std::string> Storage::g_openedForWrite;
 
-Storage::DirectoryPath Storage::m_curDir = std::vector<std::string>();
+Storage::DirectoryPath Storage::m_curDir = getOSCurrentDir();
 Storage::DirectoryPath Storage::curDir()
 {
     return m_curDir;
@@ -640,11 +640,15 @@ bool Storage::isGUID(std::string const & str)
     return bIsGUID;
 }
 
-bool Storage::setCurrentDir(const char * dir)
-{
-    LG(INFO, "Storage::SetCurrentDirectory(%s) begin", (dir ? dir : "NULL"));
-    bool bRet = false;
+Storage::DirectoryPath Storage::getOSCurrentDir() {
+    DirectoryPath p;
+    auto ret = getOSCurrentDir(p);
+    A(ret);
+    return p;
+}
 
+bool Storage::getOSCurrentDir( DirectoryPath & p ) {
+    
     const int BUFSIZE = 1 +
 #ifndef _WIN32
     PATH_MAX
@@ -653,68 +657,74 @@ bool Storage::setCurrentDir(const char * dir)
 #endif
     ;
     
-    char bufCurDirectory[BUFSIZE];
+    char bufCurDirectory[BUFSIZE] {};
+    
+#ifdef _WIN32
+    {
+        DWORD dwRet;
+        TCHAR cArray[BUFSIZE];
+        
+        dwRet = GetCurrentDirectory(BUFSIZE, cArray);
+        
+        if( unlikely(dwRet == 0) )
+        {
+            LG(ERR,"Storage::getOSCurrentDir : GetCurrentDirectory failed (%d)", GetLastError());
+            return false;
+        }
+        else if(unlikely(dwRet > BUFSIZE))
+        {
+            LG(ERR,"Storage::getOSCurrentDir : Buffer too small; need %d characters", dwRet);
+            return false;
+        }
+        else
+        {
+            wcstombs(bufCurDirectory, cArray, wcslen(cArray) + 1);
+        }
+    }
+    
+#else
+
+    if ( !getcwd(bufCurDirectory, BUFSIZE) )
+    {
+        LG(ERR, "Storage::getOSCurrentDir : getcwd error %d", errno);
+        return false;
+    }
+#endif
+
+    LG(INFO, "Storage::getOSCurrentDir : current directory %s", bufCurDirectory);
+
+    p = toDirPath(bufCurDirectory);
+    return true;
+}
+
+
+bool Storage::setCurrentDir(const char * dir)
+{
+    LG(INFO, "Storage::SetCurrentDirectory(%s) begin", (dir ? dir : "NULL"));
 
 #ifdef _WIN32
     std::string sName(dir);
     std::wstring swName = std::wstring(sName.begin(), sName.end());
     const wchar_t * pwStr = swName.c_str();
-    if (unlikely(!SetCurrentDirectory(pwStr)))
-    {
+    if (unlikely(!SetCurrentDirectory(pwStr))) {
         DWORD dwErr = GetLastError();
         LG(ERR, "Storage::SetCurrentDirectory : SetCurrentDirectory error : %x", dwErr);
+        return false;
     }
-    else
-    {
-        DWORD dwRet;
-        TCHAR cArray[BUFSIZE];
-
-        dwRet = GetCurrentDirectory(BUFSIZE, cArray);
-        
-        if( unlikely(dwRet == 0) )
-        {
-            LG(ERR,"GetCurrentDirectory failed (%d)", GetLastError());
-        }
-        else if(unlikely(dwRet > BUFSIZE))
-        {
-            LG(ERR,"Buffer too small; need %d characters", dwRet);
-        }
-        else
-        {
-            bRet = true;
-            wcstombs(bufCurDirectory, cArray, wcslen(cArray) + 1);
-        }
-    }
-
 #else
-
-    if (unlikely(0 != chdir(dir)))
-    {
+    if (unlikely(0 != chdir(dir))) {
         LG(ERR, "Storage::SetCurrentDirectory : chdir error : %x", errno);
+        return false;
     }
-    else
-    {
-        if (likely(getcwd(bufCurDirectory, BUFSIZE)))
-        {
-            //LG(INFO, "Storage::OpenFileForOperation : current directory %s", bufCurDirectory);
-            bRet = true;
-        }
-        else
-        {
-            LG(ERR, "Storage::setCurrentDir : getcwd error %d", errno);
-            A(0);
-        }
-    }
-
 #endif
 
-    if(likely(bRet))
-    {
-        m_curDir = toDirPath(bufCurDirectory);
+    if( ! getOSCurrentDir(m_curDir) ) {
+        LG(ERR, "Storage::setCurrentDir : getOSCurrentDir error");
+        return false;
     }
     
-    LG(INFO, "Storage::SetCurrentDirectory(%s) returns %s", (dir ? dir : "NULL"), (bRet?"true":"false"));
-    return bRet;
+    LG(INFO, "Storage::SetCurrentDirectory( %s ) ok", (dir ? dir : "NULL"));
+    return true;
 }
 
 Storage::DirectoryPath Storage::toDirPath(const std::string & sInput)
