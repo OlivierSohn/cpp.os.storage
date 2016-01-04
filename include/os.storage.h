@@ -18,6 +18,8 @@ enum eResult
 
 #define SIZE_READ_BUFFER 2048
 
+typedef std::vector<std::string> DirectoryPath;
+
 class Storage
 {
 public:
@@ -43,7 +45,6 @@ public:
 
     eResult Save();
 
-    typedef std::vector<std::string> DirectoryPath;
     typedef std::string FileName;
     static DirectoryPath curDir();
     static DirectoryPath toDirPath(const std::string &);

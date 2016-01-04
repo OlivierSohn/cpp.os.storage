@@ -27,8 +27,8 @@ using namespace imajuscule;
 
 std::set<std::string> Storage::g_openedForWrite;
 
-Storage::DirectoryPath Storage::m_curDir = getOSCurrentDir();
-Storage::DirectoryPath Storage::curDir()
+DirectoryPath Storage::m_curDir = getOSCurrentDir();
+DirectoryPath Storage::curDir()
 {
     return m_curDir;
 }
@@ -640,7 +640,7 @@ bool Storage::isGUID(std::string const & str)
     return bIsGUID;
 }
 
-Storage::DirectoryPath Storage::getOSCurrentDir() {
+DirectoryPath Storage::getOSCurrentDir() {
     DirectoryPath p;
     auto ret = getOSCurrentDir(p);
     A(ret);
@@ -727,7 +727,7 @@ bool Storage::setCurrentDir(const char * dir)
     return true;
 }
 
-Storage::DirectoryPath Storage::toDirPath(const std::string & sInput)
+DirectoryPath Storage::toDirPath(const std::string & sInput)
 {
     DirectoryPath strings;
     std::istringstream f(sInput);
