@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <initializer_list>
 
 namespace imajuscule {
     
@@ -18,7 +19,25 @@ enum eResult
 
 #define SIZE_READ_BUFFER 2048
 
-typedef std::vector<std::string> DirectoryPath;
+    class DirectoryPath {
+    public:
+        DirectoryPath() {}
+        DirectoryPath( const std::string & path );
+        DirectoryPath( std::initializer_list<std::string> vec ) :
+        vec(vec) {}
+
+        std::string toString();
+        
+        DirectoryPath operator + ( const DirectoryPath & other ) {
+            DirectoryPath ret = *this;
+            ret.vec.insert( ret.vec.end(), other.vec.begin(), other.vec.end() );
+            return ret;
+        }
+        void operator += ( const DirectoryPath & other ) {
+            vec.insert( vec.end(), other.vec.begin(), other.vec.end() );
+        }
+        std::vector<std::string> vec;
+    };
 
 class Storage
 {
@@ -46,9 +65,7 @@ public:
     eResult Save();
 
     typedef std::string FileName;
-    static DirectoryPath curDir();
-    static DirectoryPath toDirPath(const std::string &);
-    static std::string toString(const DirectoryPath &);
+    static DirectoryPath const & curDir();
     
 protected:
     

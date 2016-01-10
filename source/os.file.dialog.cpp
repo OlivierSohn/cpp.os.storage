@@ -31,8 +31,7 @@ static bool hasEnding (std::string const &fullString, std::string const &ending)
 bool BasicFileOpen2(DirectoryPath & pathToDirectory, Storage::FileName & filename, const std::string & sFileExt)
 {
     std::string path, file;
-    bool bRet = BasicFileOpen(path, file, sFileExt);
-    if(bRet)
+    if( BasicFileOpen(path, file, sFileExt) )
     {
         if(hasEnding(path, file))
         {
@@ -40,10 +39,12 @@ bool BasicFileOpen2(DirectoryPath & pathToDirectory, Storage::FileName & filenam
         }
         
         filename = file;
-        pathToDirectory = Storage::toDirPath(path);
+        pathToDirectory = DirectoryPath(path);
+        
+        return true;
     }
     
-    return bRet;
+    return false;
 }
 
 FileSystemOperation::FileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, const std::vector<std::string> & extensions)

@@ -28,7 +28,7 @@ using namespace imajuscule;
 std::set<std::string> Storage::g_openedForWrite;
 
 DirectoryPath Storage::m_curDir = getOSCurrentDir();
-DirectoryPath Storage::curDir()
+DirectoryPath const & Storage::curDir()
 {
     return m_curDir;
 }
@@ -36,7 +36,7 @@ DirectoryPath Storage::curDir()
 Storage::Storage(DirectoryPath d, FileName f) :
 m_pFile(NULL),
 m_bufferReadPos(0),
-m_directoryPath(d),
+m_directoryPath(m_curDir + d),
 m_filename(f)
 {}
 
@@ -93,11 +93,9 @@ eResult Storage::OpenForRead()
 {
     std::string filePath;
     
-    auto it = m_directoryPath.begin();
-    auto end = m_directoryPath.end();
-    for(;it!=end;++it)
+    for( auto const & directory_name : m_directoryPath.vec)
     {
-        filePath.append(*it);
+        filePath.append(directory_name);
         filePath.append("/");
     }
     
@@ -117,11 +115,9 @@ eResult Storage::OpenForWrite()
 {
     eResult ret = ILE_SUCCESS;
     {
-        auto it = m_directoryPath.begin();
-        auto end = m_directoryPath.end();
-        for(;it!=end;++it)
+        for( auto const & directory_name : m_directoryPath.vec)
         {
-            m_filePath.append(*it);
+            m_filePath.append( directory_name );
             m_filePath.append("/");
             if (!Storage::dirExists(m_filePath))
             {
@@ -693,7 +689,7 @@ bool Storage::getOSCurrentDir( DirectoryPath & p ) {
 
     LG(INFO, "Storage::getOSCurrentDir : current directory %s", bufCurDirectory);
 
-    p = toDirPath(bufCurDirectory);
+    p = DirectoryPath(bufCurDirectory);
     return true;
 }
 
@@ -727,22 +723,19 @@ bool Storage::setCurrentDir(const char * dir)
     return true;
 }
 
-DirectoryPath Storage::toDirPath(const std::string & sInput)
+DirectoryPath::DirectoryPath(const std::string & sInput)
 {
-    DirectoryPath strings;
     std::istringstream f(sInput);
     std::string s;
     while (getline(f, s, '/')) {
-        strings.push_back(s);
+        vec.push_back(s);
     }
-    
-    return strings;
 }
 
-std::string Storage::toString(const DirectoryPath & dir)
+std::string DirectoryPath::toString()
 {
     std::string ret;
-    for(auto&st:dir)
+    for( auto & st : vec )
     {
         ret.append(st);
         ret.append("/");
