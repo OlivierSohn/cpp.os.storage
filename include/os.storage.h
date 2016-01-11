@@ -71,7 +71,7 @@ protected:
     
     static DirectoryPath m_curDir;
     
-    Storage(DirectoryPath, FileName);
+    Storage(DirectoryPath const &, FileName const &);
     virtual ~Storage();
 
     eResult OpenForRead();

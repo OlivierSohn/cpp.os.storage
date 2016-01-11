@@ -33,7 +33,7 @@ DirectoryPath const & Storage::curDir()
     return m_curDir;
 }
 
-Storage::Storage(DirectoryPath d, FileName f) :
+Storage::Storage(DirectoryPath const &d, FileName const &f) :
 m_pFile(NULL),
 m_bufferReadPos(0),
 m_directoryPath(m_curDir + d),

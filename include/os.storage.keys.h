@@ -14,7 +14,7 @@ namespace imajuscule
 	class KeysPersist : public Storage
 	{
 	public:
-		KeysPersist(DirectoryPath, FileName);
+		KeysPersist(DirectoryPath const &, FileName const &);
 		virtual ~KeysPersist();
 
 		int32_t WriteKeyData(char key, bool bValue);

@@ -31,7 +31,7 @@ static bool keyReadOnly(char key)
     }
 }
 
-KeysPersist::KeysPersist(DirectoryPath d, FileName f) :
+KeysPersist::KeysPersist(DirectoryPath const &d, FileName const &f) :
 Storage(d, f),
 m_countLevelZeroKeys(0)
 {
