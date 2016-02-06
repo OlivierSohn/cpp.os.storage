@@ -22,6 +22,9 @@ namespace imajuscule
 
         virtual bool getCursorPos(int&x, int&y) const = 0;
         
+        enum direction { UP = 1, DOWN = 2, LEFT = 4, RIGHT = 8 };
+        virtual bool getDirectionBits( int & ) const = 0;
+        
         virtual bool hasKeyboard() const {return true;}
     private:
         static OSAbstraction * m_registered;
