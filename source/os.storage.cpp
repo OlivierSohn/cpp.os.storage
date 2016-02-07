@@ -1,8 +1,6 @@
-
-#include "os.storage.h"
-#include "os.log.h"
-#include "os.log.format.h"
-#include "os.file.dialog.h"
+#ifdef __APPLE__
+#include "TargetConditionals.h"
+#endif
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -23,6 +21,12 @@
 #include <sstream>
 #include <iostream>
 
+#include "os.storage.h"
+#include "os.log.h"
+#include "os.log.format.h"
+#include "os.file.dialog.h"
+
+
 using namespace imajuscule;
 
 std::set<std::string> Storage::g_openedForWrite;
@@ -36,7 +40,13 @@ DirectoryPath const & Storage::curDir()
 Storage::Storage(DirectoryPath const &d, FileName const &f) :
 m_pFile(NULL),
 m_bufferReadPos(0),
-m_directoryPath(m_curDir + d),
+m_directoryPath(
+#if TARGET_OS_IOS
+                DirectoryPath(".")
+#else
+                m_curDir
+#endif
+                + d),
 m_filename(f)
 {}
 
