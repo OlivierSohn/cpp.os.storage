@@ -22,7 +22,7 @@ namespace imajuscule
 
         virtual bool getCursorPos(int&x, int&y) const = 0;
         
-        enum direction { NONE = 0, UP = 1, DOWN = 2, LEFT = 4, RIGHT = 8 };
+        enum direction { DIRECTION_NONE = 0, DIRECTION_UP = 1, DIRECTION_DOWN = 2, DIRECTION_LEFT = 4, DIRECTION_RIGHT = 8 };
         virtual bool getDirectionBits( int & ) = 0;
         
         virtual bool hasKeyboard() const {return true;}
