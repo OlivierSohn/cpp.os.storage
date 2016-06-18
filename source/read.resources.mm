@@ -1,8 +1,12 @@
 #include <string>
 
+#include "os.log.h"
+
 #ifdef __APPLE__
 
 #import <Foundation/Foundation.h>
+
+#include "file2string.h"
 
 #elif _WIN32
 
@@ -14,16 +18,45 @@
 namespace imajuscule {
 
 #ifdef __APPLE__
-bool readResource(int name, int type, std::string & result) {
-    std::string filePath = appleResourcePath(name, type);
-    filePath = ResourcePath(filePath);
-    return get_file_contents(filePath, result );
-}
+    bool readResource(const char * name, std::string const &type, std::string & result) {
+        if(!name) {
+            LG(ERR, "name of resource is null");
+            return false;
+        }
+        
+        auto b = CFBundleGetMainBundle();
+        if(!b) {
+            LG(ERR, "could not find bundle");
+            return false;
+        }
+        
+        auto n = [NSString stringWithUTF8String:name];
+        auto t = [NSString stringWithUTF8String:type.c_str()];
+        CFStringRef ref_n = (__bridge CFStringRef)n;
+        CFStringRef ref_t = (__bridge CFStringRef)t;
+        
+        auto url = CFBundleCopyResourceURL(b, ref_n, 0, ref_t);
+        if(!url) {
+            LG(ERR, "could not find resource in bundle");
+            return false;
+        }
+
+        
+        CFStringRef imagePath = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
+        
+        // Get the system encoding method
+        CFStringEncoding encodingMethod = CFStringGetSystemEncoding();
+        
+        // Convert the string reference into a C string
+        const char *path = CFStringGetCStringPtr(imagePath, encodingMethod);
+        
+        return get_file_contents( path, result);
+    }
 #elif __ANDROID__
-bool readResource(int name, int type, std::string & result) {
-    A(!"TODO");
-	return false;
-}
+    bool readResource(int name, std::string const &type, std::string & result) {
+        A(!"TODO");
+        return false;
+    }
 #elif _WIN32
 std::wstring s2ws(const std::string& s)
 {
@@ -38,10 +71,9 @@ std::wstring s2ws(const std::string& s)
 }
 std::string GetLastErrorAsString()
 {
-    //Get the error message, if any.
     DWORD errorMessageID = ::GetLastError();
     if(errorMessageID == 0)
-        return std::string(); //No error message has been recorded
+        return std::string();
 
     LPSTR messageBuffer = nullptr;
     size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -49,7 +81,6 @@ std::string GetLastErrorAsString()
 
     std::string message(messageBuffer, size);
 
-    //Free the buffer.
     LocalFree(messageBuffer);
 
     return message;
