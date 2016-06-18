@@ -22,6 +22,9 @@
 		09C6C6C91A0186E9003ECAB4 /* os.storage.keys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */; };
 		09C6C6CA1A0186E9003ECAB4 /* os.storage.keys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */; };
 		09C6C6CC1A0186F4003ECAB4 /* os.storage.keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 09C6C6CB1A0186F4003ECAB4 /* os.storage.keys.h */; };
+		09D1348E1D15B570001CE54F /* read.resources.h in Headers */ = {isa = PBXBuildFile; fileRef = 09D1348D1D15B570001CE54F /* read.resources.h */; };
+		09D134901D15B57F001CE54F /* read.resources.mm in Sources */ = {isa = PBXBuildFile; fileRef = 09D1348F1D15B57F001CE54F /* read.resources.mm */; };
+		09D134911D15B57F001CE54F /* read.resources.mm in Sources */ = {isa = PBXBuildFile; fileRef = 09D1348F1D15B57F001CE54F /* read.resources.mm */; };
 		09DBDCBA1B07EF8800870E0A /* os.file.dialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09DBDCB91B07EF8800870E0A /* os.file.dialog.cpp */; };
 		09DBDCBB1B07EF8800870E0A /* os.file.dialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09DBDCB91B07EF8800870E0A /* os.file.dialog.cpp */; };
 		09E632391AEF18C80073D796 /* CocoaDialogs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 09E632381AEF18C80073D796 /* CocoaDialogs.mm */; };
@@ -66,6 +69,8 @@
 		09C84A681C271DC4002CF5B7 /* Project.Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Debug.xcconfig; sourceTree = "<group>"; };
 		09C84A691C271DC4002CF5B7 /* Project.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Release.xcconfig; sourceTree = "<group>"; };
 		09C84A6A1C271DC4002CF5B7 /* Project.Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Shared.xcconfig; sourceTree = "<group>"; };
+		09D1348D1D15B570001CE54F /* read.resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = read.resources.h; path = include/read.resources.h; sourceTree = "<group>"; };
+		09D1348F1D15B57F001CE54F /* read.resources.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = read.resources.mm; path = source/read.resources.mm; sourceTree = "<group>"; };
 		09DBDCB91B07EF8800870E0A /* os.file.dialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.file.dialog.cpp; path = source/os.file.dialog.cpp; sourceTree = "<group>"; };
 		09E632381AEF18C80073D796 /* CocoaDialogs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaDialogs.mm; path = source/cocoa/CocoaDialogs.mm; sourceTree = "<group>"; };
 		09E6323B1AEF19720073D796 /* os.file.dialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.file.dialog.h; path = include/os.file.dialog.h; sourceTree = "<group>"; };
@@ -112,6 +117,7 @@
 		09C2F83019BF17DB00472700 /* source */ = {
 			isa = PBXGroup;
 			children = (
+				09D1348F1D15B57F001CE54F /* read.resources.mm */,
 				0914BEE61D13904C007D6795 /* file2string.cpp */,
 				092A2A091BC4B6B400CBB8A9 /* iosDialogs.mm */,
 				09E632381AEF18C80073D796 /* CocoaDialogs.mm */,
@@ -127,6 +133,7 @@
 		09C2F83119BF17E100472700 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				09D1348D1D15B570001CE54F /* read.resources.h */,
 				0914BEE91D13905F007D6795 /* file2string.h */,
 				093DCC921B6213C200140F7B /* os.abstraction.h */,
 				09E6323B1AEF19720073D796 /* os.file.dialog.h */,
@@ -173,6 +180,7 @@
 				09C6C6CC1A0186F4003ECAB4 /* os.storage.keys.h in Headers */,
 				09429D631AD3877D001513DA /* os.storage.allincludes.h in Headers */,
 				0914BEEA1D13905F007D6795 /* file2string.h in Headers */,
+				09D1348E1D15B570001CE54F /* read.resources.h in Headers */,
 				093DCC931B6213C200140F7B /* os.abstraction.h in Headers */,
 				09C2F83519BF17FC00472700 /* os.storage.h in Headers */,
 				09C2F86119BF185300472700 /* os.storage-Prefix.pch in Headers */,
@@ -253,6 +261,7 @@
 				0914BEE71D13904C007D6795 /* file2string.cpp in Sources */,
 				09E632391AEF18C80073D796 /* CocoaDialogs.mm in Sources */,
 				09C2F83319BF17F400472700 /* os.storage.cpp in Sources */,
+				09D134901D15B57F001CE54F /* read.resources.mm in Sources */,
 				093DCC951B6213F800140F7B /* os.abstraction.cpp in Sources */,
 				09C6C6C91A0186E9003ECAB4 /* os.storage.keys.cpp in Sources */,
 			);
@@ -266,6 +275,7 @@
 				0914BEE81D13904C007D6795 /* file2string.cpp in Sources */,
 				09DBDCBB1B07EF8800870E0A /* os.file.dialog.cpp in Sources */,
 				09C2F86219BF18B400472700 /* os.storage.cpp in Sources */,
+				09D134911D15B57F001CE54F /* read.resources.mm in Sources */,
 				093DCC961B6213F800140F7B /* os.abstraction.cpp in Sources */,
 				09C6C6CA1A0186E9003ECAB4 /* os.storage.keys.cpp in Sources */,
 			);
