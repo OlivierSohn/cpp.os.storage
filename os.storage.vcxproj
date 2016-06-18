@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\file2string.cpp" />
     <ClCompile Include="source\os.abstraction.cpp" />
     <ClCompile Include="source\os.file.dialog.cpp" />
     <ClCompile Include="source\os.storage.cpp" />
@@ -32,13 +33,20 @@
     <ClCompile Include="source\win32\Win32Dialogs.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\file2string.h" />
     <ClInclude Include="include\os.abstraction.h" />
     <ClInclude Include="include\os.file.dialog.h" />
     <ClInclude Include="include\os.storage.h" />
     <ClInclude Include="include\os.storage.keys.h" />
     <ClInclude Include="include\os.storage.allincludes.h" />
+    <ClInclude Include="include\read.resources.h" />
     <ClInclude Include="source\win32\stdafx.h" />
     <ClInclude Include="source\win32\targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\read.resources.mm">
+      <FileType>CppCode</FileType>
+    </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{62244B96-8FB1-4C25-ACAB-21B160E3CE5D}</ProjectGuid>

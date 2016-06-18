@@ -36,6 +36,10 @@
     <ClCompile Include="source\os.abstraction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\file2string.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\read.resources.mm" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\win32\stdafx.h">
@@ -57,6 +61,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\os.abstraction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\file2string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\read.resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
