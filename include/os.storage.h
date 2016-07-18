@@ -49,18 +49,7 @@ public:
         OP_READ
     };
 
-#ifdef _WIN32
-    static void string_cast(const wchar_t* pSource, unsigned int codePage /*= CP_ACP*/, std::string & oString);
-#endif
-
-    static bool dirExists(const std::string & path);
-    static bool fileExists(const std::string & path);
-    static bool fileCreationDate(const std::string & path, std::string & oDate);
-    static eResult makeDir(const std::string & path);
     static bool setCurrentDir(const char * dir);
-    static std::vector< std::string > listFilenames( const std::string & path );
-
-    static bool isGUID(std::string const & str);
 
     eResult Save();
 
@@ -113,12 +102,23 @@ private:
 
     void ReadToBuffer();
     eResult OpenFileForOperation(const std::string & sFilePath, enum FileOperation);
-
-    static const char * FileOperationToString(FileOperation op);
     
-    static DirectoryPath getOSCurrentDir();
-    static bool getOSCurrentDir( DirectoryPath& );
 };
     
-    
+    namespace StorageStuff {
+#ifdef _WIN32
+        void string_cast(const wchar_t* pSource, unsigned int codePage /*= CP_ACP*/, std::string & oString);
+#endif
+        
+        bool dirExists(const std::string & path);
+        bool fileExists(const std::string & path);
+        bool fileCreationDate(const std::string & path, std::string & oDate);
+        eResult makeDir(const std::string & path);
+        std::vector< std::string > listFilenames( const std::string & path );
+        
+        bool isGUID(std::string const & str);
+        const char * FileOperationToString(Storage::FileOperation op);
+        bool getOSCurrentDir( DirectoryPath& );
+        DirectoryPath getOSCurrentDir();
+    }
 }

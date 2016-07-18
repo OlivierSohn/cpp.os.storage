@@ -28,6 +28,7 @@
 
 
 using namespace imajuscule;
+using namespace StorageStuff;
 
 std::set<std::string> Storage::g_openedForWrite;
 
@@ -66,7 +67,7 @@ void Storage::CloseFile()
 void Storage::Finalize()
 {
     FlushData();
-
+    
     CloseFile();
 }
 
@@ -74,13 +75,13 @@ void Storage::Finalize()
 eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOperation op)
 {
     //LG(INFO, "Storage::OpenFileForOperation( %s, %s) begin", sFilePath.c_str(), FileOperationToString(op));
-
+    
     eResult ret = ILE_SUCCESS;
-
+    
     CloseFile();
-
+    
     m_pFile = fopen(sFilePath.c_str(), op == OP_READ ? "rb" : "wb");
-
+    
     if ( unlikely(!m_pFile))
     {
         LG(ERR, "Storage::OpenFileForOperation : fopen failed : %d", errno);
@@ -94,7 +95,7 @@ eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOp
             ReadToBuffer();
         }
     }
-
+    
     //LG(INFO, "Storage::OpenFileForOperation() returns %d", ret);
     return ret;
 }
@@ -118,7 +119,7 @@ eResult Storage::OpenForRead()
     {
         LG(ERR, "Storage::OpenForRead : OpenFileForOperation returned %d", ret);
     }
-
+    
     return ret;
 }
 eResult Storage::OpenForWrite()
@@ -129,9 +130,9 @@ eResult Storage::OpenForWrite()
         {
             m_filePath.append( directory_name );
             m_filePath.append("/");
-            if (!Storage::dirExists(m_filePath))
+            if (!dirExists(m_filePath))
             {
-                ret = Storage::makeDir(m_filePath);
+                ret = makeDir(m_filePath);
                 if ( unlikely(ILE_SUCCESS != ret))
                 {
                     LG(ERR, "Storage::OpenForWrite : Storage::makeDir(%s) error : %d", m_filePath.c_str(), ret);
@@ -177,7 +178,7 @@ eResult Storage::Save()
         LG(ERR, "Storage::Save : doSave returned %d", ret);
         return ret;
     }
-
+    
     doSaveEnd();
     
     return ILE_SUCCESS;
@@ -194,7 +195,7 @@ eResult Storage::doSaveBegin()
             return ret;
         }
     }
-
+    
     // to reserve the header space (it will be overwritten in ::SaveEnd())
     DoUpdateFileHeader();
     
@@ -207,7 +208,7 @@ eResult Storage::doSave()
 void Storage::doSaveEnd()
 {
     UpdateFileHeader();
-
+    
     if(!m_filePath.empty())
         g_openedForWrite.erase(m_filePath);
 }
@@ -216,24 +217,24 @@ void Storage::UpdateFileHeader()
 {
     // write the data for this frame
     FlushMyBuffer();
-
+    
     // now that the data has been written, we can modify the file position
     fpos_t curPos;
     if (likely(!fgetpos((FILE*)m_pFile, &curPos)))
     {
         rewind((FILE*)m_pFile);
-
+        
         DoUpdateFileHeader();
-
+        
         int ret = FlushData();
         if (unlikely(ret))
         {
             LG(ERR, "Storage::UpdateFileHeader : FlushData returned %d", ret );
         }
-
+        
         if (likely(!fsetpos((FILE*)m_pFile, &curPos)))
         {
-
+            
         }
         else
         {
@@ -258,7 +259,7 @@ void Storage::FlushMyBuffer()
 #else
     fwrite(m_writeBuffer.data(), 1, count, (FILE*)m_pFile);
 #endif
-
+    
     m_writeBuffer.clear();
 }
 
@@ -274,7 +275,7 @@ void Storage::ReadToBuffer()
 void Storage::ReadData(void * p, size_t size, size_t count)
 {
     //LG(INFO, "Storage::ReadData(%x, %d, %d)", p, size, count);
-
+    
     size_t total = size * count;
     
     do
@@ -330,411 +331,417 @@ void Storage::WriteData(void * p, size_t size, size_t count)
 int Storage::FlushData()
 {
     FlushMyBuffer();
-
+    
 #ifdef _WIN32
     return _fflush_nolock((FILE*)m_pFile);
 #else
     return fflush((FILE*)m_pFile);
 #endif
 }
-const char * Storage::FileOperationToString(FileOperation op)
-{
-    switch (op)
-    {
-    case OP_WRITE:
-        return "OP_WRITE";
-        break;
-    case OP_READ:
-        return "OP_READ";
-        break;
-    default:
-        return "UNKNOWN";
-        break;
-    }
-}
 
-#ifdef _WIN32
-void Storage::string_cast(const wchar_t* pSource, unsigned int codePage, std::string & oCast)
-{
-    A(pSource != 0);
-    oCast.clear();
-    size_t sourceLength = std::wcslen(pSource);
-    if (likely(sourceLength > 0))
+namespace imajuscule {
+    namespace StorageStuff {
+    const char * FileOperationToString(Storage::FileOperation op)
     {
-        int length = ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, NULL, 0, NULL, NULL);
-        if (likely(length != 0))
+        switch (op)
         {
-            std::vector<char> buffer(length);
-            ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, &buffer[0], length, NULL, NULL);
-            oCast.assign(buffer.begin(), buffer.end());
-        }
-    }
-}
-#endif
-
-bool Storage::dirExists(const std::string & path)
-{
-    //LG(INFO, "Storage::dirExists(%s)", (path.c_str() ? path.c_str() : "NULL"));
-    bool bExists = false;
-
-    struct stat info;
-    bExists = ((stat(path.c_str(), &info) == 0) && (info.st_mode & S_IFDIR));
-
-    //LG(INFO, "Storage::dirExists(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
-    return bExists;
-}
-
-bool Storage::fileExists(const std::string & path)
-{
-    //LG(INFO, "Storage::fileExists(%s)", (path.c_str() ? path.c_str() : "NULL"));
-    bool bExists = false;
-
-    struct stat info;
-    bExists = (stat(path.c_str(), &info) == 0) && !(info.st_mode & S_IFDIR);
-
-    //LG(INFO, "Storage::fileExists(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
-    return bExists;
-}
-
-bool Storage::fileCreationDate(const std::string & path, std::string & oDate)
-{
-    //LG(INFO, "Storage::fileCreationDate(%s)", (path.c_str() ? path.c_str() : "NULL"));
-    
-    oDate.clear();
-
-    bool bExists = false;
-
-    struct stat info;
-    bExists = (stat(path.c_str(), &info) == 0) && !(info.st_mode & S_IFDIR);
-    if (likely(bExists))
-    {
-        tm * time = gmtime((const time_t*)&(info.st_mtime));
-        FormatDate(time, oDate);
-    }
-    else
-    {
-        LG(ERR, "Storage::fileCreationDate : file does not exist");
-        oDate.assign("../../.. ..:..:..");
-    }
-
-    //LG(INFO, "Storage::fileCreationDate(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
-    return bExists;
-}
-
-eResult Storage::makeDir(const std::string & path)
-{
-    //LG(INFO, "Storage::makeDir(%s)", (path.c_str() ? path.c_str() : "NULL"));
-    eResult res = ILE_SUCCESS;
-
-#ifdef _WIN32
-    std::wstring swName = std::wstring(path.begin(), path.end());
-    const wchar_t * pwStr = swName.c_str();
-    //LG(INFO, "Storage::makeDir : before CreateDirectory");
-    if (!CreateDirectory(pwStr, NULL))
-    {
-        DWORD dwErr = GetLastError();
-        if (unlikely(dwErr != ERROR_ALREADY_EXISTS))
-        {
-            LG(ERR, "Storage::makeDir : CreateDirectory error %x", dwErr);
-            res = ILE_ERROR;
-        }
-        else
-        {
-            //LG(INFO, "Storage::makeDir : directory already exists");
-        }
-    }
-#else
-
-    int ret;
-    ret = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-    if (ret != 0)
-    {
-        if( unlikely(errno != EEXIST))
-        {
-            LG(ERR, "Storage::makeDir : CreateDirectory error %x", errno);
-            res = ILE_ERROR;
-        }
-        else
-        {
-            //LG(INFO, "Storage::makeDir : directory already exists");
-        }
-    }
-
-#endif
-
-    //LG(INFO, "Storage::makeDir(%s) returns %d", (path.c_str() ? path.c_str() : "NULL"), res);
-    return res;
-}
-
-// returns true if dir exists, false otherwise
-std::vector< std::string > Storage::listFilenames( const std::string & path )
-{
-    //LG(INFO, "Storage::listFilenames(%s)", (path.c_str() ? path.c_str() : "NULL"));
-    bool bExists = false;
-    std::vector<std::string> filenames;
-
-#ifdef _WIN32
-    WIN32_FIND_DATA ffd;
-    TCHAR szDir[MAX_PATH];
-    size_t length_of_arg;
-    HANDLE hFind = INVALID_HANDLE_VALUE;
-    DWORD dwError = 0;
-
-    // Check that the input path plus 3 is not longer than MAX_PATH.
-    // Three characters are for the "\*" plus NULL appended below.
-
-    TCHAR tstrTo[MAX_PATH*2];
-    const int nMax = sizeof(tstrTo) / sizeof(tstrTo[0]);
-    int tstrLen;
-#ifdef UNICODE
-    tstrLen = MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), NULL, 0);
-    if ( unlikely(tstrLen >= nMax) ) {
-        LG(ERR, "Storage::listFilenames : string %s is tool long", path.c_str());
-        A(0);
-        return filenames;
-    }
-    tstrTo[tstrLen] = 0;
-    MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), tstrTo, tstrLen);
-#else
-    int err = strcpy_s( tstrTo, nMax, path.c_str() );
-    if ( err != 0 )
-    {
-        LG(ERR, "Storage::listFilenames : strcpy_s error %d", err);
-        A(0);
-        return filenames;
-    }
-    tstrLen = strlen( tstrTo );
-#endif
-
-    HRESULT hr=StringCchLength(tstrTo, MAX_PATH, &length_of_arg);
-
-	if (unlikely(FAILED(hr)))
-	{
-		LG(ERR, "Storage::listFilenames : StringCchLength failed (%x)", hr);
-	}
-    else if (unlikely(length_of_arg > (MAX_PATH - 3)))
-    {
-        // can fix this by using unicode version of FindFirstFile and prepending \\?\ to the path
-        LG(ERR, "Storage::listFilenames : Directory path is too long");
-    }
-    else
-    {
-        // Prepare string for use with FindFile functions.  First, copy the
-        // string to a buffer, then append '\*' to the directory name.
-
-        StringCchCopy(szDir, MAX_PATH, tstrTo);
-        StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
-
-        // Find the first file in the directory.
-
-        hFind = FindFirstFile(szDir, &ffd);
-
-        if (unlikely(INVALID_HANDLE_VALUE == hFind))
-        {
-            LG(INFO, "Storage::listFilenames : FindFirstFile returned INVALID_HANDLE_VALUE");
-        }
-        else
-        {
-            // List all the files in the directory with some info about them.
-
-            bExists = true;
-
-            do
-            {
-                if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-                {
-                    std::string cast;
-                    string_cast(ffd.cFileName, CP_ACP, cast);
-                    filenames.push_back(cast);
-                }
-            } while (FindNextFile(hFind, &ffd) != 0);
-
-            dwError = GetLastError();
-            if (unlikely(dwError != ERROR_NO_MORE_FILES))
-            {
-                LG(ERR, "Storage::listFilenames : FindNextFile returned %d", dwError);
-            }
-        }
-        FindClose(hFind);
-    }
-
-#else
-    DIR           *d;
-    struct dirent *dir;
-    d = opendir(path.c_str());
-    if (likely(d))
-    {
-        bExists = true;
-        while ((dir = readdir(d)) != NULL)
-        {
-            if (dir->d_type == DT_REG)
-            {
-                filenames.push_back(dir->d_name);
-            }
-        }
-
-        closedir(d);
-    }
-#endif
-
-    //LG(INFO, "Storage::listFilenames(%s) found %d files and returns %s", (path.c_str() ? path.c_str() : "NULL"), filenames.size(), (bExists ? "true" : "false"));
-    return filenames;
-}
-
-bool Storage::isGUID(std::string const & str)
-{
-    bool bIsGUID = true;
-    
-    int count = -1;
-    int idx_parenthesis_open = -1;
-    int idx_parenthesis_close = -1;
-    for(char const &c:str)
-    {
-        count++;
-
-        switch(c)
-        {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-            case 'A':
-            case 'B':
-            case 'C':
-            case 'D':
-            case 'E':
-            case 'F':
+            case Storage::OP_WRITE:
+                return "OP_WRITE";
                 break;
-            case '-':
-                break;
-            case '{':
-                if(idx_parenthesis_open != -1)
-                    bIsGUID = false;
-                else
-                    idx_parenthesis_open = count;
-                break;
-            case '}':
-                if(idx_parenthesis_close != -1)
-                    bIsGUID = false;
-                else
-                    idx_parenthesis_close = count;
+            case Storage::OP_READ:
+                return "OP_READ";
                 break;
             default:
-                bIsGUID = false;
+                return "UNKNOWN";
                 break;
         }
-        if (!bIsGUID) {
-            break;
-        }
     }
-
-    if(bIsGUID)
-    {
-        if( idx_parenthesis_close != -1 ) {
-            if( idx_parenthesis_open != -1 ) {
-                if( ( idx_parenthesis_open != 0 ) || ( idx_parenthesis_close != count ) ) {
-                    bIsGUID = false;
-                }
-            } else {
-                bIsGUID = false;
-            }
-        } else if( idx_parenthesis_open != -1 ) {
-            bIsGUID = false;
-        }
-    }
-    return bIsGUID;
-}
-
-DirectoryPath Storage::getOSCurrentDir() {
-    DirectoryPath p;
-    auto ret = getOSCurrentDir(p);
-    A(ret);
-    return p;
-}
-
-bool Storage::getOSCurrentDir( DirectoryPath & p ) {
-    
-    const int BUFSIZE = 1 +
-#ifndef _WIN32
-    PATH_MAX
-#else
-    MAX_PATH
-#endif
-    ;
-    
-    char bufCurDirectory[BUFSIZE] {};
     
 #ifdef _WIN32
+    void string_cast(const wchar_t* pSource, unsigned int codePage, std::string & oCast)
     {
-        DWORD dwRet;
-        TCHAR cArray[BUFSIZE];
-        
-        dwRet = GetCurrentDirectory(BUFSIZE, cArray);
-        
-        if( unlikely(dwRet == 0) )
+        A(pSource != 0);
+        oCast.clear();
+        size_t sourceLength = std::wcslen(pSource);
+        if (likely(sourceLength > 0))
         {
-            LG(ERR,"Storage::getOSCurrentDir : GetCurrentDirectory failed (%d)", GetLastError());
-            return false;
+            int length = ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, NULL, 0, NULL, NULL);
+            if (likely(length != 0))
+            {
+                std::vector<char> buffer(length);
+                ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, &buffer[0], length, NULL, NULL);
+                oCast.assign(buffer.begin(), buffer.end());
+            }
         }
-        else if(unlikely(dwRet > BUFSIZE))
+    }
+#endif
+    
+    bool dirExists(const std::string & path)
+    {
+        //LG(INFO, "dirExists(%s)", (path.c_str() ? path.c_str() : "NULL"));
+        bool bExists = false;
+        
+        struct stat info;
+        bExists = ((stat(path.c_str(), &info) == 0) && (info.st_mode & S_IFDIR));
+        
+        //LG(INFO, "dirExists(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
+        return bExists;
+    }
+    
+    bool fileExists(const std::string & path)
+    {
+        //LG(INFO, "fileExists(%s)", (path.c_str() ? path.c_str() : "NULL"));
+        bool bExists = false;
+        
+        struct stat info;
+        bExists = (stat(path.c_str(), &info) == 0) && !(info.st_mode & S_IFDIR);
+        
+        //LG(INFO, "fileExists(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
+        return bExists;
+    }
+    
+    bool fileCreationDate(const std::string & path, std::string & oDate)
+    {
+        //LG(INFO, "fileCreationDate(%s)", (path.c_str() ? path.c_str() : "NULL"));
+        
+        oDate.clear();
+        
+        bool bExists = false;
+        
+        struct stat info;
+        bExists = (stat(path.c_str(), &info) == 0) && !(info.st_mode & S_IFDIR);
+        if (likely(bExists))
         {
-            LG(ERR,"Storage::getOSCurrentDir : Buffer too small; need %d characters", dwRet);
-            return false;
+            tm * time = gmtime((const time_t*)&(info.st_mtime));
+            FormatDate(time, oDate);
         }
         else
         {
-            wcstombs(bufCurDirectory, cArray, wcslen(cArray) + 1);
+            LG(ERR, "fileCreationDate : file does not exist");
+            oDate.assign("../../.. ..:..:..");
         }
+        
+        //LG(INFO, "fileCreationDate(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
+        return bExists;
     }
     
-#else
-
-    if ( !getcwd(bufCurDirectory, BUFSIZE) )
+    eResult makeDir(const std::string & path)
     {
-        LG(ERR, "Storage::getOSCurrentDir : getcwd error %d", errno);
-        return false;
-    }
+        //LG(INFO, "makeDir(%s)", (path.c_str() ? path.c_str() : "NULL"));
+        eResult res = ILE_SUCCESS;
+        
+#ifdef _WIN32
+        std::wstring swName = std::wstring(path.begin(), path.end());
+        const wchar_t * pwStr = swName.c_str();
+        //LG(INFO, "makeDir : before CreateDirectory");
+        if (!CreateDirectory(pwStr, NULL))
+        {
+            DWORD dwErr = GetLastError();
+            if (unlikely(dwErr != ERROR_ALREADY_EXISTS))
+            {
+                LG(ERR, "makeDir : CreateDirectory error %x", dwErr);
+                res = ILE_ERROR;
+            }
+            else
+            {
+                //LG(INFO, "makeDir : directory already exists");
+            }
+        }
+#else
+        
+        int ret;
+        ret = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+        if (ret != 0)
+        {
+            if( unlikely(errno != EEXIST))
+            {
+                LG(ERR, "makeDir : CreateDirectory error %x", errno);
+                res = ILE_ERROR;
+            }
+            else
+            {
+                //LG(INFO, "makeDir : directory already exists");
+            }
+        }
+        
 #endif
-
-    LG(INFO, "Storage::getOSCurrentDir : current directory %s", bufCurDirectory);
-
-    p = DirectoryPath(bufCurDirectory);
-    return true;
-}
-
+        
+        //LG(INFO, "makeDir(%s) returns %d", (path.c_str() ? path.c_str() : "NULL"), res);
+        return res;
+    }
+    
+    // returns true if dir exists, false otherwise
+    std::vector< std::string > listFilenames( const std::string & path )
+    {
+        //LG(INFO, "listFilenames(%s)", (path.c_str() ? path.c_str() : "NULL"));
+        bool bExists = false;
+        std::vector<std::string> filenames;
+        
+#ifdef _WIN32
+        WIN32_FIND_DATA ffd;
+        TCHAR szDir[MAX_PATH];
+        size_t length_of_arg;
+        HANDLE hFind = INVALID_HANDLE_VALUE;
+        DWORD dwError = 0;
+        
+        // Check that the input path plus 3 is not longer than MAX_PATH.
+        // Three characters are for the "\*" plus NULL appended below.
+        
+        TCHAR tstrTo[MAX_PATH*2];
+        const int nMax = sizeof(tstrTo) / sizeof(tstrTo[0]);
+        int tstrLen;
+#ifdef UNICODE
+        tstrLen = MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), NULL, 0);
+        if ( unlikely(tstrLen >= nMax) ) {
+            LG(ERR, "listFilenames : string %s is tool long", path.c_str());
+            A(0);
+            return filenames;
+        }
+        tstrTo[tstrLen] = 0;
+        MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), tstrTo, tstrLen);
+#else
+        int err = strcpy_s( tstrTo, nMax, path.c_str() );
+        if ( err != 0 )
+        {
+            LG(ERR, "listFilenames : strcpy_s error %d", err);
+            A(0);
+            return filenames;
+        }
+        tstrLen = strlen( tstrTo );
+#endif
+        
+        HRESULT hr=StringCchLength(tstrTo, MAX_PATH, &length_of_arg);
+        
+        if (unlikely(FAILED(hr)))
+        {
+            LG(ERR, "listFilenames : StringCchLength failed (%x)", hr);
+        }
+        else if (unlikely(length_of_arg > (MAX_PATH - 3)))
+        {
+            // can fix this by using unicode version of FindFirstFile and prepending \\?\ to the path
+            LG(ERR, "listFilenames : Directory path is too long");
+        }
+        else
+        {
+            // Prepare string for use with FindFile functions.  First, copy the
+            // string to a buffer, then append '\*' to the directory name.
+            
+            StringCchCopy(szDir, MAX_PATH, tstrTo);
+            StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
+            
+            // Find the first file in the directory.
+            
+            hFind = FindFirstFile(szDir, &ffd);
+            
+            if (unlikely(INVALID_HANDLE_VALUE == hFind))
+            {
+                LG(INFO, "listFilenames : FindFirstFile returned INVALID_HANDLE_VALUE");
+            }
+            else
+            {
+                // List all the files in the directory with some info about them.
+                
+                bExists = true;
+                
+                do
+                {
+                    if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+                    {
+                        std::string cast;
+                        string_cast(ffd.cFileName, CP_ACP, cast);
+                        filenames.push_back(cast);
+                    }
+                } while (FindNextFile(hFind, &ffd) != 0);
+                
+                dwError = GetLastError();
+                if (unlikely(dwError != ERROR_NO_MORE_FILES))
+                {
+                    LG(ERR, "listFilenames : FindNextFile returned %d", dwError);
+                }
+            }
+            FindClose(hFind);
+        }
+        
+#else
+        DIR           *d;
+        struct dirent *dir;
+        d = opendir(path.c_str());
+        if (likely(d))
+        {
+            bExists = true;
+            while ((dir = readdir(d)) != NULL)
+            {
+                if (dir->d_type == DT_REG)
+                {
+                    filenames.push_back(dir->d_name);
+                }
+            }
+            
+            closedir(d);
+        }
+#endif
+        
+        //LG(INFO, "listFilenames(%s) found %d files and returns %s", (path.c_str() ? path.c_str() : "NULL"), filenames.size(), (bExists ? "true" : "false"));
+        return filenames;
+    }
+    
+    bool isGUID(std::string const & str)
+    {
+        bool bIsGUID = true;
+        
+        int count = -1;
+        int idx_parenthesis_open = -1;
+        int idx_parenthesis_close = -1;
+        for(char const &c:str)
+        {
+            count++;
+            
+            switch(c)
+            {
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                case 'A':
+                case 'B':
+                case 'C':
+                case 'D':
+                case 'E':
+                case 'F':
+                    break;
+                case '-':
+                    break;
+                case '{':
+                    if(idx_parenthesis_open != -1)
+                        bIsGUID = false;
+                    else
+                        idx_parenthesis_open = count;
+                    break;
+                case '}':
+                    if(idx_parenthesis_close != -1)
+                        bIsGUID = false;
+                    else
+                        idx_parenthesis_close = count;
+                    break;
+                default:
+                    bIsGUID = false;
+                    break;
+            }
+            if (!bIsGUID) {
+                break;
+            }
+        }
+        
+        if(bIsGUID)
+        {
+            if( idx_parenthesis_close != -1 ) {
+                if( idx_parenthesis_open != -1 ) {
+                    if( ( idx_parenthesis_open != 0 ) || ( idx_parenthesis_close != count ) ) {
+                        bIsGUID = false;
+                    }
+                } else {
+                    bIsGUID = false;
+                }
+            } else if( idx_parenthesis_open != -1 ) {
+                bIsGUID = false;
+            }
+        }
+        return bIsGUID;
+    }
+    
+    DirectoryPath getOSCurrentDir() {
+        DirectoryPath p;
+        auto ret = getOSCurrentDir(p);
+        A(ret);
+        return p;
+    }
+    
+    bool getOSCurrentDir( DirectoryPath & p ) {
+        
+        const int BUFSIZE = 1 +
+#ifndef _WIN32
+        PATH_MAX
+#else
+        MAX_PATH
+#endif
+        ;
+        
+        char bufCurDirectory[BUFSIZE] {};
+        
+#ifdef _WIN32
+        {
+            DWORD dwRet;
+            TCHAR cArray[BUFSIZE];
+            
+            dwRet = GetCurrentDirectory(BUFSIZE, cArray);
+            
+            if( unlikely(dwRet == 0) )
+            {
+                LG(ERR,"getOSCurrentDir : GetCurrentDirectory failed (%d)", GetLastError());
+                return false;
+            }
+            else if(unlikely(dwRet > BUFSIZE))
+            {
+                LG(ERR,"getOSCurrentDir : Buffer too small; need %d characters", dwRet);
+                return false;
+            }
+            else
+            {
+                wcstombs(bufCurDirectory, cArray, wcslen(cArray) + 1);
+            }
+        }
+        
+#else
+        
+        if ( !getcwd(bufCurDirectory, BUFSIZE) )
+        {
+            LG(ERR, "getOSCurrentDir : getcwd error %d", errno);
+            return false;
+        }
+#endif
+        
+        LG(INFO, "getOSCurrentDir : current directory %s", bufCurDirectory);
+        
+        p = DirectoryPath(bufCurDirectory);
+        return true;
+    }
+    
+    
+    } // namespace StorageStuff
+} // namespace imajuscule
 
 bool Storage::setCurrentDir(const char * dir)
 {
-    LG(INFO, "Storage::SetCurrentDirectory(%s) begin", (dir ? dir : "NULL"));
-
+    LG(INFO, "SetCurrentDirectory(%s) begin", (dir ? dir : "NULL"));
+    
 #ifdef _WIN32
     std::string sName(dir);
     std::wstring swName = std::wstring(sName.begin(), sName.end());
     const wchar_t * pwStr = swName.c_str();
     if (unlikely(!SetCurrentDirectory(pwStr))) {
         DWORD dwErr = GetLastError();
-        LG(ERR, "Storage::SetCurrentDirectory : SetCurrentDirectory error : %x", dwErr);
+        LG(ERR, "SetCurrentDirectory : SetCurrentDirectory error : %x", dwErr);
         return false;
     }
 #else
     if (unlikely(0 != chdir(dir))) {
-        LG(ERR, "Storage::SetCurrentDirectory : chdir error : %x", errno);
+        LG(ERR, "SetCurrentDirectory : chdir error : %x", errno);
         return false;
     }
 #endif
-
+    
     if( ! getOSCurrentDir(m_curDir) ) {
-        LG(ERR, "Storage::setCurrentDir : getOSCurrentDir error");
+        LG(ERR, "setCurrentDir : getOSCurrentDir error");
         return false;
     }
     
-    LG(INFO, "Storage::SetCurrentDirectory( %s ) ok", (dir ? dir : "NULL"));
+    LG(INFO, "SetCurrentDirectory( %s ) ok", (dir ? dir : "NULL"));
     return true;
 }
 
