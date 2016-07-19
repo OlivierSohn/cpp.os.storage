@@ -5,6 +5,9 @@
 #include <set>
 #include <initializer_list>
 
+#include "os.log.h"
+#include "os.log.format.h"
+
 namespace imajuscule {
     
 enum eResult
@@ -23,12 +26,14 @@ enum eResult
     public:
         DirectoryPath() {}
         DirectoryPath( const std::string & path );
+        DirectoryPath( const char * path );
         DirectoryPath( std::initializer_list<std::string> vec ) :
         vec(vec) {}
 
-        std::string toString();
+        std::string toString() const;
+        void set(const std::string & path);
         
-        DirectoryPath operator + ( const DirectoryPath & other ) {
+        DirectoryPath operator + ( const DirectoryPath & other ) const {
             DirectoryPath ret = *this;
             ret.vec.insert( ret.vec.end(), other.vec.begin(), other.vec.end() );
             return ret;
@@ -78,7 +83,7 @@ protected:
     // child classes should call this method directly only the first time the header is written.
     // for subsequent header writes they should call instead UpdateFileHeader that will call this method at the appropriate moment
     // and then restore the file position to the position it had before writing the header
-    virtual void DoUpdateFileHeader() = 0;
+    virtual void DoUpdateFileHeader() { A(0); }
 
     eResult doSaveBegin();
 private:
@@ -114,6 +119,7 @@ private:
         bool fileExists(const std::string & path);
         bool fileCreationDate(const std::string & path, std::string & oDate);
         eResult makeDir(const std::string & path);
+        std::vector< std::string > listFilenames( const DirectoryPath & path );
         std::vector< std::string > listFilenames( const std::string & path );
         
         bool isGUID(std::string const & str);

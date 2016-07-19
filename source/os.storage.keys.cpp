@@ -412,11 +412,6 @@ void KeysLoad::EndSubElement()
     }    
 }
 
-void KeysLoad::DoUpdateFileHeader()
-{
-    A(0);
-}
-
 eResult KeysLoad::ReadAllKeys()
 {
     //LG(INFO, "KeysLoad::ReadAllKeys begin");

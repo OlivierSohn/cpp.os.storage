@@ -65,7 +65,6 @@ namespace imajuscule
 		eResult ReadAllKeys();
 
 	protected:
-		virtual void DoUpdateFileHeader();
 
 		virtual void LoadCharForKey(char key, char cVal);
 		virtual void LoadStringForKey(char key, std::string & str);

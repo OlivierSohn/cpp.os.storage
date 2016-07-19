@@ -37,7 +37,7 @@ namespace imajuscule {
         
         auto url = CFBundleCopyResourceURL(b, ref_n, 0, ref_t);
         if(!url) {
-            LG(ERR, "could not find resource in bundle");
+            LG(ERR, "could not find resource %s of type %s in bundle", name, type.c_str());
             return false;
         }
 

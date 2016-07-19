@@ -471,6 +471,9 @@ namespace imajuscule {
     }
     
     // returns true if dir exists, false otherwise
+        std::vector< std::string > listFilenames( const DirectoryPath & path ) {
+            return listFilenames(path.toString());
+        }
     std::vector< std::string > listFilenames( const std::string & path )
     {
         //LG(INFO, "listFilenames(%s)", (path.c_str() ? path.c_str() : "NULL"));
@@ -745,7 +748,14 @@ bool Storage::setCurrentDir(const char * dir)
     return true;
 }
 
-DirectoryPath::DirectoryPath(const std::string & sInput)
+DirectoryPath::DirectoryPath(const std::string & sInput) {
+    set(sInput);
+}
+
+DirectoryPath::DirectoryPath(const char * sInput) {
+    set(std::string(sInput));
+}
+void DirectoryPath::set(const std::string & sInput)
 {
     std::istringstream f(sInput);
     std::string s;
@@ -754,7 +764,7 @@ DirectoryPath::DirectoryPath(const std::string & sInput)
     }
 }
 
-std::string DirectoryPath::toString()
+std::string DirectoryPath::toString() const
 {
     std::string ret;
     for( auto & st : vec )
