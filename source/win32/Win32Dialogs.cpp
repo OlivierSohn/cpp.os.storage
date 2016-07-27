@@ -49,6 +49,7 @@
 #define IDC_WRITEPROPERTIESWITHOUTUSINGHANDLERS 105
 
 namespace imajuscule {
+    using namespace StorageStuff;
 
 /* File Dialog Event Handler *****************************************************************************************************/
 
@@ -329,7 +330,7 @@ bool Open(FileSystemOperation::Kind k, const std::vector<std::string> & extensio
                                         hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
                                         if_A(SUCCEEDED(hr))
                                         {
-                                            Storage::string_cast(pszFilePath, CP_ACP, sPath);
+                                            string_cast(pszFilePath, CP_ACP, sPath);
 
                                             bRet = true;
                                             CoTaskMemFree(pszFilePath);
@@ -425,13 +426,13 @@ bool BasicFileOpen(std::string & sFilePath, std::string & fileName, const std::s
                                     hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
                                     if (SUCCEEDED(hr))
                                     {
-                                        Storage::string_cast(pszFilePath, CP_ACP, sFilePath);
+                                        string_cast(pszFilePath, CP_ACP, sFilePath);
                                         // We are just going to print out the name of the file for sample sake.
                                         PWSTR pszFilePath2 = NULL;
                                         hr = psiResult->GetDisplayName(SIGDN_PARENTRELATIVE, &pszFilePath2);
                                         if (SUCCEEDED(hr))
                                         {
-                                            Storage::string_cast(pszFilePath2, CP_ACP, fileName);
+                                            string_cast(pszFilePath2, CP_ACP, fileName);
 
                                             bRet = true;
                                             CoTaskMemFree(pszFilePath2);
