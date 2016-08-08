@@ -13,21 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\win32">
-      <UniqueIdentifier>{1bbef41b-d6a1-4acb-9b80-d241a0a8f014}</UniqueIdentifier>
+    <Filter Include="Unity">
+      <UniqueIdentifier>{269d6c9d-190d-4e7a-a94a-4adf0dc0f4ef}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\win32\stdafx.cpp">
-      <Filter>Source Files\win32</Filter>
-    </ClCompile>
     <ClCompile Include="source\os.storage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\os.storage.keys.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\win32\Win32Dialogs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\os.file.dialog.cpp">
@@ -40,14 +34,14 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\read.resources.mm" />
+    <ClCompile Include="source\unity.build.cpp">
+      <Filter>Unity</Filter>
+    </ClCompile>
+    <ClCompile Include="source\win32\Win32Dialogs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\win32\stdafx.h">
-      <Filter>Source Files\win32</Filter>
-    </ClInclude>
-    <ClInclude Include="source\win32\targetver.h">
-      <Filter>Source Files\win32</Filter>
-    </ClInclude>
     <ClInclude Include="include\os.storage.h">
       <Filter>Header Files</Filter>
     </ClInclude>

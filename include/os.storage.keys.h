@@ -6,8 +6,8 @@
 #include <set>
 
 /////////////////////// read only keys
-#define KEY_SUBELT_KEY_START              -126 // char
-#define KEY_SUBELT_KEY_END              -127 // char
+const int KEY_SUBELT_KEY_START  = -126; // char
+const int KEY_SUBELT_KEY_END    = -127; // char
 
 namespace imajuscule
 {

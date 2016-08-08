@@ -8,6 +8,7 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
+#if _WIN32
 
 #include "os.storage.h"
 #include "os.file.dialog.h"
@@ -467,3 +468,5 @@ bool BasicFileOpen(std::string & sFilePath, std::string & fileName, const std::s
         return FileSystemOperation::Nature::BLOCKING;
     }
 }
+
+#endif // _WIN32
