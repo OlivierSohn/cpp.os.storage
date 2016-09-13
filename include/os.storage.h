@@ -21,15 +21,42 @@ enum eResult
 };
 
 #define SIZE_READ_BUFFER 2048
+    namespace StorageStuff {
+#ifdef _WIN32
+        void string_cast(const wchar_t* pSource, unsigned int codePage /*= CP_ACP*/, std::string & oString);
+#endif
+        
+        bool dirExists(const std::string & path);
+        bool fileExists(const std::string & path);
+        bool fileCreationDate(const std::string & path, std::string & oDate);
+        eResult makeDir(const std::string & path);
+        
+        bool isGUID(std::string const & str);
+    }
 
+    class Storage;
     class DirectoryPath {
+        friend class Storage;
+        std::vector<std::string> vec;
+        static DirectoryPath referentiablesPath;
+        static DirectoryPath capturePath;
     public:
         DirectoryPath() {}
         DirectoryPath( const std::string & path );
         DirectoryPath( const char * path );
         DirectoryPath( std::initializer_list<std::string> vec ) :
         vec(vec) {}
-
+        
+        static DirectoryPath root();
+        static void setReferentiablesDir(DirectoryPath const &);
+        static bool getReferentiablesDir(DirectoryPath &);
+        static void setCaptureImageDir(DirectoryPath const &);
+        static bool getCaptureImageDir(DirectoryPath &);
+        
+        bool empty() const { return vec.empty(); }
+        bool isFile() const { return StorageStuff::fileExists(toString()); }
+        bool isDir() const { return StorageStuff::dirExists(toString()); }
+        
         std::string toString() const;
         void set(const std::string & path);
         
@@ -41,7 +68,10 @@ enum eResult
         void operator += ( const DirectoryPath & other ) {
             vec.insert( vec.end(), other.vec.begin(), other.vec.end() );
         }
-        std::vector<std::string> vec;
+        DirectoryPath & append(const char * p) {
+            vec.push_back(p);
+            return *this;
+        }
     };
 
 class Storage
@@ -54,16 +84,14 @@ public:
         OP_READ
     };
 
-    static bool setCurrentDir(const char * dir);
-
     eResult Save();
 
     typedef std::string FileName;
-    static DirectoryPath const & curDir();
+    DirectoryPath const & directory() {
+        return m_directoryPath;
+    }
     
 protected:
-    
-    static DirectoryPath m_curDir;
     
     Storage(DirectoryPath const &, FileName const &);
     virtual ~Storage();
@@ -98,7 +126,7 @@ private:
     
     DirectoryPath m_directoryPath;
     FileName m_filename;
-    
+
     static std::set<std::string> g_openedForWrite;
     std::string m_filePath;
     
@@ -109,22 +137,11 @@ private:
     eResult OpenFileForOperation(const std::string & sFilePath, enum FileOperation);
     
 };
-    
     namespace StorageStuff {
-#ifdef _WIN32
-        void string_cast(const wchar_t* pSource, unsigned int codePage /*= CP_ACP*/, std::string & oString);
-#endif
-        
-        bool dirExists(const std::string & path);
-        bool fileExists(const std::string & path);
-        bool fileCreationDate(const std::string & path, std::string & oDate);
-        eResult makeDir(const std::string & path);
         std::vector< std::string > listFilenames( const DirectoryPath & path );
         std::vector< std::string > listFilenames( const std::string & path );
-        
-        bool isGUID(std::string const & str);
+
         const char * FileOperationToString(Storage::FileOperation op);
-        bool getOSCurrentDir( DirectoryPath& );
-        DirectoryPath getOSCurrentDir();
     }
+
 }

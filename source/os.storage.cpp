@@ -21,6 +21,7 @@
 #include <sstream>
 #include <iostream>
 
+#include "platform.h"
 #include "os.storage.h"
 #include "os.log.h"
 #include "os.log.format.h"
@@ -30,24 +31,33 @@
 using namespace imajuscule;
 using namespace StorageStuff;
 
+namespace imajuscule {
+    DirectoryPath DirectoryPath::referentiablesPath;
+    DirectoryPath DirectoryPath::capturePath;
+}
+
 std::set<std::string> Storage::g_openedForWrite;
 
-DirectoryPath Storage::m_curDir = getOSCurrentDir();
-DirectoryPath const & Storage::curDir()
-{
-    return m_curDir;
+void DirectoryPath::setReferentiablesDir(DirectoryPath const & d) {
+    referentiablesPath = d;
+}
+bool DirectoryPath::getReferentiablesDir(DirectoryPath & p) {
+    p = referentiablesPath;
+    return !referentiablesPath.empty();
+}
+
+void DirectoryPath::setCaptureImageDir(DirectoryPath const & d) {
+    capturePath = d;
+}
+bool DirectoryPath::getCaptureImageDir(DirectoryPath & p) {
+    p = capturePath;
+    return !capturePath.empty();
 }
 
 Storage::Storage(DirectoryPath const &d, FileName const &f) :
 m_pFile(NULL),
 m_bufferReadPos(0),
-m_directoryPath(
-#if TARGET_OS_IOS
-                DirectoryPath(".")
-#else
-                m_curDir
-#endif
-                + d),
+m_directoryPath(d),
 m_filename(f)
 {}
 
@@ -340,6 +350,11 @@ int Storage::FlushData()
 }
 
 namespace imajuscule {
+    
+    DirectoryPath DirectoryPath::root() {
+        return Platform::user_path() + "grid3d";
+    }
+    
     namespace StorageStuff {
     const char * FileOperationToString(Storage::FileOperation op)
     {
@@ -470,7 +485,7 @@ namespace imajuscule {
         return res;
     }
     
-    // returns true if dir exists, false otherwise
+        
         std::vector< std::string > listFilenames( const DirectoryPath & path ) {
             return listFilenames(path.toString());
         }
@@ -658,95 +673,8 @@ namespace imajuscule {
         return bIsGUID;
     }
     
-    DirectoryPath getOSCurrentDir() {
-        DirectoryPath p;
-        auto ret = getOSCurrentDir(p);
-        A(ret);
-        return p;
-    }
-    
-    bool getOSCurrentDir( DirectoryPath & p ) {
-        
-        const int BUFSIZE = 1 +
-#ifndef _WIN32
-        PATH_MAX
-#else
-        MAX_PATH
-#endif
-        ;
-        
-        char bufCurDirectory[BUFSIZE] {};
-        
-#ifdef _WIN32
-        {
-            DWORD dwRet;
-            TCHAR cArray[BUFSIZE];
-            
-            dwRet = GetCurrentDirectory(BUFSIZE, cArray);
-            
-            if( unlikely(dwRet == 0) )
-            {
-                LG(ERR,"getOSCurrentDir : GetCurrentDirectory failed (%d)", GetLastError());
-                return false;
-            }
-            else if(unlikely(dwRet > BUFSIZE))
-            {
-                LG(ERR,"getOSCurrentDir : Buffer too small; need %d characters", dwRet);
-                return false;
-            }
-            else
-            {
-                wcstombs(bufCurDirectory, cArray, wcslen(cArray) + 1);
-            }
-        }
-        
-#else
-        
-        if ( !getcwd(bufCurDirectory, BUFSIZE) )
-        {
-            LG(ERR, "getOSCurrentDir : getcwd error %d", errno);
-            return false;
-        }
-#endif
-        
-        LG(INFO, "getOSCurrentDir : current directory %s", bufCurDirectory);
-        
-        p = DirectoryPath(bufCurDirectory);
-        return true;
-    }
-    
-    
     } // namespace StorageStuff
 } // namespace imajuscule
-
-bool Storage::setCurrentDir(const char * dir)
-{
-    LG(INFO, "SetCurrentDirectory(%s) begin", (dir ? dir : "NULL"));
-    
-#ifdef _WIN32
-    std::string sName(dir);
-    std::wstring swName = std::wstring(sName.begin(), sName.end());
-    const wchar_t * pwStr = swName.c_str();
-    if (unlikely(!SetCurrentDirectory(pwStr))) {
-        DWORD dwErr = GetLastError();
-        LG(ERR, "SetCurrentDirectory : SetCurrentDirectory error : %x", dwErr);
-        return false;
-    }
-#else
-    if (unlikely(0 != chdir(dir))) {
-        LG(ERR, "SetCurrentDirectory : chdir error : %x", errno);
-        return false;
-    }
-#endif
-    
-    if( ! getOSCurrentDir(m_curDir) ) {
-        LG(ERR, "setCurrentDir : getOSCurrentDir error");
-        return false;
-    }
-    
-    LG(INFO, "SetCurrentDirectory( %s ) ok", (dir ? dir : "NULL"));
-    return true;
-}
 
 DirectoryPath::DirectoryPath(const std::string & sInput) {
     set(sInput);
@@ -771,6 +699,11 @@ std::string DirectoryPath::toString() const
     {
         ret.append(st);
         ret.append("/");
+    }
+    
+    if(ret.size() > 1) {
+        // remove trailing '/'
+        ret.pop_back();
     }
     
     return ret;
