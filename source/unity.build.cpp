@@ -4,3 +4,6 @@
 #include "os.storage.cpp"
 #include "os.storage.keys.cpp"
 #include "win32/Win32Dialogs.cpp"
+#ifdef WIN32
+#include "Windows.cpp"
+#endif

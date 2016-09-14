@@ -701,7 +701,7 @@ std::string DirectoryPath::toString() const
         ret.append("/");
     }
     
-    if(ret.size() > 1) {
+    if(ret.size() > 1) {
         // remove trailing '/'
         ret.pop_back();
     }
