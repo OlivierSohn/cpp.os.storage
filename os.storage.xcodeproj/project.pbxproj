@@ -15,8 +15,8 @@
 		0951E9531D87B44B00876382 /* iOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0951E9521D87B44B00876382 /* iOS.mm */; };
 		0978356D1D57B13B00E47ED3 /* unity.build.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0978356C1D57B13B00E47ED3 /* unity.build.cpp */; };
 		0978356E1D57B13E00E47ED3 /* unity.build.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0978356C1D57B13B00E47ED3 /* unity.build.cpp */; };
-		0978356F1D57B19A00E47ED3 /* read.resources.mm in Sources */ = {isa = PBXBuildFile; fileRef = 09D1348F1D15B57F001CE54F /* read.resources.mm */; };
-		097835701D57B19B00E47ED3 /* read.resources.mm in Sources */ = {isa = PBXBuildFile; fileRef = 09D1348F1D15B57F001CE54F /* read.resources.mm */; };
+		0978356F1D57B19A00E47ED3 /* read.resources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09D1348F1D15B57F001CE54F /* read.resources.cpp */; };
+		097835701D57B19B00E47ED3 /* read.resources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09D1348F1D15B57F001CE54F /* read.resources.cpp */; };
 		09C2F83519BF17FC00472700 /* os.storage.h in Headers */ = {isa = PBXBuildFile; fileRef = 09C2F83419BF17FC00472700 /* os.storage.h */; };
 		09C6C6CC1A0186F4003ECAB4 /* os.storage.keys.h in Headers */ = {isa = PBXBuildFile; fileRef = 09C6C6CB1A0186F4003ECAB4 /* os.storage.keys.h */; };
 		09D1348E1D15B570001CE54F /* read.resources.h in Headers */ = {isa = PBXBuildFile; fileRef = 09D1348D1D15B570001CE54F /* read.resources.h */; };
@@ -68,7 +68,7 @@
 		09C84A691C271DC4002CF5B7 /* Project.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Release.xcconfig; sourceTree = "<group>"; };
 		09C84A6A1C271DC4002CF5B7 /* Project.Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Shared.xcconfig; sourceTree = "<group>"; };
 		09D1348D1D15B570001CE54F /* read.resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = read.resources.h; path = include/read.resources.h; sourceTree = "<group>"; };
-		09D1348F1D15B57F001CE54F /* read.resources.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = read.resources.mm; path = source/read.resources.mm; sourceTree = "<group>"; };
+		09D1348F1D15B57F001CE54F /* read.resources.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = read.resources.cpp; path = source/read.resources.cpp; sourceTree = "<group>"; };
 		09DBDCB91B07EF8800870E0A /* os.file.dialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.file.dialog.cpp; path = source/os.file.dialog.cpp; sourceTree = "<group>"; };
 		09E632381AEF18C80073D796 /* CocoaDialogs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaDialogs.mm; path = source/cocoa/CocoaDialogs.mm; sourceTree = "<group>"; };
 		09E6323B1AEF19720073D796 /* os.file.dialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.file.dialog.h; path = include/os.file.dialog.h; sourceTree = "<group>"; };
@@ -124,7 +124,7 @@
 				09C2F83219BF17F400472700 /* os.storage.cpp */,
 				09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */,
 				0951E94F1D865C0500876382 /* Posix.mm */,
-				09D1348F1D15B57F001CE54F /* read.resources.mm */,
+				09D1348F1D15B57F001CE54F /* read.resources.cpp */,
 				0978356C1D57B13B00E47ED3 /* unity.build.cpp */,
 			);
 			name = source;
@@ -259,7 +259,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				097835701D57B19B00E47ED3 /* read.resources.mm in Sources */,
+				097835701D57B19B00E47ED3 /* read.resources.cpp in Sources */,
 				09E632391AEF18C80073D796 /* CocoaDialogs.mm in Sources */,
 				0978356D1D57B13B00E47ED3 /* unity.build.cpp in Sources */,
 				0951E9501D865C0500876382 /* Posix.mm in Sources */,
@@ -270,7 +270,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0978356F1D57B19A00E47ED3 /* read.resources.mm in Sources */,
+				0978356F1D57B19A00E47ED3 /* read.resources.cpp in Sources */,
 				0951E9531D87B44B00876382 /* iOS.mm in Sources */,
 				092A2A0B1BC4B6B900CBB8A9 /* iosDialogs.mm in Sources */,
 				0978356E1D57B13E00E47ED3 /* unity.build.cpp in Sources */,
