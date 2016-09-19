@@ -98,7 +98,7 @@ namespace imajuscule {
         return get_file_contents( path, result);
     }
 #else
-    bool readResource(int name, std::string const &type, std::string & result) {
+    bool readResource(const char * name, std::string const &type, std::string & result) {
         A(!"TODO");
         return false;
     }
