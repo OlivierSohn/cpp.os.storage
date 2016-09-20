@@ -34,6 +34,7 @@
     <ClCompile Include="source\os.storage.keys.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="source\read.resources.cpp" />
     <ClCompile Include="source\win32\Win32Dialogs.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -47,11 +48,6 @@
     <ClInclude Include="include\os.storage.keys.h" />
     <ClInclude Include="include\os.storage.allincludes.h" />
     <ClInclude Include="include\read.resources.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\read.resources.mm">
-      <FileType>CppCode</FileType>
-    </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{62244B96-8FB1-4C25-ACAB-21B160E3CE5D}</ProjectGuid>

@@ -33,11 +33,13 @@
     <ClCompile Include="source\file2string.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\read.resources.mm" />
     <ClCompile Include="source\unity.build.cpp">
       <Filter>Unity</Filter>
     </ClCompile>
     <ClCompile Include="source\win32\Win32Dialogs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\read.resources.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
