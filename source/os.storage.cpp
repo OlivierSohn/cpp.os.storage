@@ -276,10 +276,12 @@ void Storage::FlushMyBuffer()
 void Storage::ReadToBuffer()
 {
 #ifdef _WIN32
-    _fread_nolock(m_freadBuffer, 1, SIZE_READ_BUFFER, (FILE*)m_pFile);
+    auto result = _fread_nolock(m_freadBuffer, 1, SIZE_READ_BUFFER, (FILE*)m_pFile);
 #else
-    fread(m_freadBuffer, 1, SIZE_READ_BUFFER, (FILE*)m_pFile);
+    auto result = fread(m_freadBuffer, 1, SIZE_READ_BUFFER, (FILE*)m_pFile);
 #endif
+  // we don't check the result and it's okay
+  //if (result != SIZE_READ_BUFFER) {fputs ("Reading error",stderr); exit (3);}
 }
 
 void Storage::ReadData(void * p, size_t size, size_t count)
