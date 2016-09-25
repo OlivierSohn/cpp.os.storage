@@ -15,9 +15,8 @@
 
 #endif
 
-namespace imajuscule {
-
 #if _WIN32
+namespace imajuscule {
     std::wstring s2ws(const std::string& s)
     {
         int len;
@@ -62,7 +61,9 @@ namespace imajuscule {
         }
         return false;
     }
+} // namespace imajuscule
 #elif __APPLE__
+namespace imajuscule {
     bool readResource(const char * name, std::string const &type, std::string & result) {
         if(!name) {
             LG(ERR, "name of resource is null");
@@ -97,11 +98,8 @@ namespace imajuscule {
         
         return get_file_contents( path, result);
     }
+} // namespace imajuscule
 #else
-    bool readResource(const char * name, std::string const &type, std::string & result) {
-        A(!"TODO");
-        return false;
-    }
+# include "generated/read.resources.cpp"
 #endif
 
-} // namespace imajuscule
