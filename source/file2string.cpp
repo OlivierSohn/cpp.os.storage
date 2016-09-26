@@ -18,7 +18,7 @@ namespace imajuscule {
             return false;
         }
         in.seekg(0, std::ios::end);
-        str.resize(in.tellg());
+        str.resize(static_cast<size_t>(in.tellg()));
         in.seekg(0, std::ios::beg);
         in.read(&str[0], str.size());
         in.close();
