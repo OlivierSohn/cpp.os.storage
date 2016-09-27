@@ -634,6 +634,12 @@ namespace imajuscule {
                 case 'D':
                 case 'E':
                 case 'F':
+                case 'a':
+                case 'b':
+                case 'c':
+                case 'd':
+                case 'e':
+                case 'f':
                     break;
                 case '-':
                     break;
