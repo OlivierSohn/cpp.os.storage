@@ -43,7 +43,7 @@ namespace imajuscule {
                 }
             }
             return true;
-        }
+        }        
     }
 
     FileSystemOperation::Nature
@@ -54,10 +54,18 @@ namespace imajuscule {
                          std::function<void(void)> fEnd)
     {
         std::thread thread([=](){
-            const char * cmd = "python -c \"import tkFilesDialog; print 'begin_results'; print tkFileDialog.askdirectory()\" 2>&1";
+            std::string cmd("python -c \"import tkFileDialog; print 'begin_results'; print ");
+            if(k == FileSystemOperation::Kind::OP_DIR) {
+                cmd += "tkFileDialog.askdirectory()\" ";                
+            } else {
+                cmd += "'\\n'.join(tkFileDialog.askopenfilenames())\" ";
+            }
+            cmd += "2>&1";
+
+            bool res;
             std::string result;
-            if( !exec(cmd, result) ) {
-                f(OperationResult::CANCELED, std::string());
+            if( !exec( cmd.c_str(), result ) ) {
+                f(OperationResult::CANCELED, result);
             } else {
                 auto lines = split_in_lines(result);
                 lines.erase(std::remove(lines.begin(), lines.end(), ""), lines.end());
@@ -80,6 +88,7 @@ namespace imajuscule {
                     f(OperationResult::CANCELED, result);
                 }
             }
+            
             fEnd();
         });
         
