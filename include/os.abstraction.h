@@ -29,4 +29,25 @@ namespace imajuscule
     private:
         static OSAbstraction * m_registered;
     };
+    
+    class TestOSAbstraction : public OSAbstraction {
+    public:
+        TestOSAbstraction() : OSAbstraction() {}
+        
+        void PauseInteractions(bool b) override {
+            interaction_paused = b;
+        }
+        
+        void * getNativeWindowHandle() override { return 0; }
+        
+        bool getCursorPos(int &, int &) const override {
+            return false;
+        }
+        
+        bool getDirectionBits(int &) override {
+            return false;
+        }
+    private:
+        bool interaction_paused = false;
+    };
 }
