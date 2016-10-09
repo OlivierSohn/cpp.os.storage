@@ -25,7 +25,7 @@ namespace imajuscule
         };
         FileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, const std::vector<std::string> & extensions);
         FileSystemOperation(const std::string & title, std::function<void(OperationResult, const std::string &)> f, Kind k);
-        virtual ~FileSystemOperation();
+        virtual ~FileSystemOperation() {}
         
         enum Nature
         {

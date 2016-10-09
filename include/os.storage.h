@@ -30,6 +30,8 @@ enum eResult
         bool fileExists(const std::string & path);
         bool fileCreationDate(const std::string & path, std::string & oDate);
         eResult makeDir(const std::string & path);
+        eResult removeDir(const std::string & path);
+        eResult removeFile(const std::string & path);
         
         bool isGUID(std::string const & str);
     }

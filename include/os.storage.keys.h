@@ -15,7 +15,6 @@ namespace imajuscule
 	{
 	public:
 		KeysPersist(DirectoryPath const &, FileName const &);
-		virtual ~KeysPersist();
 
 		int32_t WriteKeyData(char key, bool bValue);
 		int32_t WriteKeyData(char key, int32_t iValue);
@@ -60,7 +59,6 @@ namespace imajuscule
 	{
 	public:
 		KeysLoad(DirectoryPath, FileName, bool bExhaustive = true);
-		~KeysLoad();
 
 		eResult ReadAllKeys();
 

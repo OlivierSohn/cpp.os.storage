@@ -16,15 +16,6 @@ OSAbstraction * OSAbstraction::edit()
     return m_registered;
 }
 
-OSAbstraction::OSAbstraction()
-{
-    
-}
-OSAbstraction::~OSAbstraction()
-{
-    
-}
-
 void OSAbstraction::registerAbstraction(OSAbstraction * a)
 {
     A(!m_registered);

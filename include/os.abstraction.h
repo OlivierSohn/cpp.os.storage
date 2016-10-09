@@ -5,9 +5,7 @@ namespace imajuscule
     class OSAbstraction
     {
     protected:
-        OSAbstraction();
-        
-        virtual ~OSAbstraction();
+        virtual ~OSAbstraction() {}
 
     public:
         static const OSAbstraction * get();

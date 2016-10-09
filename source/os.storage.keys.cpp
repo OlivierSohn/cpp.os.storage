@@ -38,10 +38,6 @@ m_countLevelZeroKeys(0)
     m_curSubElt = m_subElements.begin();
 }
 
-KeysPersist::~KeysPersist()
-{
-}
-
 void KeysPersist::StartSubElement(char key)
 {
     WriteKey(key, false);
@@ -351,10 +347,6 @@ m_controlSizeAfterIt(0)
 , m_bExhaustive(bExhaustive)
 {
 
-}
-
-KeysLoad::~KeysLoad()
-{
 }
 
 

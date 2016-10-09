@@ -68,11 +68,6 @@ auto FileSystemOperation::go(const std::string &title, std::function<void (Opera
     });
 }
 
-FileSystemOperation::~FileSystemOperation()
-{
-    
-}
-
 auto FileSystemOperation::getNature () const -> Nature
 {
     return mNature;

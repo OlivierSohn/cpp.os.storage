@@ -442,6 +442,23 @@ namespace imajuscule {
         return bExists;
     }
     
+        eResult removeDir(const std::string & path)
+        {
+            if(rmdir(path.c_str())) {
+                LG(ERR, "rmdir error %d", errno);
+                return ILE_ERROR;
+            }
+            return ILE_SUCCESS;
+        }
+        eResult removeFile(const std::string & path)
+        {
+            if(unlink(path.c_str())) {
+                LG(ERR, "unlink error %d", errno);
+                return ILE_ERROR;
+            }
+            return ILE_SUCCESS;
+        }
+        
     eResult makeDir(const std::string & path)
     {
         //LG(INFO, "makeDir(%s)", (path.c_str() ? path.c_str() : "NULL"));
