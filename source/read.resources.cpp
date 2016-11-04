@@ -15,6 +15,8 @@
 
 #endif
 
+#include "read.resources.h"
+
 #if _WIN32
 namespace imajuscule {
     std::wstring s2ws(const std::string& s)
@@ -43,27 +45,40 @@ namespace imajuscule {
         
         return message;
     }
-    bool readResource(int name, std::string const &type, std::string & result) {
+    
+    bool findResource(int name, std::string const &type, resource & res) {
         
         auto wtype = s2ws(type);
-        HRSRC hRes = FindResource(0, MAKEINTRESOURCE(name), wtype.c_str());
-        if(NULL != hRes)
-        {
-            HGLOBAL hData = LoadResource(0, hRes);
-            if(NULL != hData)
-            {
-                DWORD dataSize = SizeofResource(0, hRes);
-                char* data = (char*)LockResource(hData);
-                result.assign(data, dataSize);
-                return true;
-            }
+        res.res = FindResource(0, MAKEINTRESOURCE(name), wtype.c_str());
+        if(NULL == res.res) {
+            return false;
         }
-        return false;
+        res.handle = LoadResource(0, res.res);
+        if(NULL == res.handle) {
+            return false;
+        }
+        return true;
+    }
+    
+    bool getResource(resource const & res, std::string & result) {
+        DWORD dataSize = SizeofResource(0, res.res);
+        char* data = (char*)LockResource(res.hamdle);
+        result.assign(data, dataSize);
+        return true;
+    }
+    
+    bool readResource(int name, std::string const &type, std::string & result) {
+        resource res;
+        if(!findResource(name, type, res)) {
+            return false;
+        }
+        return getResource(res, result);
     }
 } // namespace imajuscule
 #elif __APPLE__
 namespace imajuscule {
-    bool readResource(const char * name, std::string const &type, std::string & result) {
+    
+    bool findResource(const char * name, std::string const &type, resource & path_) {
         if(!name) {
             LG(ERR, "name of resource is null");
             return false;
@@ -94,9 +109,27 @@ namespace imajuscule {
         
         // Convert the string reference into a C string
         const char *path = CFStringGetCStringPtr(imagePath, encodingMethod);
+        if(!path) {
+            LG(ERR, "char * is null");
+            return false;
+        }
         
-        return get_file_contents( path, result);
+        path_ = std::string(path);
+        return true;
     }
+    
+    bool getResource(resource const & res, std::string &result) {
+        return get_file_contents( res, result);
+    }
+    
+    bool readResource(const char * name, std::string const &type, std::string & result) {
+        resource res;
+        if(!findResource(name, type, res)) {
+            return false;
+        }
+        return getResource(res, result);
+    }
+    
 } // namespace imajuscule
 #else
 # include "generated/read.resources.cpp"
