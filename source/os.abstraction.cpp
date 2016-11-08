@@ -1,9 +1,9 @@
-#include <cstddef> // NULL
+#include <cstddef> // nullptr
 #include "os.abstraction.h"
 #include "os.log.h"
 
 using namespace imajuscule;
-OSAbstraction * OSAbstraction::m_registered = NULL;
+OSAbstraction * OSAbstraction::m_registered = nullptr;
 
 const OSAbstraction * OSAbstraction::get()
 {
@@ -24,5 +24,5 @@ void OSAbstraction::registerAbstraction(OSAbstraction * a)
 void OSAbstraction::unregisterAbstraction(OSAbstraction * a)
 {
     A(m_registered == a);
-    m_registered = NULL;
+    m_registered = nullptr;
 }

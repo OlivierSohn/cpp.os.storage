@@ -342,7 +342,7 @@ int32_t KeysPersist::WriteKeyData(char key, float * bValueArray, size_t nElems)
 KeysLoad::KeysLoad(DirectoryPath d, FileName f,bool bExhaustive) :
 Storage(d, f),
 m_iCurReadSubElementLevel(-1),
-m_firstLevelSubElementDataIt(NULL),
+m_firstLevelSubElementDataIt(nullptr),
 m_controlSizeAfterIt(0)
 , m_bExhaustive(bExhaustive)
 {
@@ -400,7 +400,7 @@ void KeysLoad::EndSubElement()
     {
         A(m_controlSizeAfterIt == 0);
         m_firstLevelSubElement.clear();
-        m_firstLevelSubElementDataIt = NULL;
+        m_firstLevelSubElementDataIt = nullptr;
     }    
 }
 
@@ -708,7 +708,7 @@ void KeysLoad::LoadBoolForKey(char key, bool bVal){
 void KeysLoad::LoadStringForKey(char key, std::string & str){
     if(m_bExhaustive)
     {
-        LG(ERR, "KeysLoad::LoadStringForKey(%d, %s) should not be called", key, str.c_str() ? str.c_str() : "NULL");
+        LG(ERR, "KeysLoad::LoadStringForKey(%d, %s) should not be called", key, str.c_str() ? str.c_str() : "nullptr");
         A(0);
     }
 }

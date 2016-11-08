@@ -37,7 +37,7 @@ namespace imajuscule {
         
         LPSTR messageBuffer = nullptr;
         size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                                     NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+                                     nullptr, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, nullptr);
         
         std::string message(messageBuffer, size);
         
@@ -50,11 +50,11 @@ namespace imajuscule {
         
         auto wtype = s2ws(type);
         res.res = FindResource(0, MAKEINTRESOURCE(name), wtype.c_str());
-        if(NULL == res.res) {
+        if(nullptr == res.res) {
             return false;
         }
         res.handle = LoadResource(0, res.res);
-        if(NULL == res.handle) {
+        if(nullptr == res.handle) {
             return false;
         }
         return true;

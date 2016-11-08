@@ -17,7 +17,7 @@ namespace imajuscule {
 #else
         const char *path;
 
-        if ((path = getenv("HOME")) == NULL) {
+        if ((path = getenv("HOME")) == nullptr) {
             path = getpwuid(getuid())->pw_dir;
         }
 #endif

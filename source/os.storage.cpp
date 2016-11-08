@@ -55,7 +55,7 @@ bool DirectoryPath::getCaptureImageDir(DirectoryPath & p) {
 }
 
 Storage::Storage(DirectoryPath const &d, FileName const &f) :
-m_pFile(NULL),
+m_pFile(nullptr),
 m_bufferReadPos(0),
 m_directoryPath(d),
 m_filename(f)
@@ -382,11 +382,11 @@ namespace imajuscule {
         size_t sourceLength = std::wcslen(pSource);
         if (likely(sourceLength > 0))
         {
-            int length = ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, NULL, 0, NULL, NULL);
+            int length = ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, nullptr, 0, nullptr, nullptr);
             if (likely(length != 0))
             {
                 std::vector<char> buffer(length);
-                ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, &buffer[0], length, NULL, NULL);
+                ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, &buffer[0], length, nullptr, nullptr);
                 oCast.assign(buffer.begin(), buffer.end());
             }
         }
@@ -395,31 +395,31 @@ namespace imajuscule {
     
     bool dirExists(const std::string & path)
     {
-        //LG(INFO, "dirExists(%s)", (path.c_str() ? path.c_str() : "NULL"));
+        //LG(INFO, "dirExists(%s)", (path.c_str() ? path.c_str() : "nullptr"));
         bool bExists = false;
         
         struct stat info;
         bExists = ((stat(path.c_str(), &info) == 0) && (info.st_mode & S_IFDIR));
         
-        //LG(INFO, "dirExists(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
+        //LG(INFO, "dirExists(%s) returns %s", (path.c_str() ? path.c_str() : "nullptr"), (bExists ? "true" : "false"));
         return bExists;
     }
     
     bool fileExists(const std::string & path)
     {
-        //LG(INFO, "fileExists(%s)", (path.c_str() ? path.c_str() : "NULL"));
+        //LG(INFO, "fileExists(%s)", (path.c_str() ? path.c_str() : "nullptr"));
         bool bExists = false;
         
         struct stat info;
         bExists = (stat(path.c_str(), &info) == 0) && !(info.st_mode & S_IFDIR);
         
-        //LG(INFO, "fileExists(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
+        //LG(INFO, "fileExists(%s) returns %s", (path.c_str() ? path.c_str() : "nullptr"), (bExists ? "true" : "false"));
         return bExists;
     }
     
     bool fileCreationDate(const std::string & path, std::string & oDate)
     {
-        //LG(INFO, "fileCreationDate(%s)", (path.c_str() ? path.c_str() : "NULL"));
+        //LG(INFO, "fileCreationDate(%s)", (path.c_str() ? path.c_str() : "nullptr"));
         
         oDate.clear();
         
@@ -438,7 +438,7 @@ namespace imajuscule {
             oDate.assign("../../.. ..:..:..");
         }
         
-        //LG(INFO, "fileCreationDate(%s) returns %s", (path.c_str() ? path.c_str() : "NULL"), (bExists ? "true" : "false"));
+        //LG(INFO, "fileCreationDate(%s) returns %s", (path.c_str() ? path.c_str() : "nullptr"), (bExists ? "true" : "false"));
         return bExists;
     }
     
@@ -461,14 +461,14 @@ namespace imajuscule {
         
     eResult makeDir(const std::string & path)
     {
-        //LG(INFO, "makeDir(%s)", (path.c_str() ? path.c_str() : "NULL"));
+        //LG(INFO, "makeDir(%s)", (path.c_str() ? path.c_str() : "nullptr"));
         eResult res = ILE_SUCCESS;
         
 #ifdef _WIN32
         std::wstring swName = std::wstring(path.begin(), path.end());
         const wchar_t * pwStr = swName.c_str();
         //LG(INFO, "makeDir : before CreateDirectory");
-        if (!CreateDirectory(pwStr, NULL))
+        if (!CreateDirectory(pwStr, nullptr))
         {
             DWORD dwErr = GetLastError();
             if (unlikely(dwErr != ERROR_ALREADY_EXISTS))
@@ -500,7 +500,7 @@ namespace imajuscule {
         
 #endif
         
-        //LG(INFO, "makeDir(%s) returns %d", (path.c_str() ? path.c_str() : "NULL"), res);
+        //LG(INFO, "makeDir(%s) returns %d", (path.c_str() ? path.c_str() : "nullptr"), res);
         return res;
     }
     
@@ -510,7 +510,7 @@ namespace imajuscule {
         }
     std::vector< std::string > listFilenames( const std::string & path )
     {
-        //LG(INFO, "listFilenames(%s)", (path.c_str() ? path.c_str() : "NULL"));
+        //LG(INFO, "listFilenames(%s)", (path.c_str() ? path.c_str() : "nullptr"));
         bool bExists = false;
         std::vector<std::string> filenames;
         
@@ -522,13 +522,13 @@ namespace imajuscule {
         DWORD dwError = 0;
         
         // Check that the input path plus 3 is not longer than MAX_PATH.
-        // Three characters are for the "\*" plus NULL appended below.
+        // Three characters are for the "\*" plus nullptr appended below.
         
         TCHAR tstrTo[MAX_PATH*2];
         const int nMax = sizeof(tstrTo) / sizeof(tstrTo[0]);
         int tstrLen;
 #ifdef UNICODE
-        tstrLen = MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), NULL, 0);
+        tstrLen = MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), nullptr, 0);
         if ( unlikely(tstrLen >= nMax) ) {
             LG(ERR, "listFilenames : string %s is tool long", path.c_str());
             A(0);
@@ -606,7 +606,7 @@ namespace imajuscule {
         if (likely(d))
         {
             bExists = true;
-            while ((dir = readdir(d)) != NULL)
+            while ((dir = readdir(d)) != nullptr)
             {
                 if (dir->d_type == DT_REG)
                 {
@@ -618,7 +618,7 @@ namespace imajuscule {
         }
 #endif
         
-        //LG(INFO, "listFilenames(%s) found %d files and returns %s", (path.c_str() ? path.c_str() : "NULL"), filenames.size(), (bExists ? "true" : "false"));
+        //LG(INFO, "listFilenames(%s) found %d files and returns %s", (path.c_str() ? path.c_str() : "nullptr"), filenames.size(), (bExists ? "true" : "false"));
         return filenames;
     }
     
