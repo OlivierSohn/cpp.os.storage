@@ -69,15 +69,15 @@ Storage::~Storage()
 
 void Storage::CloseFile()
 {
-    if (m_pFile)
+    if (m_pFile) {
         fclose((FILE*)m_pFile);
+    }
     m_bufferReadPos = 0;
 }
 
 void Storage::Finalize()
 {
     FlushData();
-    
     CloseFile();
 }
 
@@ -121,9 +121,7 @@ eResult Storage::OpenForRead()
     }
     
     filePath.append(m_filename);
-    std::string search("//");
-    std::string replace("/");
-    ReplaceStringInPlace(filePath, search, replace );
+    ReplaceStringInPlace(filePath, "//", "/" );
     eResult ret = OpenFileForOperation(filePath, OP_READ);
     if ( unlikely(ret != ILE_SUCCESS))
     {
@@ -135,36 +133,34 @@ eResult Storage::OpenForRead()
 eResult Storage::OpenForWrite()
 {
     eResult ret = ILE_SUCCESS;
+    for( auto const & directory_name : m_directoryPath.vec)
     {
-        for( auto const & directory_name : m_directoryPath.vec)
+        m_filePath.append( directory_name );
+        m_filePath.append("/");
+        if (!dirExists(m_filePath))
         {
-            m_filePath.append( directory_name );
-            m_filePath.append("/");
-            if (!dirExists(m_filePath))
+            ret = makeDir(m_filePath);
+            if ( unlikely(ILE_SUCCESS != ret))
             {
-                ret = makeDir(m_filePath);
-                if ( unlikely(ILE_SUCCESS != ret))
-                {
-                    LG(ERR, "Storage::OpenForWrite : Storage::makeDir(%s) error : %d", m_filePath.c_str(), ret);
-                    return ret;
-                }
+                LG(ERR, "Storage::OpenForWrite : Storage::makeDir(%s) error : %d", m_filePath.c_str(), ret);
+                return ret;
             }
         }
-        
-        m_filePath.append(m_filename);
-        
-        auto it2 = g_openedForWrite.find(m_filePath);
-        if(it2 != g_openedForWrite.end())
-        {
-            return ILE_RECURSIVITY;
-        }
-        g_openedForWrite.insert(m_filePath);
-        
-        ret = OpenFileForOperation(m_filePath, OP_WRITE);
-        if ( unlikely(ret != ILE_SUCCESS))
-        {
-            LG(ERR, "Storage::OpenForWrite : OpenFileForOperation returned %d", ret);
-        }
+    }
+    
+    m_filePath.append(m_filename);
+    
+    auto it2 = g_openedForWrite.find(m_filePath);
+    if(it2 != g_openedForWrite.end())
+    {
+        return ILE_RECURSIVITY;
+    }
+    g_openedForWrite.insert(m_filePath);
+    
+    ret = OpenFileForOperation(m_filePath, OP_WRITE);
+    if ( unlikely(ret != ILE_SUCCESS))
+    {
+        LG(ERR, "Storage::OpenForWrite : OpenFileForOperation returned %d", ret);
     }
     
     return ret;
@@ -177,8 +173,9 @@ eResult Storage::Save()
     eResult ret = doSaveBegin();
     if (ret != ILE_SUCCESS)
     {
-        if( unlikely(ret != ILE_RECURSIVITY))
+        if( unlikely(ret != ILE_RECURSIVITY)) {
             LG(ERR, "Storage::Save : doSaveBegin returned %d", ret);
+        }
         return ret;
     }
     
