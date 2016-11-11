@@ -406,22 +406,18 @@ void KeysLoad::EndSubElement()
 
 eResult KeysLoad::ReadAllKeys()
 {
-    //LG(INFO, "KeysLoad::ReadAllKeys begin");
-    
     eResult ret = OpenForRead();
     if ( unlikely(ret != ILE_SUCCESS))
     {
         LG(ERR, "PathSuiteLoad::Load : OpenForRead returned %d", ret);
-        goto end;
+        return ret;
     }
     
     ReadAllKeysInternal();
     
     onLoadFinished();
     
-end:
-    //LG(INFO, "KeysLoad::ReadAllKeys end");
-    return ret;
+    return ILE_SUCCESS;
 }
 
 void KeysLoad::ReadAllKeysInternal()
