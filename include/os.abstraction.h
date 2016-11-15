@@ -24,6 +24,9 @@ namespace imajuscule
         virtual bool getDirectionBits( int & ) = 0;
         
         virtual bool hasKeyboard() const {return true;}
+        virtual const char * getClipboard() const { return nullptr; }
+        virtual void setClipboard(const char *) {}
+        
     private:
         static OSAbstraction * m_registered;
     };
