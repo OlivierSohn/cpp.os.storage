@@ -658,16 +658,20 @@ namespace imajuscule {
                 case '-':
                     break;
                 case '{':
-                    if(idx_parenthesis_open != -1)
+                    if(idx_parenthesis_open != -1) {
                         bIsGUID = false;
-                    else
+                    }
+                    else {
                         idx_parenthesis_open = count;
+                    }
                     break;
                 case '}':
-                    if(idx_parenthesis_close != -1)
+                    if(idx_parenthesis_close != -1) {
                         bIsGUID = false;
-                    else
+                    }
+                    else {
                         idx_parenthesis_close = count;
+                    }
                     break;
                 default:
                     bIsGUID = false;
@@ -678,8 +682,7 @@ namespace imajuscule {
             }
         }
         
-        if(bIsGUID)
-        {
+        if(bIsGUID) {
             if( idx_parenthesis_close != -1 ) {
                 if( idx_parenthesis_open != -1 ) {
                     if( ( idx_parenthesis_open != 0 ) || ( idx_parenthesis_close != count ) ) {
