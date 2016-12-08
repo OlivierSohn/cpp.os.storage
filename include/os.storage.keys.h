@@ -83,6 +83,8 @@ namespace imajuscule
 
 		virtual void onLoadFinished() {};
 	private:
+        bool m_bExhaustive : 1;
+        
 		std::string m_tmpString;
 		std::vector<double> m_tmpDoubles;
 		std::vector<float> m_tmpFloats;
@@ -94,8 +96,6 @@ namespace imajuscule
 		std::vector<char> m_firstLevelSubElement;
 		char * m_firstLevelSubElementDataIt;
 		long m_controlSizeAfterIt;
-
-		bool m_bExhaustive;
 
 		int32_t ReadKeysCount();
 		char ReadNextKey();
