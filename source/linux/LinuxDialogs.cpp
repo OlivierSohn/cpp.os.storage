@@ -1,14 +1,3 @@
-#include <cstdio>
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <vector>
-#include <thread>
-#include <algorithm>
-
-#include "os.storage.h"
-#include "os.file.dialog.h"
 
 namespace imajuscule {
     using namespace StorageStuff;

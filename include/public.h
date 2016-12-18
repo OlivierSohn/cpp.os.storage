@@ -1,6 +1,5 @@
 #pragma once
 
-// stl
 #include <functional>
 #include <initializer_list>
 #include <list>
@@ -11,7 +10,6 @@
 
 #include "../../os.log/include/public.h"
 
-// this module
 #include "file2string.h"
 #include "os.abstraction.h"
 #include "os.storage.h"

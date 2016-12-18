@@ -20,6 +20,10 @@
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
+#if __linux__
+# include <thread>
+# include <memory>
+#endif
 #include <sys/stat.h>
 
 #include "platform.h"
