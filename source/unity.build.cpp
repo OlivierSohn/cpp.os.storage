@@ -1,13 +1,14 @@
+#include "private.h"
+
 #if _WIN32
 # include "Windows.cpp"
 #elif __linux__
 # include "Posix.cpp"
 # include "linux/LinuxDialogs.cpp"
+#elif __APPLE__
 #endif
 
-#ifndef __APPLE__
-# include  "read.resources.cpp"
-#endif
+#include "read.resources.cpp"
 
 #include "file2string.cpp"
 #include "os.abstraction.cpp"

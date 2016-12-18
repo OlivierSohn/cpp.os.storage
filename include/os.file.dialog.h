@@ -1,11 +1,4 @@
 
-#pragma once
-
-#include <string>
-#include <vector>
-#include <functional>
-#include "os.storage.h"
-
 enum OperationResult
 {
     SUCCESS,

@@ -1,11 +1,4 @@
 
-#include <fstream>
-#include <string>
-#include <cerrno>
-
-#include "os.log.h"
-
-#include "file2string.h"
 
 namespace imajuscule {
     

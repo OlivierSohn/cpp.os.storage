@@ -1,6 +1,3 @@
-#include "os.storage.keys.h"
-#include "os.log.h"
-#include <cstring> // memcpy
 
 // data types
 

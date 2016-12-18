@@ -1,18 +1,5 @@
-//
-//  LLVPlayerCocoaDialogs.mm
-//  LLVPlayer
-//
-//  Created by Olivier on 09/08/2014.
-//
-//
 
 // for ios, see https://developer.apple.com/library/ios/documentation/FileManagement/Conceptual/DocumentPickerProgrammingGuide/AccessingDocuments/AccessingDocuments.html#//apple_ref/doc/uid/TP40014451-CH2-SW4
-
-#include <string>
-#include <vector>
-#include <functional>
-
-#include "os.file.dialog.h"
 
 namespace imajuscule {
 

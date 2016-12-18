@@ -1,9 +1,3 @@
-#pragma once
-#include "os.storage.h"
-#include "os.log.h"
-#include <stdint.h>
-#include <list>
-#include <set>
 
 /////////////////////// read only keys
 const int KEY_SUBELT_KEY_START  = -126; // char

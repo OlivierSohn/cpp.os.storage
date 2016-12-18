@@ -1,32 +1,3 @@
-#ifdef __APPLE__
-#include "TargetConditionals.h"
-#endif
-
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <tchar.h> 
-#include <strsafe.h>
-#else
-#include <dirent.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <cerrno>
-#endif
-
-#include <ctime>
-#include <sys/stat.h>
-#include <stdio.h>
-#include <cstring> // memcpy
-#include <sstream>
-#include <iostream>
-
-#include "platform.h"
-#include "os.storage.h"
-#include "os.log.h"
-#include "os.log.format.h"
-#include "os.file.dialog.h"
-
 
 using namespace imajuscule;
 using namespace StorageStuff;

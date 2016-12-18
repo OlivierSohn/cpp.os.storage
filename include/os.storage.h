@@ -1,12 +1,3 @@
-#pragma once
-
-#include <string>
-#include <vector>
-#include <set>
-#include <initializer_list>
-
-#include "os.log.h"
-#include "os.log.format.h"
 
 namespace imajuscule {
     

@@ -1,20 +1,4 @@
-//
-//  LLVPlayerCocoaDialogs.mm
-//  LLVPlayer
-//
-//  Created by Olivier on 09/08/2014.
-//
-//
 
-#include <stdio.h>
-
-#import <Foundation/Foundation.h>
-#import <Foundation/NSUrl.h>
-#import <AppKit/NSOpenPanel.h>
-#include <string>
-#include <functional>
-#include "os.file.dialog.h"
-#include "os.abstraction.h"
 
 namespace imajuscule {
 
