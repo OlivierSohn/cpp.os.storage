@@ -1,7 +1,7 @@
 
 /////////////////////// read only keys
-const int KEY_SUBELT_KEY_START  = -126; // char
-const int KEY_SUBELT_KEY_END    = -127; // char
+constexpr int KEY_SUBELT_KEY_START  = -126; // char
+constexpr int KEY_SUBELT_KEY_END    = -127; // char
 
 namespace imajuscule
 {
