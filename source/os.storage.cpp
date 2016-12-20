@@ -479,7 +479,6 @@ namespace imajuscule {
     std::vector< std::string > listFilenames( const std::string & path )
     {
         //LG(INFO, "listFilenames(%s)", (path.c_str() ? path.c_str() : "nullptr"));
-        bool bExists = false;
         std::vector<std::string> filenames;
         
 #ifdef _WIN32
@@ -546,8 +545,6 @@ namespace imajuscule {
             {
                 // List all the files in the directory with some info about them.
                 
-                bExists = true;
-                
                 do
                 {
                     if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
@@ -573,7 +570,6 @@ namespace imajuscule {
         d = opendir(path.c_str());
         if (likely(d))
         {
-            bExists = true;
             while ((dir = readdir(d)) != nullptr)
             {
                 if (dir->d_type == DT_REG)
