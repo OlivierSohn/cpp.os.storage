@@ -86,7 +86,7 @@ namespace imajuscule
 		std::vector<int32_t> m_tmpInts32;
 		std::vector<std::string> m_tmpStrings;
 
-		int m_iCurReadSubElementLevel;// -1 : normal (file) / n : nth level subelement 
+		int16_t m_iCurReadSubElementLevel;// -1 : normal (file) / n : nth level subelement
 		std::vector<char> m_firstLevelSubElement;
 		char * m_firstLevelSubElementDataIt;
 		long m_controlSizeAfterIt;
