@@ -11,7 +11,13 @@ namespace imajuscule {
             return false;
         }
         in.seekg(0, std::ios::end);
-        str.resize(static_cast<size_t>(in.tellg()));
+        int res = in.tellg();
+        if(-1 == res) {
+            LG(ERR, "tellg error");
+            return false;
+        }
+        A(res >= 0);
+        str.resize(safe_cast<size_t>(res));
         in.seekg(0, std::ios::beg);
         in.read(&str[0], str.size());
         in.close();

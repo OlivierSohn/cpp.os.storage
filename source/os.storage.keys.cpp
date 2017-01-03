@@ -67,7 +67,7 @@ void KeysPersist::EndSubElement()
 
     m_curSubElt++;
         
-    int32_t sizeSubElement = static_cast<int32_t>(pFinishedSubElt->size());
+    int32_t sizeSubElement = safe_cast<int32_t>(pFinishedSubElt->size());
 
     WriteArrayElementsCount(sizeSubElement);
 
@@ -193,7 +193,7 @@ int32_t KeysPersist::WriteKeyData(char key, const std::string & sValue)
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_STRING_AS_CHAR_ARRAY);
-    int32_t nElems = static_cast<int32_t>(sValue.size());
+    int32_t nElems = safe_cast<int32_t>(sValue.size());
     WriteSize += WriteArrayElementsCount(nElems);
 
     WriteData((void*)sValue.c_str(), nElems * sizeof(char), 1);
