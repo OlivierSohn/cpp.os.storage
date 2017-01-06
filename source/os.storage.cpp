@@ -353,7 +353,7 @@ namespace imajuscule {
             int length = ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, nullptr, 0, nullptr, nullptr);
             if (likely(length != 0))
             {
-                pool::vector<char> buffer(length);
+                StaticVector<char> buffer(length);
                 ::WideCharToMultiByte(codePage, 0, pSource, sourceLength, &buffer[0], length, nullptr, nullptr);
                 oCast.assign(buffer.begin(), buffer.end());
             }
