@@ -73,7 +73,7 @@ namespace imajuscule
 		virtual void StartSubElement(int32_t nElems);
 		virtual void EndSubElement();
 
-		virtual void ReadData(void * p, size_t size, size_t count);
+        void doReadData(void * p, size_t size, size_t count);
 
 		virtual void onLoadFinished() {};
 	private:

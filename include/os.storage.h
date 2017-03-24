@@ -1,16 +1,16 @@
 
 namespace imajuscule {
     
-enum eResult
-{
-    ILE_SUCCESS = 0,
-    ILE_RECURSIVITY,
-    ILE_ERROR,
-    ILE_NOT_IMPLEMENTED,
-    ILE_BAD_PARAMETER,
-    ILE_OBJECT_INVALID
-};
-
+    enum eResult
+    {
+        ILE_SUCCESS = 0,
+        ILE_RECURSIVITY,
+        ILE_ERROR,
+        ILE_NOT_IMPLEMENTED,
+        ILE_BAD_PARAMETER,
+        ILE_OBJECT_INVALID
+    };
+    
 #define SIZE_READ_BUFFER 2048
     namespace StorageStuff {
 #ifdef _WIN32
@@ -26,11 +26,11 @@ enum eResult
         
         bool isGUID(std::string const & str);
     }
-
+    
     class Storage;
     class DirectoryPath {
-        friend class Storage;
         std::vector<std::string> vec;
+        
         static DirectoryPath referentiablesPath;
         static DirectoryPath capturePath;
     public:
@@ -50,6 +50,9 @@ enum eResult
         bool isFile() const { return StorageStuff::fileExists(toString()); }
         bool isDir() const { return StorageStuff::dirExists(toString()); }
         
+        auto begin() const { return vec.begin(); }
+        auto end() const { return vec.end(); }
+
         std::string toString() const;
         void set(const std::string & path);
         
@@ -67,74 +70,92 @@ enum eResult
         }
     };
 
-class Storage
-{
-public:
+    using FileName = std::string;
 
-    enum FileOperation
-    {
-        OP_WRITE,
-        OP_READ
+    class Storage;
+    
+    struct ReadableStorage {
+        friend class Storage;
+        
+        DirectoryPath const & directory() {
+            return m_directoryPath;
+        }
+
+        enum class FileMode
+        {
+            WRITE,
+            READ
+        };
+        
+    protected:
+        ReadableStorage(DirectoryPath const &, FileName const &);
+        virtual ~ReadableStorage();
+
+        eResult OpenForRead();
+        void CloseFile();
+        
+        void ReadData(void * p, size_t size, size_t count);
+        
+
+    protected:
+        void* m_pFile;
+    private:
+        unsigned char m_freadBuffer[SIZE_READ_BUFFER];
+        size_t m_bufferReadPos;
+
+    protected:
+        DirectoryPath m_directoryPath;
+        FileName m_filename;
+
+    private:
+        eResult OpenFileForOperation(const std::string & sFilePath, FileMode);
+        void ReadToBuffer();
     };
-
-    eResult Save();
-
-    typedef std::string FileName;
-    DirectoryPath const & directory() {
-        return m_directoryPath;
-    }
     
-protected:
-    
-    Storage(DirectoryPath const &, FileName const &);
-    virtual ~Storage();
+    class Storage : public ReadableStorage
+    {
+    public:
+        
+        eResult Save();
+        
+    protected:
 
-    eResult OpenForRead();
-    eResult OpenForWrite();
-    
-    virtual void WriteData(void * p, size_t size, size_t count);
+        Storage(DirectoryPath const & d, FileName const & f) : ReadableStorage(d, f) {}
 
-    virtual void ReadData(void * p, size_t size, size_t count);
-
-    void Finalize();
-    void CloseFile();
-
-    void UpdateFileHeader();
-
-    // child classes should call this method directly only the first time the header is written.
-    // for subsequent header writes they should call instead UpdateFileHeader that will call this method at the appropriate moment
-    // and then restore the file position to the position it had before writing the header
-    virtual void DoUpdateFileHeader() { A(0); }
-
-    eResult doSaveBegin();
-private:
-    bool isBeingSaved();
-    virtual eResult doSave();
-    void doSaveEnd();
-
-    void* m_pFile;
-    std::vector<unsigned char> m_writeBuffer;
-    unsigned char m_freadBuffer[SIZE_READ_BUFFER];
-    size_t m_bufferReadPos;
-    
-    DirectoryPath m_directoryPath;
-    FileName m_filename;
-
-    static std::set<std::string> g_openedForWrite;
-    std::string m_filePath;
-    
-    int  FlushData();
-    void FlushMyBuffer();
-
-    void ReadToBuffer();
-    eResult OpenFileForOperation(const std::string & sFilePath, enum FileOperation);
-    
-};
+        eResult OpenForWrite();
+        
+        virtual void WriteData(void * p, size_t size, size_t count);
+        
+        void Finalize();
+        
+        void UpdateFileHeader();
+        
+        // child classes should call this method directly only the first time the header is written.
+        // for subsequent header writes they should call instead UpdateFileHeader that will call this method at the appropriate moment
+        // and then restore the file position to the position it had before writing the header
+        virtual void DoUpdateFileHeader() { A(0); }
+        
+        eResult doSaveBegin();
+    private:
+        bool isBeingSaved();
+        virtual eResult doSave();
+        void doSaveEnd();
+        
+        std::vector<unsigned char> m_writeBuffer;
+        
+        static std::set<std::string> g_openedForWrite;
+        std::string m_filePath;
+        
+        int  FlushData();
+        void FlushMyBuffer();
+        
+        
+    };
     namespace StorageStuff {
         std::vector< std::string > listFilenames( const DirectoryPath & path );
         std::vector< std::string > listFilenames( const std::string & path );
-
-        const char * FileOperationToString(Storage::FileOperation op);
+        
+        const char * FileOperationToString(Storage::FileMode op);
     }
-
+    
 }

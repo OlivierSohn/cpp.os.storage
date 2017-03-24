@@ -18,7 +18,7 @@ static bool hasEnding (std::string const &fullString, std::string const &ending)
     }
 }
 
-bool BasicFileOpen2(DirectoryPath & pathToDirectory, Storage::FileName & filename, const std::string & sFileExt)
+bool BasicFileOpen2(DirectoryPath & pathToDirectory, FileName & filename, const std::string & sFileExt)
 {
     std::string path, file;
     if( BasicFileOpen(path, file, sFileExt) )

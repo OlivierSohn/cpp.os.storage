@@ -25,7 +25,7 @@ bool DirectoryPath::getCaptureImageDir(DirectoryPath & p) {
     return !capturePath.empty();
 }
 
-Storage::Storage(DirectoryPath const &d, FileName const &f) :
+ReadableStorage::ReadableStorage(DirectoryPath const &d, FileName const &f) :
 m_pFile(nullptr),
 m_bufferReadPos(0),
 m_directoryPath(d),
@@ -33,12 +33,12 @@ m_filename(f)
 {}
 
 
-Storage::~Storage()
+ReadableStorage::~ReadableStorage()
 {
     CloseFile();
 }
 
-void Storage::CloseFile()
+void ReadableStorage::CloseFile()
 {
     if (m_pFile) {
         fclose((FILE*)m_pFile);
@@ -53,39 +53,30 @@ void Storage::Finalize()
 }
 
 
-eResult Storage::OpenFileForOperation(const std::string & sFilePath, enum FileOperation op)
+eResult ReadableStorage::OpenFileForOperation(const std::string & sFilePath, FileMode op)
 {
     //LG(INFO, "Storage::OpenFileForOperation( %s, %s) begin", sFilePath.c_str(), FileOperationToString(op));
     
-    eResult ret = ILE_SUCCESS;
-    
     CloseFile();
     
-    m_pFile = fopen(sFilePath.c_str(), op == OP_READ ? "rb" : "wb");
+    m_pFile = fopen(sFilePath.c_str(), op == FileMode::READ ? "rb" : "wb");
     
-    if ( unlikely(!m_pFile))
-    {
+    if ( unlikely(!m_pFile)) {
         LG(ERR, "Storage::OpenFileForOperation : fopen failed : %d", errno);
-        ret = ILE_BAD_PARAMETER;
+        return ILE_BAD_PARAMETER;
     }
-    else
-    {
-        if (op == OP_READ)
-        {
-            m_bufferReadPos = 0;
-            ReadToBuffer();
-        }
+    if (op == FileMode::READ) {
+        m_bufferReadPos = 0;
+        ReadToBuffer();
     }
-    
-    //LG(INFO, "Storage::OpenFileForOperation() returns %d", ret);
-    return ret;
+    return ILE_SUCCESS;
 }
 
-eResult Storage::OpenForRead()
+eResult ReadableStorage::OpenForRead()
 {
     std::string filePath;
     
-    for( auto const & directory_name : m_directoryPath.vec)
+    for( auto const & directory_name : m_directoryPath)
     {
         filePath.append(directory_name);
         filePath.append("/");
@@ -93,7 +84,7 @@ eResult Storage::OpenForRead()
     
     filePath.append(m_filename);
     ReplaceStringInPlace(filePath, "//", "/" );
-    eResult ret = OpenFileForOperation(filePath, OP_READ);
+    eResult ret = OpenFileForOperation(filePath, FileMode::READ);
     if ( unlikely(ret != ILE_SUCCESS))
     {
         LG(ERR, "Storage::OpenForRead : OpenFileForOperation returned %d", ret);
@@ -104,7 +95,7 @@ eResult Storage::OpenForRead()
 eResult Storage::OpenForWrite()
 {
     eResult ret = ILE_SUCCESS;
-    for( auto const & directory_name : m_directoryPath.vec)
+    for( auto const & directory_name : m_directoryPath)
     {
         m_filePath.append( directory_name );
         m_filePath.append("/");
@@ -128,7 +119,7 @@ eResult Storage::OpenForWrite()
     }
     g_openedForWrite.insert(m_filePath);
     
-    ret = OpenFileForOperation(m_filePath, OP_WRITE);
+    ret = OpenFileForOperation(m_filePath, FileMode::WRITE);
     if ( unlikely(ret != ILE_SUCCESS))
     {
         LG(ERR, "Storage::OpenForWrite : OpenFileForOperation returned %d", ret);
@@ -241,7 +232,7 @@ void Storage::FlushMyBuffer()
     m_writeBuffer.clear();
 }
 
-void Storage::ReadToBuffer()
+void ReadableStorage::ReadToBuffer()
 {
 #ifdef _WIN32
     auto result = _fread_nolock(m_freadBuffer, 1, SIZE_READ_BUFFER, (FILE*)m_pFile);
@@ -252,7 +243,7 @@ void Storage::ReadToBuffer()
   //if (result != SIZE_READ_BUFFER) {fputs ("Reading error",stderr); exit (3);}
 }
 
-void Storage::ReadData(void * p, size_t size, size_t count)
+void ReadableStorage::ReadData(void * p, size_t size, size_t count)
 {
     //LG(INFO, "Storage::ReadData(%x, %d, %d)", p, size, count);
     
@@ -326,15 +317,15 @@ namespace imajuscule {
     }
     
     namespace StorageStuff {
-    const char * FileOperationToString(Storage::FileOperation op)
+    const char * FileOperationToString(Storage::FileMode op)
     {
         switch (op)
         {
-            case Storage::OP_WRITE:
-                return "OP_WRITE";
+            case Storage::FileMode::WRITE:
+                return "FileMode::WRITE";
                 break;
-            case Storage::OP_READ:
-                return "OP_READ";
+            case Storage::FileMode::READ:
+                return "FileMode::READ";
                 break;
             default:
                 return "UNKNOWN";

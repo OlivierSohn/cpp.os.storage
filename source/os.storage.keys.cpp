@@ -87,7 +87,7 @@ int32_t KeysLoad::ReadKeysCount()
     //LG(INFO, "KeysLoad::ReadKeysCount begin");
 
     int32_t n;
-    ReadData(&n, sizeof(int32_t), 1);
+    doReadData(&n, sizeof(int32_t), 1);
 
     //LG(INFO, "KeysLoad::ReadKeysCount returns %d", n);
     return n;
@@ -139,7 +139,7 @@ char KeysLoad::ReadNextKey()
     //LG(INFO, "KeysLoad::ReadNextKey begin");
 
     char key;
-    ReadData(&key, sizeof(char), 1);
+    doReadData(&key, sizeof(char), 1);
 
     //LG(INFO, "KeysLoad::ReadNextKey returns %d", key);
     return key;
@@ -160,7 +160,7 @@ char KeysLoad::ReadNextDataType()
     //LG(INFO, "KeysLoad::ReadNextDataType begin");
 
     char dataType;
-    ReadData(&dataType, sizeof(dataType), 1);
+    doReadData(&dataType, sizeof(dataType), 1);
 
     //LG(INFO, "KeysLoad::ReadNextDataType returns %d", dataType);
     return dataType;
@@ -181,7 +181,7 @@ int32_t KeysLoad::ReadNextElementsCount()
     //LG(INFO, "KeysLoad::ReadNextElementsCount begin");
 
     int32_t count;
-    ReadData(&count, sizeof(count), 1);
+    doReadData(&count, sizeof(count), 1);
 
     //LG(INFO, "KeysLoad::ReadNextElementsCount returns %d", count);
     return count;
@@ -347,7 +347,7 @@ m_controlSizeAfterIt(0)
 }
 
 
-void KeysLoad::ReadData(void * p, size_t size, size_t count)
+void KeysLoad::doReadData(void * p, size_t size, size_t count)
 {
     if (-1 == m_iCurReadSubElementLevel)
     {
@@ -558,7 +558,7 @@ void KeysLoad::ReadAllKeysInternal()
         case DATA_TYPE_INT32:
         {
             int32_t iVal;
-            ReadData(&iVal, sizeof(iVal), 1);
+            doReadData(&iVal, sizeof(iVal), 1);
             LoadInt32ForKey(key, iVal);
             break;
         }
@@ -566,7 +566,7 @@ void KeysLoad::ReadAllKeysInternal()
         case DATA_TYPE_BOOL:
         {
             char cVal;
-            ReadData(&cVal, sizeof(cVal), 1);
+            doReadData(&cVal, sizeof(cVal), 1);
             bool bVal = false;
             if (cVal)
                 bVal = true;
@@ -577,7 +577,7 @@ void KeysLoad::ReadAllKeysInternal()
         case DATA_TYPE_DOUBLE:
         {
             double dVal;
-            ReadData(&dVal, sizeof(dVal), 1);
+            doReadData(&dVal, sizeof(dVal), 1);
             LoadDoubleForKey(key, dVal);
             break;
         }
@@ -585,7 +585,7 @@ void KeysLoad::ReadAllKeysInternal()
         case DATA_TYPE_FLOAT:
         {
             float fVal;
-            ReadData(&fVal, sizeof(fVal), 1);
+            doReadData(&fVal, sizeof(fVal), 1);
             LoadFloatForKey(key, fVal);
             break;
         }
@@ -593,7 +593,7 @@ void KeysLoad::ReadAllKeysInternal()
         case DATA_TYPE_CHAR:
         {
             char cVal;
-            ReadData(&cVal, sizeof(cVal), 1);
+            doReadData(&cVal, sizeof(cVal), 1);
             LoadCharForKey(key, cVal);
             break;
         }
@@ -613,7 +613,7 @@ void KeysLoad::ReadNextCharArrayAsString(int32_t nChars)
 
     m_tmpString.resize(nChars);
 
-    ReadData((void*)m_tmpString.data(), sizeof(char), nChars);
+    doReadData((void*)m_tmpString.data(), sizeof(char), nChars);
 
     //LG(INFO, "KeysLoad::ReadNextCharArrayAsString returns");
 }
@@ -625,7 +625,7 @@ void KeysLoad::ReadNextCharArray(int32_t nChars)
     
     m_tmpChars.resize(nChars);
     
-    ReadData((void*)m_tmpChars.data(), sizeof(char), nChars);
+    doReadData((void*)m_tmpChars.data(), sizeof(char), nChars);
     
     //LG(INFO, "KeysLoad::ReadNextCharArray returns");
 }
@@ -636,7 +636,7 @@ void KeysLoad::ReadNextInt32Array(int32_t nInts)
     
     m_tmpInts32.resize(nInts);
     
-    ReadData((void*)m_tmpInts32.data(), sizeof(int32_t), nInts);
+    doReadData((void*)m_tmpInts32.data(), sizeof(int32_t), nInts);
     
     //LG(INFO, "KeysLoad::ReadNextInt32Array returns");
 }
@@ -653,7 +653,7 @@ void KeysLoad::ReadNextStringArray(int32_t nElts)
         char c;
         do
         {
-            ReadData((void*)&c, sizeof(char), 1);
+            doReadData((void*)&c, sizeof(char), 1);
             if(c)
                 s.push_back(c);
         }
@@ -669,7 +669,7 @@ void KeysLoad::ReadNextDoubleArray(int32_t nElems)
 
     m_tmpDoubles.resize(nElems);
     //LG(INFO, "KeysLoad::ReadNextDoubleArray after resize");
-    ReadData((void*)m_tmpDoubles.data(), sizeof(double), nElems);
+    doReadData((void*)m_tmpDoubles.data(), sizeof(double), nElems);
 
     //LG(INFO, "KeysLoad::ReadNextDoubleArray end");
 }
@@ -679,7 +679,7 @@ void KeysLoad::ReadNextFloatArray(int32_t nElems)
     //LG(INFO, "KeysLoad::ReadNextFloatArray(%d)", nElems);
 
     m_tmpFloats.resize(nElems);
-    ReadData((void*)m_tmpFloats.data(), sizeof(float), nElems);
+    doReadData((void*)m_tmpFloats.data(), sizeof(float), nElems);
 
     //LG(INFO, "KeysLoad::ReadNextFloatArray end");
 }

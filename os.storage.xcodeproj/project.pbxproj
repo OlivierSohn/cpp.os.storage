@@ -28,6 +28,8 @@
 /* Begin PBXFileReference section */
 		0914BEE61D13904C007D6795 /* file2string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = file2string.cpp; path = source/file2string.cpp; sourceTree = "<group>"; };
 		0914BEE91D13905F007D6795 /* file2string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file2string.h; path = include/file2string.h; sourceTree = "<group>"; };
+		09186AF91E84EDE000E5BEC9 /* read.wav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = read.wav.h; path = include/read.wav.h; sourceTree = "<group>"; };
+		09186AFB1E84EE0500E5BEC9 /* read.wav.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = read.wav.cpp; path = source/read.wav.cpp; sourceTree = "<group>"; };
 		092A2A091BC4B6B400CBB8A9 /* iosDialogs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = iosDialogs.mm; path = source/ios/iosDialogs.mm; sourceTree = "<group>"; };
 		093DCC921B6213C200140F7B /* os.abstraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.abstraction.h; path = include/os.abstraction.h; sourceTree = "<group>"; };
 		093DCC941B6213F800140F7B /* os.abstraction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.abstraction.cpp; path = source/os.abstraction.cpp; sourceTree = "<group>"; };
@@ -86,6 +88,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		09186AF61E84ECC000E5BEC9 /* platforms */ = {
+			isa = PBXGroup;
+			children = (
+				0951E9511D87B3BA00876382 /* iOS.h */,
+				0951E94E1D865BE700876382 /* Posix.h */,
+			);
+			name = platforms;
+			sourceTree = "<group>";
+		};
+		09186AF71E84ED2700E5BEC9 /* platforms */ = {
+			isa = PBXGroup;
+			children = (
+				09EC870A1E06625900252038 /* Posix.mm.cpp */,
+				0951E9521D87B44B00876382 /* iOS.mm */,
+				0951E94F1D865C0500876382 /* Posix.cpp */,
+			);
+			name = platforms;
+			sourceTree = "<group>";
+		};
+		09186AF81E84ED3D00E5BEC9 /* dialogs */ = {
+			isa = PBXGroup;
+			children = (
+				09E632381AEF18C80073D796 /* CocoaDialogs.mm */,
+				092A2A091BC4B6B400CBB8A9 /* iosDialogs.mm */,
+			);
+			name = dialogs;
+			sourceTree = "<group>";
+		};
 		09C2F82019BF163A00472700 = {
 			isa = PBXGroup;
 			children = (
@@ -109,22 +139,20 @@
 		09C2F83019BF17DB00472700 /* source */ = {
 			isa = PBXGroup;
 			children = (
-				09EC87091E06625900252038 /* unity.build.mm.cpp */,
-				09EC870A1E06625900252038 /* Posix.mm.cpp */,
-				09EC87081E0661C100252038 /* read.resources.mm.cpp */,
-				09EC87071E06611700252038 /* private.mm.h */,
-				0992C61B1E0572330003688B /* private.h */,
-				09E632381AEF18C80073D796 /* CocoaDialogs.mm */,
+				09186AF81E84ED3D00E5BEC9 /* dialogs */,
 				0914BEE61D13904C007D6795 /* file2string.cpp */,
-				0951E9521D87B44B00876382 /* iOS.mm */,
-				092A2A091BC4B6B400CBB8A9 /* iosDialogs.mm */,
 				093DCC941B6213F800140F7B /* os.abstraction.cpp */,
 				09DBDCB91B07EF8800870E0A /* os.file.dialog.cpp */,
 				09C2F83219BF17F400472700 /* os.storage.cpp */,
 				09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */,
-				0951E94F1D865C0500876382 /* Posix.cpp */,
+				09186AF71E84ED2700E5BEC9 /* platforms */,
+				0992C61B1E0572330003688B /* private.h */,
+				09EC87071E06611700252038 /* private.mm.h */,
 				09D1348F1D15B57F001CE54F /* read.resources.cpp */,
+				09EC87081E0661C100252038 /* read.resources.mm.cpp */,
+				09186AFB1E84EE0500E5BEC9 /* read.wav.cpp */,
 				0978356C1D57B13B00E47ED3 /* unity.build.cpp */,
+				09EC87091E06625900252038 /* unity.build.mm.cpp */,
 			);
 			name = source;
 			sourceTree = "<group>";
@@ -133,15 +161,15 @@
 			isa = PBXGroup;
 			children = (
 				0914BEE91D13905F007D6795 /* file2string.h */,
-				0951E9511D87B3BA00876382 /* iOS.h */,
 				093DCC921B6213C200140F7B /* os.abstraction.h */,
 				09E6323B1AEF19720073D796 /* os.file.dialog.h */,
 				09C2F83419BF17FC00472700 /* os.storage.h */,
 				09C6C6CB1A0186F4003ECAB4 /* os.storage.keys.h */,
 				0951E94D1D865BE700876382 /* platform.h */,
-				0951E94E1D865BE700876382 /* Posix.h */,
+				09186AF61E84ECC000E5BEC9 /* platforms */,
 				0992C61C1E0572400003688B /* public.h */,
 				09D1348D1D15B570001CE54F /* read.resources.h */,
+				09186AF91E84EDE000E5BEC9 /* read.wav.h */,
 			);
 			name = include;
 			sourceTree = "<group>";
