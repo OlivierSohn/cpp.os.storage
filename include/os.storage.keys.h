@@ -5,7 +5,7 @@ constexpr int KEY_SUBELT_KEY_END    = -127; // char
 
 namespace imajuscule
 {
-	class KeysPersist : public Storage
+	class KeysPersist : public WritableStorage
 	{
 	public:
 		KeysPersist(DirectoryPath const &, FileName const &);
@@ -49,7 +49,7 @@ namespace imajuscule
 		std::multiset<char> rootKeys;
 	};
 
-	class KeysLoad : public Storage
+	class KeysLoad : public WritableStorage
 	{
 	public:
 		KeysLoad(DirectoryPath, FileName, bool bExhaustive = true);

@@ -29,7 +29,7 @@ static bool keyReadOnly(char key)
 }
 
 KeysPersist::KeysPersist(DirectoryPath const &d, FileName const &f) :
-Storage(d, f),
+WritableStorage(d, f),
 m_countLevelZeroKeys(0)
 {
     m_curSubElt = m_subElements.begin();
@@ -49,7 +49,7 @@ void KeysPersist::WriteData(void * p, size_t size, size_t count)
 {
     if (m_curSubElt == m_subElements.end())
     {
-        Storage::WriteData(p, size, count);
+        WritableStorage::WriteData(p, size, count);
     }
     else
     {
@@ -337,7 +337,7 @@ int32_t KeysPersist::WriteKeyData(char key, float * bValueArray, size_t nElems)
 
 
 KeysLoad::KeysLoad(DirectoryPath d, FileName f,bool bExhaustive) :
-Storage(d, f),
+WritableStorage(d, f),
 m_iCurReadSubElementLevel(-1),
 m_firstLevelSubElementDataIt(nullptr),
 m_controlSizeAfterIt(0)
@@ -351,7 +351,7 @@ void KeysLoad::doReadData(void * p, size_t size, size_t count)
 {
     if (-1 == m_iCurReadSubElementLevel)
     {
-        Storage::ReadData(p, size, count);
+        WritableStorage::ReadData(p, size, count);
     }
     else
     {

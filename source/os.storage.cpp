@@ -7,7 +7,7 @@ namespace imajuscule {
     DirectoryPath DirectoryPath::capturePath;
 }
 
-std::set<std::string> Storage::g_openedForWrite;
+std::set<std::string> WritableStorage::g_openedForWrite;
 
 void DirectoryPath::setReferentiablesDir(DirectoryPath const & d) {
     referentiablesPath = d;
@@ -46,7 +46,7 @@ void ReadableStorage::CloseFile()
     m_bufferReadPos = 0;
 }
 
-void Storage::Finalize()
+void WritableStorage::Finalize()
 {
     FlushData();
     CloseFile();
@@ -55,14 +55,14 @@ void Storage::Finalize()
 
 eResult ReadableStorage::OpenFileForOperation(const std::string & sFilePath, FileMode op)
 {
-    //LG(INFO, "Storage::OpenFileForOperation( %s, %s) begin", sFilePath.c_str(), FileOperationToString(op));
+    //LG(INFO, "WritableStorage::OpenFileForOperation( %s, %s) begin", sFilePath.c_str(), FileOperationToString(op));
     
     CloseFile();
     
     m_pFile = fopen(sFilePath.c_str(), op == FileMode::READ ? "rb" : "wb");
     
     if ( unlikely(!m_pFile)) {
-        LG(ERR, "Storage::OpenFileForOperation : fopen failed : %d", errno);
+        LG(ERR, "WritableStorage::OpenFileForOperation : fopen failed : %d", errno);
         return ILE_BAD_PARAMETER;
     }
     if (op == FileMode::READ) {
@@ -87,12 +87,12 @@ eResult ReadableStorage::OpenForRead()
     eResult ret = OpenFileForOperation(filePath, FileMode::READ);
     if ( unlikely(ret != ILE_SUCCESS))
     {
-        LG(ERR, "Storage::OpenForRead : OpenFileForOperation returned %d", ret);
+        LG(ERR, "WritableStorage::OpenForRead : OpenFileForOperation returned %d", ret);
     }
     
     return ret;
 }
-eResult Storage::OpenForWrite()
+eResult WritableStorage::OpenForWrite()
 {
     eResult ret = ILE_SUCCESS;
     for( auto const & directory_name : m_directoryPath)
@@ -104,7 +104,7 @@ eResult Storage::OpenForWrite()
             ret = makeDir(m_filePath);
             if ( unlikely(ILE_SUCCESS != ret))
             {
-                LG(ERR, "Storage::OpenForWrite : Storage::makeDir(%s) error : %d", m_filePath.c_str(), ret);
+                LG(ERR, "WritableStorage::OpenForWrite : WritableStorage::makeDir(%s) error : %d", m_filePath.c_str(), ret);
                 return ret;
             }
         }
@@ -122,13 +122,13 @@ eResult Storage::OpenForWrite()
     ret = OpenFileForOperation(m_filePath, FileMode::WRITE);
     if ( unlikely(ret != ILE_SUCCESS))
     {
-        LG(ERR, "Storage::OpenForWrite : OpenFileForOperation returned %d", ret);
+        LG(ERR, "WritableStorage::OpenForWrite : OpenFileForOperation returned %d", ret);
     }
     
     return ret;
 }
 
-eResult Storage::Save()
+eResult WritableStorage::Save()
 {
     m_filePath.clear();
     
@@ -136,7 +136,7 @@ eResult Storage::Save()
     if (ret != ILE_SUCCESS)
     {
         if( unlikely(ret != ILE_RECURSIVITY)) {
-            LG(ERR, "Storage::Save : doSaveBegin returned %d", ret);
+            LG(ERR, "WritableStorage::Save : doSaveBegin returned %d", ret);
         }
         return ret;
     }
@@ -144,7 +144,7 @@ eResult Storage::Save()
     ret = doSave();
     if (unlikely(ret != ILE_SUCCESS))
     {
-        LG(ERR, "Storage::Save : doSave returned %d", ret);
+        LG(ERR, "WritableStorage::Save : doSave returned %d", ret);
         return ret;
     }
     
@@ -153,14 +153,14 @@ eResult Storage::Save()
     return ILE_SUCCESS;
 }
 
-eResult Storage::doSaveBegin()
+eResult WritableStorage::doSaveBegin()
 {
     {
         eResult ret = OpenForWrite();
         if ( ret != ILE_SUCCESS )
         {
             if ( unlikely(ret != ILE_RECURSIVITY) )
-                LG(ERR, "Storage::SaveBegin : OpenForWrite returned %d", ret);
+                LG(ERR, "WritableStorage::SaveBegin : OpenForWrite returned %d", ret);
             return ret;
         }
     }
@@ -170,11 +170,11 @@ eResult Storage::doSaveBegin()
     
     return ILE_SUCCESS;
 }
-eResult Storage::doSave()
+eResult WritableStorage::doSave()
 {
     return ILE_SUCCESS;
 }
-void Storage::doSaveEnd()
+void WritableStorage::doSaveEnd()
 {
     UpdateFileHeader();
     
@@ -182,7 +182,7 @@ void Storage::doSaveEnd()
         g_openedForWrite.erase(m_filePath);
 }
 
-void Storage::UpdateFileHeader()
+void WritableStorage::UpdateFileHeader()
 {
     // write the data for this frame
     FlushMyBuffer();
@@ -198,7 +198,7 @@ void Storage::UpdateFileHeader()
         int ret = FlushData();
         if (unlikely(ret))
         {
-            LG(ERR, "Storage::UpdateFileHeader : FlushData returned %d", ret );
+            LG(ERR, "WritableStorage::UpdateFileHeader : FlushData returned %d", ret );
         }
         
         if (likely(!fsetpos((FILE*)m_pFile, &curPos)))
@@ -207,18 +207,18 @@ void Storage::UpdateFileHeader()
         }
         else
         {
-            LG(ERR, "Storage::UpdateFileHeader : fsetpos failed : %d", errno);
+            LG(ERR, "WritableStorage::UpdateFileHeader : fsetpos failed : %d", errno);
             A(0);
         }
     }
     else
     {
-        LG(ERR, "Storage::UpdateFileHeader : fgetpos failed : %d", errno);
+        LG(ERR, "WritableStorage::UpdateFileHeader : fgetpos failed : %d", errno);
         A(0);
     }
 }
 
-void Storage::FlushMyBuffer()
+void WritableStorage::FlushMyBuffer()
 {
     size_t count = m_writeBuffer.size();
     if (count == 0)
@@ -245,25 +245,25 @@ void ReadableStorage::ReadToBuffer()
 
 void ReadableStorage::ReadData(void * p, size_t size, size_t count)
 {
-    //LG(INFO, "Storage::ReadData(%x, %d, %d)", p, size, count);
+    //LG(INFO, "WritableStorage::ReadData(%x, %d, %d)", p, size, count);
     
     size_t total = size * count;
     
     do
     {
-        //LG(INFO, "Storage::ReadData m_bufferReadPos = %d", m_bufferReadPos);
+        //LG(INFO, "WritableStorage::ReadData m_bufferReadPos = %d", m_bufferReadPos);
         
         size_t max = m_bufferReadPos + total;
         
-        //LG(INFO, "Storage::ReadData max = %d", max);
+        //LG(INFO, "WritableStorage::ReadData max = %d", max);
         
         long secondRead = max - SIZE_READ_BUFFER;
         
-        //LG(INFO, "Storage::ReadData secondRead = %d", secondRead);
+        //LG(INFO, "WritableStorage::ReadData secondRead = %d", secondRead);
         
         if (secondRead > 0)
         {
-            //LG(INFO, "Storage::ReadData secondRead > 0");
+            //LG(INFO, "WritableStorage::ReadData secondRead > 0");
             
             long i = SIZE_READ_BUFFER - m_bufferReadPos;
             
@@ -271,16 +271,16 @@ void ReadableStorage::ReadData(void * p, size_t size, size_t count)
             
             m_bufferReadPos = 0;
             
-            //LG(INFO, "Storage::ReadData before ReadToBuffer");
+            //LG(INFO, "WritableStorage::ReadData before ReadToBuffer");
             ReadToBuffer();
-            //LG(INFO, "Storage::ReadData after ReadToBuffer");
+            //LG(INFO, "WritableStorage::ReadData after ReadToBuffer");
             
             total -= i;
             p = (char*)p + i;
         }
         else
         {
-            //LG(INFO, "Storage::ReadData secondRead < 0");
+            //LG(INFO, "WritableStorage::ReadData secondRead < 0");
             
             memcpy(p, &m_freadBuffer[m_bufferReadPos], total);
             m_bufferReadPos = max;
@@ -290,16 +290,16 @@ void ReadableStorage::ReadData(void * p, size_t size, size_t count)
     }
     while(total>0);
     
-    //LG(INFO, "Storage::ReadData end");
+    //LG(INFO, "WritableStorage::ReadData end");
 }
 
-void Storage::WriteData(void * p, size_t size, size_t count)
+void WritableStorage::WriteData(void * p, size_t size, size_t count)
 {
     size_t add = size*count;
     m_writeBuffer.insert(m_writeBuffer.end(), (unsigned char*)p, ((unsigned char*)p) + add);
 }
 
-int Storage::FlushData()
+int WritableStorage::FlushData()
 {
     FlushMyBuffer();
     
@@ -317,14 +317,14 @@ namespace imajuscule {
     }
     
     namespace StorageStuff {
-    const char * FileOperationToString(Storage::FileMode op)
+    const char * FileOperationToString(WritableStorage::FileMode op)
     {
         switch (op)
         {
-            case Storage::FileMode::WRITE:
+            case WritableStorage::FileMode::WRITE:
                 return "FileMode::WRITE";
                 break;
-            case Storage::FileMode::READ:
+            case WritableStorage::FileMode::READ:
                 return "FileMode::READ";
                 break;
             default:

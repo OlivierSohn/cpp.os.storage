@@ -27,7 +27,7 @@ namespace imajuscule {
         bool isGUID(std::string const & str);
     }
     
-    class Storage;
+    class WritableStorage;
     class DirectoryPath {
         std::vector<std::string> vec;
         
@@ -72,10 +72,10 @@ namespace imajuscule {
 
     using FileName = std::string;
 
-    class Storage;
+    class WritableStorage;
     
     struct ReadableStorage {
-        friend class Storage;
+        friend class WritableStorage;
         
         DirectoryPath const & directory() {
             return m_directoryPath;
@@ -112,7 +112,7 @@ namespace imajuscule {
         void ReadToBuffer();
     };
     
-    class Storage : public ReadableStorage
+    class WritableStorage : public ReadableStorage
     {
     public:
         
@@ -120,7 +120,7 @@ namespace imajuscule {
         
     protected:
 
-        Storage(DirectoryPath const & d, FileName const & f) : ReadableStorage(d, f) {}
+        WritableStorage(DirectoryPath const & d, FileName const & f) : ReadableStorage(d, f) {}
 
         eResult OpenForWrite();
         
@@ -155,7 +155,7 @@ namespace imajuscule {
         std::vector< std::string > listFilenames( const DirectoryPath & path );
         std::vector< std::string > listFilenames( const std::string & path );
         
-        const char * FileOperationToString(Storage::FileMode op);
+        const char * FileOperationToString(WritableStorage::FileMode op);
     }
     
 }
