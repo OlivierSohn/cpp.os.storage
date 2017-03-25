@@ -58,24 +58,12 @@ bool WAVReader::readHeader() {
     }
     ReadData(&header.subchunk2_size, sizeof(int), 1);
     
-    if(header.getSampleSize() != sizeof(ITER::value_type)) {
+    auto s = header.getSampleSize();
+    if(s != 2 && s != 4) {
         LG(ERR, "unhandled sample size %d", header.getSampleSize());
         return false;
     }
     return true;
-}
-
-WAVReader::ITER WAVReader::Read(ITER it, ITER end) {
-    while(it < end) {
-        A(audio_bytes_read < header.subchunk2_size);
-        constexpr auto n_reads = sizeof(decltype(*it));
-        
-        ReadData(&*it, n_reads, 1);
-        ++it;
-        audio_bytes_read += n_reads;
-        A(audio_bytes_read <= header.subchunk2_size);
-    }
-    return it;
 }
 
 

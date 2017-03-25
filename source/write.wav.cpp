@@ -2,10 +2,6 @@
 
 using namespace imajuscule;
 
-void WAVWriter::writeSample(short s) {
-    WriteData(&s, sizeof(short), 1);
-}
-
 void WAVWriter::DoUpdateFileHeader()
 {
     WriteData(&header.chunk_id[0], 4, 1);

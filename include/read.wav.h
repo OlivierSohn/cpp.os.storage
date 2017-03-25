@@ -39,28 +39,67 @@ namespace imajuscule {
             }
         };
         
-        static WAVPCMHeader pcm_16b_stereo(int num_frames, int sample_rate) {
-            constexpr auto bytes_per_sample = 2;
-            constexpr auto num_channels = 2;
-            auto size_data = num_frames * num_channels * bytes_per_sample;
+        enum class NChannels {
+            ONE = 1,
+            TWO = 2,
+            MONO = 1,
+            STEREO = 2
+        };
+        
+        static WAVPCMHeader pcm_(int const num_frames, int const sample_rate,
+                                 NChannels n_channels, int const bytes_per_sample) {
+            auto const num_channels = to_underlying(n_channels);
+            auto const size_data = num_frames * num_channels * bytes_per_sample;
             
-            WAVPCMHeader res {
+            return {
                 {'R','I','F','F'},
-                static_cast<int>(sizeof(WAVPCMHeader) + size_data),
+                static_cast<int32_t>(sizeof(WAVPCMHeader) + size_data),
                 {'W','A','V','E'},
                 {'f','m','t',' '},
                 16,
                 1,
-                num_channels,
+                static_cast<int16_t>(num_channels),
                 sample_rate,
                 sample_rate * bytes_per_sample * num_channels,
-                4,
-                bytes_per_sample * 8,
+                static_cast<int16_t>(bytes_per_sample * num_channels),
+                static_cast<int16_t>(bytes_per_sample * 8),
                 {'d','a','t','a'},
                 size_data
             };
-            return res;
         }
+        
+        enum class SampleFormat {
+            signed_16,
+            signed_32
+        };
+        
+        template<typename T>
+        struct SignedSample;
+
+        template<>
+        struct SignedSample<int16_t> {
+            static constexpr auto format = SampleFormat::signed_16;
+        };
+        
+        template<>
+        struct SignedSample<int32_t> {
+            static constexpr auto format = SampleFormat::signed_32;
+        };
+        
+        constexpr auto bytes_per_sample(SampleFormat f) {
+            switch(f) {
+                case SampleFormat::signed_16:
+                    return 2;
+                case SampleFormat::signed_32:
+                    return 4;
+            }
+            return 0;
+        }
+        
+        static WAVPCMHeader pcm(int num_frames, int sample_rate, NChannels n_channels, SampleFormat f) {
+            return pcm_(num_frames, sample_rate, n_channels, bytes_per_sample(f));
+        }
+        
         struct WAVReader : public ReadableStorage {
             WAVReader(DirectoryPath const & d, FileName const & f) : ReadableStorage(d, f), header{} {}
             
@@ -72,13 +111,23 @@ namespace imajuscule {
             int getSampleRate() const { return header.sample_rate; }
             float getDuration() const { return countFrames() / (float)getSampleRate(); }
             
-            using InterleavedAudio = std::vector<short int>;
-            using ITER = InterleavedAudio::iterator;
-            
             // 'it' is the begin of the buffer to write to, 'end' is the end.
             // returns the end element
-            ITER Read(ITER it, ITER end);
             
+            template<typename ITER>
+            ITER Read(ITER it, ITER end) {
+                while(it < end) {
+                    A(audio_bytes_read < header.subchunk2_size);
+                    constexpr auto n_reads = sizeof(decltype(*it));
+                    
+                    ReadData(&*it, n_reads, 1);
+                    ++it;
+                    audio_bytes_read += n_reads;
+                    A(audio_bytes_read <= header.subchunk2_size);
+                }
+                return it;
+            }
+
             bool HasMore() const;
             
         private:
@@ -96,8 +145,12 @@ namespace imajuscule {
             eResult Initialize() {
                 return doSaveBegin();
             }
+
+            template<typename T>
+            void writeSample(T s) {
+                WriteData(&s, sizeof(T), 1);
+            }
             
-            void writeSample(signed short);
         protected:
             
             void DoUpdateFileHeader() override;
