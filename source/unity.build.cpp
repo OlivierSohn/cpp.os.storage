@@ -10,6 +10,7 @@
 
 #include "read.resources.cpp"
 #include "read.wav.cpp"
+#include "write.wav.cpp"
 
 #include "file2string.cpp"
 #include "os.abstraction.cpp"

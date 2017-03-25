@@ -39,7 +39,28 @@ namespace imajuscule {
             }
         };
         
-        
+        static WAVPCMHeader pcm_16b_stereo(int num_frames, int sample_rate) {
+            constexpr auto bytes_per_sample = 2;
+            constexpr auto num_channels = 2;
+            auto size_data = num_frames * num_channels * bytes_per_sample;
+            
+            WAVPCMHeader res {
+                {'R','I','F','F'},
+                static_cast<int>(sizeof(WAVPCMHeader) + size_data),
+                {'W','A','V','E'},
+                {'f','m','t',' '},
+                16,
+                1,
+                num_channels,
+                sample_rate,
+                sample_rate * bytes_per_sample * num_channels,
+                4,
+                bytes_per_sample * 8,
+                {'d','a','t','a'},
+                size_data
+            };
+            return res;
+        }
         struct WAVReader : public ReadableStorage {
             WAVReader(DirectoryPath const & d, FileName const & f) : ReadableStorage(d, f), header{} {}
             
@@ -65,6 +86,24 @@ namespace imajuscule {
             unsigned int audio_bytes_read = 0;
             
             bool readHeader();
+        };
+        
+        struct WAVWriter : public WritableStorage {
+            WAVWriter(DirectoryPath d, FileName f, WAVPCMHeader h) : WritableStorage(d,f), header(h) {}
+
+            ~WAVWriter() { Finalize(); }
+            
+            eResult Initialize() {
+                return doSaveBegin();
+            }
+            
+            void writeSample(signed short);
+        protected:
+            
+            void DoUpdateFileHeader() override;
+            
+        private:
+            WAVPCMHeader header;
         };
     }
 }
