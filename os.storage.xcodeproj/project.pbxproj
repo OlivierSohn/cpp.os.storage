@@ -28,9 +28,6 @@
 /* Begin PBXFileReference section */
 		0914BEE61D13904C007D6795 /* file2string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = file2string.cpp; path = source/file2string.cpp; sourceTree = "<group>"; };
 		0914BEE91D13905F007D6795 /* file2string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file2string.h; path = include/file2string.h; sourceTree = "<group>"; };
-		09186AF91E84EDE000E5BEC9 /* read.wav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = read.wav.h; path = include/read.wav.h; sourceTree = "<group>"; };
-		09186AFB1E84EE0500E5BEC9 /* read.wav.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = read.wav.cpp; path = source/read.wav.cpp; sourceTree = "<group>"; };
-		09186B071E85BE1A00E5BEC9 /* write.wav.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = write.wav.cpp; path = source/write.wav.cpp; sourceTree = "<group>"; };
 		092A2A091BC4B6B400CBB8A9 /* iosDialogs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = iosDialogs.mm; path = source/ios/iosDialogs.mm; sourceTree = "<group>"; };
 		093DCC921B6213C200140F7B /* os.abstraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.abstraction.h; path = include/os.abstraction.h; sourceTree = "<group>"; };
 		093DCC941B6213F800140F7B /* os.abstraction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.abstraction.cpp; path = source/os.abstraction.cpp; sourceTree = "<group>"; };
@@ -151,10 +148,8 @@
 				09EC87071E06611700252038 /* private.mm.h */,
 				09D1348F1D15B57F001CE54F /* read.resources.cpp */,
 				09EC87081E0661C100252038 /* read.resources.mm.cpp */,
-				09186AFB1E84EE0500E5BEC9 /* read.wav.cpp */,
 				0978356C1D57B13B00E47ED3 /* unity.build.cpp */,
 				09EC87091E06625900252038 /* unity.build.mm.cpp */,
-				09186B071E85BE1A00E5BEC9 /* write.wav.cpp */,
 			);
 			name = source;
 			sourceTree = "<group>";
@@ -171,7 +166,6 @@
 				09186AF61E84ECC000E5BEC9 /* platforms */,
 				0992C61C1E0572400003688B /* public.h */,
 				09D1348D1D15B570001CE54F /* read.resources.h */,
-				09186AF91E84EDE000E5BEC9 /* read.wav.h */,
 			);
 			name = include;
 			sourceTree = "<group>";

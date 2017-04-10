@@ -37,12 +37,21 @@ namespace imajuscule {
             return false;
         }
         
-        path_ = std::string(path);
+        std::string fullPath(path);
+        auto where = fullPath.find_last_of('/');
+        if(where != std::string::npos) {
+            path_.first = {std::string(fullPath.begin(), fullPath.begin() + where)};
+            path_.second = {std::string(fullPath.begin() + where + 1, fullPath.end())};
+        }
+        else {
+            path_.first = {fullPath};
+            path_.second = "";
+        }
         return true;
     }
     
     bool getResource(resource const & res, std::string &result) {
-        return get_file_contents( res, result);
+        return get_file_contents( res.first.toString() + "/" + res.second, result);
     }
     
     bool readResource(const char * name, std::string const &type, std::string & result) {

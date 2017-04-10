@@ -25,5 +25,3 @@
 # include <memory>
 #endif
 #include <sys/stat.h>
-
-#include "platform.h"
