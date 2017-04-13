@@ -5,6 +5,18 @@ using namespace StorageStuff;
 namespace imajuscule {
     DirectoryPath DirectoryPath::referentiablesPath;
     DirectoryPath DirectoryPath::capturePath;
+    
+    bool split_path(std::string const & str, DirectoryPath & dir, FileName & filename)
+    {
+        using namespace std;
+        auto pos = str.find_last_of("/");
+        if(pos == string::npos) {
+            return false;
+        }
+        dir = {std::string(str.begin(), str.begin()+pos)};
+        filename = std::string(str.begin()+pos+1, str.end());
+        return true;
+    }
 }
 
 std::set<std::string> WritableStorage::g_openedForWrite;

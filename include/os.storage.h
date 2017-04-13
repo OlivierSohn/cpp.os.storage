@@ -72,6 +72,8 @@ namespace imajuscule {
 
     using FileName = std::string;
 
+    bool split_path(std::string const & str, DirectoryPath & dir, FileName & filename);
+
     class WritableStorage;
     
     struct ReadableStorage {
