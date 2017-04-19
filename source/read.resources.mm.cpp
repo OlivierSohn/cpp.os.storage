@@ -1,26 +1,23 @@
 
 namespace imajuscule {
     
-    bool findResource(const char * name, std::string const &type, resource & path_) {
-        if(!name) {
-            LG(ERR, "name of resource is null");
-            return false;
-        }
-        
+    bool findResource(std::string const & name, std::string const &type, resource & path_) {
         auto b = CFBundleGetMainBundle();
         if(!b) {
             LG(ERR, "could not find bundle");
             return false;
         }
         
-        auto n = [NSString stringWithUTF8String:name];
+        auto n = [NSString stringWithUTF8String:name.c_str()];
         auto t = [NSString stringWithUTF8String:type.c_str()];
         CFStringRef ref_n = (__bridge CFStringRef)n;
         CFStringRef ref_t = (__bridge CFStringRef)t;
         
         auto url = CFBundleCopyResourceURL(b, ref_n, 0, ref_t);
         if(!url) {
-            LG(ERR, "could not find resource %s of type %s in bundle", name, type.c_str());
+            LG(ERR, "could not find resource %s of type %s in bundle",
+               name.c_str(),
+               type.c_str());
             return false;
         }
 
@@ -54,7 +51,7 @@ namespace imajuscule {
         return get_file_contents( res.first.toString() + "/" + res.second, result);
     }
     
-    bool readResource(const char * name, std::string const &type, std::string & result) {
+    bool readResource(std::string const & name, std::string const &type, std::string & result) {
         resource res;
         if(!findResource(name, type, res)) {
             return false;
