@@ -73,6 +73,7 @@ namespace imajuscule {
     using FileName = std::string;
 
     bool split_path(std::string const & str, DirectoryPath & dir, FileName & filename);
+    std::string getParentDirectory(std::string path);
 
     class WritableStorage;
     
@@ -156,6 +157,8 @@ namespace imajuscule {
     namespace StorageStuff {
         std::vector< std::string > listFilenames( const DirectoryPath & path );
         std::vector< std::string > listFilenames( const std::string & path );
+        std::vector< std::string > listDirectories( const DirectoryPath & path );
+        std::vector< std::string > listDirectories( const std::string & path );
         
         const char * FileOperationToString(WritableStorage::FileMode op);
     }

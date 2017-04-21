@@ -17,6 +17,18 @@ namespace imajuscule {
         filename = std::string(str.begin()+pos+1, str.end());
         return true;
     }
+    
+    std::string getParentDirectory(std::string path)
+    {
+        using namespace std;
+        auto pos = path.find_last_of("/");
+        if(pos == string::npos) {
+            throw logic_error("no parent");
+        }
+        path.resize(pos);
+
+        return std::move(path);
+    }
 }
 
 std::set<std::string> WritableStorage::g_openedForWrite;
@@ -479,116 +491,151 @@ namespace imajuscule {
         std::vector< std::string > listFilenames( const DirectoryPath & path ) {
             return listFilenames(path.toString());
         }
-    std::vector< std::string > listFilenames( const std::string & path )
-    {
-        //LG(INFO, "listFilenames(%s)", (path.c_str() ? path.c_str() : "nullptr"));
-        std::vector<std::string> filenames;
-        
+        std::vector< std::string > listFilenames( const std::string & path )
+        {
+            //LG(INFO, "listFilenames(%s)", (path.c_str() ? path.c_str() : "nullptr"));
+            std::vector<std::string> filenames;
+            
 #ifdef _WIN32
-        WIN32_FIND_DATA ffd;
-        TCHAR szDir[MAX_PATH];
-        size_t length_of_arg;
-        HANDLE hFind = INVALID_HANDLE_VALUE;
-        DWORD dwError = 0;
-        
-        // Check that the input path plus 3 is not longer than MAX_PATH.
-        // Three characters are for the "\*" plus nullptr appended below.
-        
-        TCHAR tstrTo[MAX_PATH*2];
-        const int nMax = sizeof(tstrTo) / sizeof(tstrTo[0]);
-        int tstrLen;
+            WIN32_FIND_DATA ffd;
+            TCHAR szDir[MAX_PATH];
+            size_t length_of_arg;
+            HANDLE hFind = INVALID_HANDLE_VALUE;
+            DWORD dwError = 0;
+            
+            // Check that the input path plus 3 is not longer than MAX_PATH.
+            // Three characters are for the "\*" plus nullptr appended below.
+            
+            TCHAR tstrTo[MAX_PATH*2];
+            const int nMax = sizeof(tstrTo) / sizeof(tstrTo[0]);
+            int tstrLen;
 #ifdef UNICODE
-        tstrLen = MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), nullptr, 0);
-        if ( unlikely(tstrLen >= nMax) ) {
-            LG(ERR, "listFilenames : string %s is tool long", path.c_str());
-            A(0);
-            return filenames;
-        }
-        tstrTo[tstrLen] = 0;
-        MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), tstrTo, tstrLen);
+            tstrLen = MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), nullptr, 0);
+            if ( unlikely(tstrLen >= nMax) ) {
+                LG(ERR, "listFilenames : string %s is tool long", path.c_str());
+                A(0);
+                return filenames;
+            }
+            tstrTo[tstrLen] = 0;
+            MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), tstrTo, tstrLen);
 #else
-        int err = strcpy_s( tstrTo, nMax, path.c_str() );
-        if ( err != 0 )
-        {
-            LG(ERR, "listFilenames : strcpy_s error %d", err);
-            A(0);
-            return filenames;
-        }
-        tstrLen = strlen( tstrTo );
-#endif
-        
-        HRESULT hr=StringCchLength(tstrTo, MAX_PATH, &length_of_arg);
-        
-        if (unlikely(FAILED(hr)))
-        {
-            LG(ERR, "listFilenames : StringCchLength failed (%x)", hr);
-        }
-        else if (unlikely(length_of_arg > (MAX_PATH - 3)))
-        {
-            // can fix this by using unicode version of FindFirstFile and prepending \\?\ to the path
-            LG(ERR, "listFilenames : Directory path is too long");
-        }
-        else
-        {
-            // Prepare string for use with FindFile functions.  First, copy the
-            // string to a buffer, then append '\*' to the directory name.
-            
-            StringCchCopy(szDir, MAX_PATH, tstrTo);
-            StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
-            
-            // Find the first file in the directory.
-            
-            hFind = FindFirstFile(szDir, &ffd);
-            
-            if (unlikely(INVALID_HANDLE_VALUE == hFind))
+            int err = strcpy_s( tstrTo, nMax, path.c_str() );
+            if ( err != 0 )
             {
-                LG(INFO, "listFilenames : FindFirstFile returned INVALID_HANDLE_VALUE");
+                LG(ERR, "listFilenames : strcpy_s error %d", err);
+                A(0);
+                return filenames;
+            }
+            tstrLen = strlen( tstrTo );
+#endif
+            
+            HRESULT hr=StringCchLength(tstrTo, MAX_PATH, &length_of_arg);
+            
+            if (unlikely(FAILED(hr)))
+            {
+                LG(ERR, "listFilenames : StringCchLength failed (%x)", hr);
+            }
+            else if (unlikely(length_of_arg > (MAX_PATH - 3)))
+            {
+                // can fix this by using unicode version of FindFirstFile and prepending \\?\ to the path
+                LG(ERR, "listFilenames : Directory path is too long");
             }
             else
             {
-                // List all the files in the directory with some info about them.
+                // Prepare string for use with FindFile functions.  First, copy the
+                // string to a buffer, then append '\*' to the directory name.
                 
-                do
+                StringCchCopy(szDir, MAX_PATH, tstrTo);
+                StringCchCat(szDir, MAX_PATH, TEXT("\\*"));
+                
+                // Find the first file in the directory.
+                
+                hFind = FindFirstFile(szDir, &ffd);
+                
+                if (unlikely(INVALID_HANDLE_VALUE == hFind))
                 {
-                    if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+                    LG(INFO, "listFilenames : FindFirstFile returned INVALID_HANDLE_VALUE");
+                }
+                else
+                {
+                    // List all the files in the directory with some info about them.
+                    
+                    do
                     {
-                        std::string cast;
-                        string_cast(ffd.cFileName, CP_ACP, cast);
-                        filenames.push_back(cast);
+                        if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+                        {
+                            std::string cast;
+                            string_cast(ffd.cFileName, CP_ACP, cast);
+                            filenames.push_back(cast);
+                        }
+                    } while (FindNextFile(hFind, &ffd) != 0);
+                    
+                    dwError = GetLastError();
+                    if (unlikely(dwError != ERROR_NO_MORE_FILES))
+                    {
+                        LG(ERR, "listFilenames : FindNextFile returned %d", dwError);
                     }
-                } while (FindNextFile(hFind, &ffd) != 0);
-                
-                dwError = GetLastError();
-                if (unlikely(dwError != ERROR_NO_MORE_FILES))
-                {
-                    LG(ERR, "listFilenames : FindNextFile returned %d", dwError);
                 }
-            }
-            FindClose(hFind);
-        }
-        
-#else
-        DIR           *d;
-        struct dirent *dir;
-        d = opendir(path.c_str());
-        if (likely(d))
-        {
-            while ((dir = readdir(d)) != nullptr)
-            {
-                if (dir->d_type == DT_REG)
-                {
-                    filenames.push_back(dir->d_name);
-                }
+                FindClose(hFind);
             }
             
-            closedir(d);
-        }
+#else
+            DIR           *d;
+            struct dirent *dir;
+            d = opendir(path.c_str());
+            if (likely(d))
+            {
+                while ((dir = readdir(d)) != nullptr)
+                {
+                    if (dir->d_type == DT_REG)
+                    {
+                        filenames.push_back(dir->d_name);
+                    }
+                }
+                
+                closedir(d);
+            }
 #endif
+            
+            //LG(INFO, "listFilenames(%s) found %d files and returns %s", (path.c_str() ? path.c_str() : "nullptr"), filenames.size(), (bExists ? "true" : "false"));
+            return filenames;
+        }
+
         
-        //LG(INFO, "listFilenames(%s) found %d files and returns %s", (path.c_str() ? path.c_str() : "nullptr"), filenames.size(), (bExists ? "true" : "false"));
-        return filenames;
-    }
-    
+        std::vector< std::string > listDirectories( const DirectoryPath & path ) {
+            return listDirectories(path.toString());
+        }
+        std::vector< std::string > listDirectories( const std::string & path )
+        {
+            std::vector<std::string> dirnames;
+            
+#ifdef _WIN32
+            throw std::logic_error("not implemented on windows");
+#else
+            DIR           *d;
+            struct dirent *dir;
+            d = opendir(path.c_str());
+            if (likely(d))
+            {
+                while ((dir = readdir(d)) != nullptr)
+                {
+                    if(!strcmp(dir->d_name, ".")) {
+                        continue;
+                    }
+                    if (dir->d_type == DT_DIR)
+                    {
+                        dirnames.push_back(dir->d_name);
+                    }
+                }
+                
+                closedir(d);
+            }
+#endif
+            
+            return dirnames;
+        }
+        
+
     bool isGUID(std::string const & str)
     {
         bool bIsGUID = true;
