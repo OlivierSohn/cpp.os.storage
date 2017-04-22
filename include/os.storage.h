@@ -124,6 +124,12 @@ namespace imajuscule {
     protected:
 
         WritableStorage(DirectoryPath const & d, FileName const & f) : ReadableStorage(d, f) {}
+        
+        ~WritableStorage() {
+            if(!m_filePath.empty()) {
+                g_openedForWrite.erase(m_filePath);
+            }
+        }
 
         eResult OpenForWrite();
         

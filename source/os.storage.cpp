@@ -200,10 +200,7 @@ eResult WritableStorage::doSave()
 }
 void WritableStorage::doSaveEnd()
 {
-    UpdateFileHeader();
-    
-    if(!m_filePath.empty())
-        g_openedForWrite.erase(m_filePath);
+    UpdateFileHeader();    
 }
 
 void WritableStorage::UpdateFileHeader()
