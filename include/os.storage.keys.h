@@ -28,7 +28,7 @@ namespace imajuscule
 
 		int32_t countWriteKeyOperations() const;
 
-		void WriteData(void * p, size_t size, size_t count) override;
+		int WriteData(void const * p, size_t size, size_t count) override;
 
 	private:
 		int32_t m_countLevelZeroKeys;

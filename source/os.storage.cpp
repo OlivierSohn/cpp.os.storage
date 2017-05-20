@@ -66,6 +66,7 @@ void ReadableStorage::CloseFile()
 {
     if (m_pFile) {
         fclose((FILE*)m_pFile);
+        m_pFile = 0;
     }
     m_bufferReadPos = 0;
 }
@@ -205,12 +206,16 @@ void WritableStorage::doSaveEnd()
 
 void WritableStorage::UpdateFileHeader()
 {
+    if(!m_pFile) {
+        assert(0);
+        return;
+    }
     // write the data for this frame
     FlushMyBuffer();
     
     // now that the data has been written, we can modify the file position
     fpos_t curPos;
-    if (likely(!fgetpos((FILE*)m_pFile, &curPos)))
+    if (!fgetpos((FILE*)m_pFile, &curPos))
     {
         rewind((FILE*)m_pFile);
         
@@ -314,10 +319,11 @@ void ReadableStorage::ReadData(void * p, size_t size, size_t count)
     //LG(INFO, "WritableStorage::ReadData end");
 }
 
-void WritableStorage::WriteData(void * p, size_t size, size_t count)
+int WritableStorage::WriteData(void const * p, size_t size, size_t count)
 {
     size_t add = size*count;
     m_writeBuffer.insert(m_writeBuffer.end(), (unsigned char*)p, ((unsigned char*)p) + add);
+    return add;
 }
 
 int WritableStorage::FlushData()

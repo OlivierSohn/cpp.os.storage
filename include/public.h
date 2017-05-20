@@ -18,4 +18,7 @@
 #include "os.file.dialog.h"
 #include "read.resources.h"
 #include "platform.h"
-
+#include "bsonutils.hpp"
+#include "utf8.hpp"
+#include "bsonparser.hpp"
+#include "bsonwriter.hpp"

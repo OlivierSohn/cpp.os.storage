@@ -45,16 +45,17 @@ void KeysPersist::StartSubElement(char key)
     m_curSubElt = m_subElements.begin();
 }
 
-void KeysPersist::WriteData(void * p, size_t size, size_t count)
+int KeysPersist::WriteData(void const * p, size_t size, size_t count)
 {
     if (m_curSubElt == m_subElements.end())
     {
-        WritableStorage::WriteData(p, size, count);
+        return WritableStorage::WriteData(p, size, count);
     }
     else
     {
         size_t add = size*count;
         m_curSubElt->content.insert(m_curSubElt->content.end(), (unsigned char*)p, ((unsigned char*)p) + add);
+        return add;
     }
 }
 
@@ -71,8 +72,9 @@ void KeysPersist::EndSubElement()
 
     WriteArrayElementsCount(sizeSubElement);
 
-    if ( sizeSubElement > 0 )
+    if ( sizeSubElement > 0 ) {
         WriteData((void*)pFinishedSubElt->data(), sizeSubElement, 1);
+    }
 
     m_subElements.pop_front();
 }
@@ -103,8 +105,7 @@ int32_t KeysPersist::WriteKey(char key, bool bCheckUnicity)
 {
     A(!keyReadOnly(key));
     
-    int32_t size = sizeof(char);
-    WriteData(&key, size, 1);
+    int32_t size = WriteData(&key, sizeof(char), 1);
     
     if ( m_curSubElt == m_subElements.end() )
     {
@@ -147,13 +148,9 @@ char KeysLoad::ReadNextKey()
 
 int32_t KeysPersist::WriteDataType(char keyDataType)
 {
-    //LG(INFO, "KeysLoad::WriteDataType begin");
-
     int32_t size = sizeof(keyDataType);
-    WriteData(&keyDataType, size, 1);
 
-    //LG(INFO, "KeysLoad::WriteDataType returns %d", size);
-    return size;
+    return WriteData(&keyDataType, size, 1);
 }
 char KeysLoad::ReadNextDataType()
 {
@@ -168,13 +165,10 @@ char KeysLoad::ReadNextDataType()
 
 int32_t KeysPersist::WriteArrayElementsCount(int32_t count)
 {
-    //LG(INFO, "KeysLoad::WriteArrayElementsCount(%d)", count);
-
     int32_t size = sizeof(count);
-    WriteData(&count, size, 1);
+    
 
-    //LG(INFO, "KeysLoad::WriteArrayElementsCount returns %d", size);
-    return size;
+    return WriteData(&count, size, 1);
 }
 int32_t KeysLoad::ReadNextElementsCount()
 {
@@ -196,8 +190,7 @@ int32_t KeysPersist::WriteKeyData(char key, const std::string & sValue)
     int32_t nElems = safe_cast<int32_t>(sValue.size());
     WriteSize += WriteArrayElementsCount(nElems);
 
-    WriteData((void*)sValue.c_str(), nElems * sizeof(char), 1);
-    WriteSize += nElems * sizeof(char);
+    WriteSize += WriteData((void*)sValue.c_str(), nElems * sizeof(char), 1);
 
     //LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
     return WriteSize;
@@ -210,10 +203,9 @@ int32_t KeysPersist::WriteKeyData(char key, bool bValue)
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_BOOL);
 
-    int32_t size = sizeof(char);
     char val = (bValue ? 0x01 : 0x00);
-    WriteData(&val, size, 1);
-    WriteSize += size;
+    
+    WriteSize += WriteData(&val, sizeof(char), 1);
 
     //LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
     return WriteSize;
@@ -225,10 +217,8 @@ int32_t KeysPersist::WriteKeyData(char key, int32_t iValue)
 
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_INT32);
-
-    int32_t size = sizeof(int32_t);
-    WriteData(&iValue, size, 1);
-    WriteSize += size;
+    
+    WriteSize += WriteData(&iValue, sizeof(int32_t), 1);
 
     //LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
     return WriteSize;
@@ -241,9 +231,7 @@ int32_t KeysPersist::WriteKeyData(char key, double dValue)
     int32_t WriteSize = WriteKey(key);
     WriteSize += WriteDataType(DATA_TYPE_DOUBLE);
 
-    int32_t size = sizeof(double);
-    WriteData(&dValue, size, 1);
-    WriteSize += size;
+    WriteSize += WriteData(&dValue, sizeof(double), 1);
 
     //LG(INFO, "KeysPersist::Write returns %d", WriteSize);
     return WriteSize;
@@ -258,8 +246,7 @@ int32_t KeysPersist::WriteKeyData(char key, int32_t * iValueArray, size_t nElems
     WriteSize += WriteArrayElementsCount((int32_t)nElems);
     
     int32_t size = (int32_t) nElems * sizeof(int32_t);
-    WriteData((void*)iValueArray, size, 1);
-    WriteSize += size;
+    WriteSize += WriteData((void*)iValueArray, size, 1);
     
     //LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
     return WriteSize;
@@ -274,8 +261,8 @@ int32_t KeysPersist::WriteKeyData(char key, char * cValueArray, size_t nElems)
     WriteSize += WriteArrayElementsCount((int32_t)nElems);
     
     int32_t size = (int32_t) nElems * sizeof(char);
-    WriteData((void*)cValueArray, size, 1);
-    WriteSize += size;
+    
+    WriteSize += WriteData((void*)cValueArray, size, 1);;
     
     //LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
     return WriteSize;
@@ -294,8 +281,8 @@ int32_t KeysPersist::WriteKeyData(char key, const std::vector<std::string> & sVa
     for(auto const & s : sValueArray )
     {
         int32_t sizeWithEnd = (int32_t) (s.size()+1) * sizeof(char);
-        WriteData((void*)s.c_str(), sizeWithEnd, 1);
-        WriteSize += sizeWithEnd;
+        
+        WriteSize += WriteData((void*)s.c_str(), sizeWithEnd, 1);
     }
     
     //LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
@@ -311,8 +298,8 @@ int32_t KeysPersist::WriteKeyData(char key, double * dValueArray, size_t nElems)
     WriteSize += WriteArrayElementsCount((int32_t)nElems);
 
     int32_t size = (int32_t) nElems * sizeof(double);
-    WriteData((void*)dValueArray, size, 1);
-    WriteSize += size;
+    
+    WriteSize += WriteData((void*)dValueArray, size, 1);
 
     //LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
     return WriteSize;
@@ -328,8 +315,8 @@ int32_t KeysPersist::WriteKeyData(char key, float * bValueArray, size_t nElems)
 
     // write data
     int32_t size = (int32_t) nElems * sizeof(float);
-    WriteData((void*)bValueArray, size, 1);
-    WriteSize += size;
+    
+    WriteSize += WriteData((void*)bValueArray, size, 1);
 
     //LG(INFO, "KeysPersist::WriteKeyData returns %d", WriteSize);
     return WriteSize;
@@ -654,8 +641,9 @@ void KeysLoad::ReadNextStringArray(int32_t nElts)
         do
         {
             doReadData((void*)&c, sizeof(char), 1);
-            if(c)
+            if(c) {
                 s.push_back(c);
+            }
         }
         while (c); // assume string ends with 0
     }

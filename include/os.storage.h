@@ -101,7 +101,7 @@ namespace imajuscule {
         
 
     protected:
-        void* m_pFile;
+        void* m_pFile = nullptr;
     private:
         unsigned char m_freadBuffer[SIZE_READ_BUFFER];
         size_t m_bufferReadPos;
@@ -133,7 +133,7 @@ namespace imajuscule {
 
         eResult OpenForWrite();
         
-        virtual void WriteData(void * p, size_t size, size_t count);
+        virtual int WriteData(void const * p, size_t size, size_t count);
         
         void Finalize();
         

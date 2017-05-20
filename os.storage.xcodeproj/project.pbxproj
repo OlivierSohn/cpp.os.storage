@@ -29,6 +29,7 @@
 		0914BEE61D13904C007D6795 /* file2string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = file2string.cpp; path = source/file2string.cpp; sourceTree = "<group>"; };
 		0914BEE91D13905F007D6795 /* file2string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file2string.h; path = include/file2string.h; sourceTree = "<group>"; };
 		092A2A091BC4B6B400CBB8A9 /* iosDialogs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = iosDialogs.mm; path = source/ios/iosDialogs.mm; sourceTree = "<group>"; };
+		093592471ECFCC0D008DFAB2 /* utf8.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = utf8.hpp; path = include/utf8.hpp; sourceTree = "<group>"; };
 		093DCC921B6213C200140F7B /* os.abstraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.abstraction.h; path = include/os.abstraction.h; sourceTree = "<group>"; };
 		093DCC941B6213F800140F7B /* os.abstraction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.abstraction.cpp; path = source/os.abstraction.cpp; sourceTree = "<group>"; };
 		0951E94D1D865BE700876382 /* platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = platform.h; path = include/platform.h; sourceTree = "<group>"; };
@@ -39,6 +40,9 @@
 		0978356C1D57B13B00E47ED3 /* unity.build.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unity.build.cpp; path = source/unity.build.cpp; sourceTree = "<group>"; };
 		0992C61B1E0572330003688B /* private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = private.h; path = source/private.h; sourceTree = "<group>"; };
 		0992C61C1E0572400003688B /* public.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = public.h; path = include/public.h; sourceTree = "<group>"; };
+		09AEADF41ECF831E005CF2E7 /* bsonparser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = bsonparser.hpp; path = include/bsonparser.hpp; sourceTree = "<group>"; };
+		09AEADF51ECF831E005CF2E7 /* bsonwriter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = bsonwriter.hpp; path = include/bsonwriter.hpp; sourceTree = "<group>"; };
+		09AEADF81ECF8462005CF2E7 /* bsonutils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = bsonutils.hpp; path = include/bsonutils.hpp; sourceTree = "<group>"; };
 		09C2F82919BF163B00472700 /* libos.storage.osx.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libos.storage.osx.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		09C2F83219BF17F400472700 /* os.storage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.storage.cpp; path = source/os.storage.cpp; sourceTree = "<group>"; };
 		09C2F83419BF17FC00472700 /* os.storage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = os.storage.h; path = include/os.storage.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -157,6 +161,10 @@
 		09C2F83119BF17E100472700 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				093592471ECFCC0D008DFAB2 /* utf8.hpp */,
+				09AEADF81ECF8462005CF2E7 /* bsonutils.hpp */,
+				09AEADF41ECF831E005CF2E7 /* bsonparser.hpp */,
+				09AEADF51ECF831E005CF2E7 /* bsonwriter.hpp */,
 				0914BEE91D13905F007D6795 /* file2string.h */,
 				093DCC921B6213C200140F7B /* os.abstraction.h */,
 				09E6323B1AEF19720073D796 /* os.file.dialog.h */,
