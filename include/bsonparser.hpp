@@ -506,7 +506,7 @@ namespace imajuscule {
                                                      array);
                     }, "ObjectId"},
                     
-                    {{Item::x08, Item::E_NAME, Item::BYTE}, nullptr,
+                    {{Item::x08, Item::E_NAME, Item::BYTE}, named_native<uint8_t>(),
                         "Boolean"}, // byte should be 0x00 or 0x01
                     
                     {{Item::x09, Item::E_NAME, Item::INT64}, nullptr,

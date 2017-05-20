@@ -30,6 +30,16 @@ namespace bsonparser {
             n_bytes += WriteData(&i,sizeof(int32_t),1);
         }
         
+        void writeBool(bool b) {
+            
+            writeByte(bsonparser::Item::x08);
+            
+            writeName("");
+            
+            uint8_t i = b?1:0;
+            n_bytes += WriteData(&i,sizeof(uint8_t),1);
+        }
+        
         void writeString(std::string const & s) {
             writeByte(bsonparser::Item::x02);
 
