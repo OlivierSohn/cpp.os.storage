@@ -46,9 +46,9 @@ namespace platform {
         
         FileReader(std::string const & file_name) :
         file(file_name.c_str(),
-             std::ios::binary),
-        it(file)
+             std::ios::binary)
         {
+            it = ITER{file};
             if(!file) {
                 throw std::runtime_error("file not found : " + file_name);
             }
