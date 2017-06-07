@@ -595,6 +595,21 @@ namespace imajuscule {
             return g;
         }
         
+        /*
+         * to prevent corrupt files leading to stack overflow
+         */
+        struct LimitRecursions {
+            LimitRecursions(int32_t & i) : i(i) {
+                ++i;
+                if(i > 100) {
+                    throw platform::corrupt_file("n recursion exceeds 100");
+                }
+            }
+            ~LimitRecursions() { --i; }
+        private:
+            int32_t & i;
+        };
+        
         template<typename Stream>
         struct Parser {
             
@@ -637,8 +652,7 @@ namespace imajuscule {
             platform::CustomStream<Stream> byte_source;
             
             std::unique_ptr<Object> read(Item item) {
-                // todo implement length constraints to support corrupt files
-                // (today we might read "too much" if the file is ill-formed)
+                LimitRecursions lr(recursion);
                 
                 using namespace platform;
                 
@@ -731,6 +745,7 @@ namespace imajuscule {
             }
             
             int32_t n_bytes_remaining;
+            int32_t recursion = 0;
         };
         
         static inline auto parse(const char * filepath) {
