@@ -93,13 +93,9 @@ namespace platform {
     }
 
     /*
-     * CustomStream allows to read from a Stream, and from a "one byte buffer" which has 
+     * CustomStream allows to read from a Stream, and from a buffer which has
      * a higher priority than the Stream.
-     * The "one byte buffer" is controlled by the user of the class through the "setNextByte" method.
-     *
-     * The need from this class came from bson parsing : sometimes we need to parse one byte, just to discover that
-     * the byte we just read belongs to a sub object. This class allows to "return" the byte read, and to simplify
-     * the parser implementation.
+     * The buffer is controlled by the user of the class through the "setNextByte" method.
      */
     template<typename Stream>
     struct CustomStream {
@@ -108,16 +104,14 @@ namespace platform {
         
         unsigned char read() {
             if(!next_byte.empty()) {
-                assert(next_byte.size()==1); // else logic error
                 auto v = next_byte.front();
-                next_byte.clear();
+                next_byte.erase(next_byte.begin());
                 return v;
             }
             return stream.getNext();
         }
         
         void setNextByte(unsigned char b) {
-            assert(next_byte.empty()); // else logic error
             next_byte.push_back(b);
         }
         

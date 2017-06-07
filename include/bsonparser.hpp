@@ -603,14 +603,32 @@ namespace imajuscule {
             }
             
             std::unique_ptr<Object> readDocument() {
+                n_bytes_remaining = seek<int32_t>();
                 return read(Item::DOCUMENT);
             }
             
             template<typename T>
             T read() {
+                constexpr auto n_reads = sizeof(T);
+                n_bytes_remaining -= n_reads;
+                if(unlikely(n_bytes_remaining < 0)) {
+                    throw platform::corrupt_file("reading past file end");
+                }
+                std::array<unsigned char, n_reads> array;
+                for(auto & a : array) {
+                    a = byte_source.read();
+                }
+                return *reinterpret_cast<T*>(&array[0]);
+            }
+            
+            template<typename T>
+            T seek() {
                 std::array<unsigned char, sizeof(T)> array;
                 for(auto & a : array) {
                     a = byte_source.read();
+                }
+                for(auto val:array) {
+                    byte_source.setNextByte(val);
                 }
                 return *reinterpret_cast<T*>(&array[0]);
             }
@@ -631,7 +649,7 @@ namespace imajuscule {
                 }
                 auto const & gr = getGrammar()[rank];
                 if(gr.empty()) {
-                    auto b = byte_source.read();
+                    auto b = read<uint8_t>();
                     if(b != to_underlying(item)) {
                         throw corrupt_file("No match found");
                     }
@@ -642,12 +660,10 @@ namespace imajuscule {
                 if(gr.size() > 1){
                     bool found = false;
                     
-                    // from this byte we deduce which spec to choose
-                    auto b = byte_source.read();
-                    // we "return" the byte we just read to the custom stream, because it is not ours, it belongs
-                    // to a sub element
-                    byte_source.setNextByte(b);
-                    
+                    // from this byte we deduce which spec to choose.
+                    // we seek instead of read because it belongs to a sub element
+                    auto b = seek<uint8_t>();
+
                     for(auto const & spec : gr) {
                         assert(!spec.sequenced_items.empty());
                         auto const & quantifiedItem = spec.sequenced_items[0];
@@ -688,8 +704,8 @@ namespace imajuscule {
                 for(auto const &i : objs) {
                     if(i.getQuantification() == Quantification::ANY_UNTIL_0x00) {
                         assert(!has_size);
-                        std::vector<unsigned char> buffer;
-                        while(auto b = byte_source.read()) {
+                        std::vector<uint8_t> buffer;
+                        while(auto b = read<uint8_t>()) {
                             buffer.push_back(b);
                         }
                         buffer.push_back(0);
@@ -713,6 +729,8 @@ namespace imajuscule {
                 }
                 return std::move(v);
             }
+            
+            int32_t n_bytes_remaining;
         };
         
         static inline auto parse(const char * filepath) {
