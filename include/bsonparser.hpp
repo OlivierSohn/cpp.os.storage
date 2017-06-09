@@ -129,14 +129,7 @@ namespace imajuscule {
             
             List() = default;
             
-            /*
-             * Elements are stored in reverse order!
-             */
             List(Elems elems) : elements(std::move(elems)) {}
-
-            void reverse() {
-                std::reverse(elements.begin(), elements.end());
-            }
             
             void append(std::unique_ptr<Object> elem) {
                 assert(elem);
@@ -432,10 +425,10 @@ namespace imajuscule {
                 
                 {{Item::DOCUMENT}, {{{Item::INT32, Item::E_LIST}, [](auto & reader, auto objs){
                     auto list = getAs<List>(std::move(objs[1]));
-                    list->reverse();
                     return make_object<Document>(std::move(list));
                 }, "BSON Document. int32 is the total number of bytes comprising the document."}}},
                 
+                // this definition is recursive i.e for lists of N items, a stack of 2*N is needed
                 {{Item::E_LIST}, {
                     {{Item::x00}, [](auto & reader, auto objs) {
                         return make_object<List>();
@@ -601,8 +594,8 @@ namespace imajuscule {
         struct LimitRecursions {
             LimitRecursions(int32_t & i) : i(i) {
                 ++i;
-                if(i > 100) {
-                    throw platform::corrupt_file("n recursion exceeds 100");
+                if(i > 10000) {
+                    throw platform::corrupt_file("n recursion exceeds 10000");
                 }
             }
             ~LimitRecursions() { --i; }
@@ -651,12 +644,10 @@ namespace imajuscule {
         private:
             platform::CustomStream<Stream> byte_source;
             
-            std::unique_ptr<Object> read(Item item) {
-                LimitRecursions lr(recursion);
-                
+            int deduceSpecIndex(Item item, int &rank)
+            {
                 using namespace platform;
-                
-                auto rank = master_rank(item);
+                rank = master_rank(item);
                 if(rank < 0) {
                     // it is not a master element, so it is a byte
                     rank = master_rank(Item::BYTE);
@@ -667,7 +658,7 @@ namespace imajuscule {
                     if(b != to_underlying(item)) {
                         throw corrupt_file("No match found");
                     }
-                    return {};
+                    return -1;
                 }
                 
                 int chosen_index = 0;
@@ -696,7 +687,30 @@ namespace imajuscule {
                         --chosen_index;
                     }
                 }
+                return chosen_index;
+            }
+            
+            std::unique_ptr<Object> read(Item item) {
+                LimitRecursions lr(recursion);
                 
+                using namespace platform;
+                
+                int rank;
+                int chosen_index = deduceSpecIndex(item, rank);
+                if(chosen_index<0) {
+                    return {};
+                }
+
+                // special case to avoid recursion stack overflow (list is defined recursively in the grammar)
+                if(item == Item::E_LIST) {
+                    std::vector<std::unique_ptr<Object>> list_elements;
+                    while(chosen_index != 0) { // 0 is end of list
+                        list_elements.push_back(read(Item::ELEMENT));
+                        chosen_index = deduceSpecIndex(Item::E_LIST, rank);
+                    }
+                    return std::make_unique<List>(std::move(list_elements));
+                }
+                auto const & gr = getGrammar()[rank];
                 auto const & spec = gr[chosen_index];
                 
                 auto objs = readComponents(spec.sequenced_items);
