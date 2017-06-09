@@ -431,10 +431,14 @@ namespace imajuscule {
                 // this definition is recursive i.e for lists of N items, a stack of 2*N is needed
                 {{Item::E_LIST}, {
                     {{Item::x00}, [](auto & reader, auto objs) {
+                        assert(0); // not used anymore, optimized to avoid recursion
+                        throw std::logic_error("list parsing should occur in a non recursive way");
                         return make_object<List>();
                     }, "An empty list"},
                     
                     {{Item::ELEMENT, Item::E_LIST}, [](auto & reader, auto objs) {
+                        assert(0); // not used anymore, optimized to avoid recursion
+                        throw std::logic_error("list parsing should occur in a non recursive way");
                         auto & elem = objs[0];
                         auto list = getAs<List>(std::move(objs[1]));
                         list->append(std::move(elem));
