@@ -142,7 +142,7 @@ namespace imajuscule {
         // child classes should call this method directly only the first time the header is written.
         // for subsequent header writes they should call instead UpdateFileHeader that will call this method at the appropriate moment
         // and then restore the file position to the position it had before writing the header
-        virtual void DoUpdateFileHeader() { A(0); }
+        virtual void DoUpdateFileHeader() { Assert(0); }
         
         eResult doSaveBegin();
     private:

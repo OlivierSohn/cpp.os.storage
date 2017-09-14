@@ -16,7 +16,7 @@ namespace imajuscule {
             LG(ERR, "tellg error");
             return false;
         }
-        A(res >= 0);
+        Assert(res >= 0);
         str.resize(safe_cast<size_t>(res));
         in.seekg(0, std::ios::beg);
         in.read(&str[0], str.size());

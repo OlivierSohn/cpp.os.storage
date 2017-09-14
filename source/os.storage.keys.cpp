@@ -62,7 +62,7 @@ int KeysPersist::WriteData(void const * p, size_t size, size_t count)
 
 void KeysPersist::EndSubElement()
 {
-    A(!m_subElements.empty());
+    Assert(!m_subElements.empty());
 
     std::vector<char> * pFinishedSubElt = &m_curSubElt->content;
 
@@ -103,7 +103,7 @@ int32_t KeysPersist::countWriteKeyOperations() const
 
 int32_t KeysPersist::WriteKey(char key, bool bCheckUnicity)
 {
-    A(!keyReadOnly(key));
+    Assert(!keyReadOnly(key));
     
     int32_t size = WriteData(&key, sizeof(char), 1);
     
@@ -116,7 +116,7 @@ int32_t KeysPersist::WriteKey(char key, bool bCheckUnicity)
         if(bCheckUnicity)
         {
             auto it = rootKeys.find(key);
-            A( it == rootKeys.end());
+            Assert( it == rootKeys.end());
         }
         rootKeys.insert(key);
     }
@@ -127,7 +127,7 @@ int32_t KeysPersist::WriteKey(char key, bool bCheckUnicity)
         if(bCheckUnicity)
         {
             auto it = m_curSubElt->keys.find(key);
-            A( it == m_curSubElt->keys.end());
+            Assert( it == m_curSubElt->keys.end());
         }
         m_curSubElt->keys.insert(key);
     }
@@ -342,13 +342,13 @@ void KeysLoad::doReadData(void * p, size_t size, size_t count)
     }
     else
     {
-        A(m_iCurReadSubElementLevel >= 0);
-        A(m_firstLevelSubElementDataIt);
+        Assert(m_iCurReadSubElementLevel >= 0);
+        Assert(m_firstLevelSubElementDataIt);
         
         size_t add = size*count;
 
         m_controlSizeAfterIt -= add;
-        A(m_controlSizeAfterIt >= 0);
+        Assert(m_controlSizeAfterIt >= 0);
 
         memcpy(p, m_firstLevelSubElementDataIt, add);
         m_firstLevelSubElementDataIt += add;
@@ -357,7 +357,7 @@ void KeysLoad::doReadData(void * p, size_t size, size_t count)
 
 void KeysLoad::StartSubElement(int32_t nElems)
 {
-    A(m_iCurReadSubElementLevel >= -1);
+    Assert(m_iCurReadSubElementLevel >= -1);
 
     if (m_iCurReadSubElementLevel == -1)
     {
@@ -374,15 +374,15 @@ void KeysLoad::StartSubElement(int32_t nElems)
 }
 void KeysLoad::EndSubElement()
 {
-    A(m_iCurReadSubElementLevel >= 0);
+    Assert(m_iCurReadSubElementLevel >= 0);
     
-    A(m_firstLevelSubElementDataIt);
+    Assert(m_firstLevelSubElementDataIt);
 
     m_iCurReadSubElementLevel--;
 
     if (m_iCurReadSubElementLevel == -1)
     {
-        A(m_controlSizeAfterIt == 0);
+        Assert(m_controlSizeAfterIt == 0);
         m_firstLevelSubElement.clear();
         m_firstLevelSubElementDataIt = nullptr;
     }    
@@ -676,49 +676,49 @@ void KeysLoad::LoadDoubleArrayForKey(char key, double * pdVal, size_t nElems){
     if(m_bExhaustive)
     {
         LG(ERR, "KeysLoad::LoadDoubleArrayForKey(%d, ..., %d) should not be called", key, nElems);
-        A(0);
+        Assert(0);
     }
 }
 void KeysLoad::LoadBoolForKey(char key, bool bVal){
     if(m_bExhaustive)
     {
         LG(ERR, "KeysLoad::LoadBoolForKey(%d, %s) should not be called", key, bVal?"true":"false");
-        A(0);
+        Assert(0);
     }
 }
 void KeysLoad::LoadStringForKey(char key, std::string & str){
     if(m_bExhaustive)
     {
         LG(ERR, "KeysLoad::LoadStringForKey(%d, %s) should not be called", key, str.c_str() ? str.c_str() : "nullptr");
-        A(0);
+        Assert(0);
     }
 }
 void KeysLoad::LoadInt32ForKey(char key, int32_t iVal){
     if(m_bExhaustive)
     {
         LG(ERR, "KeysLoad::LoadInt32ForKey(%d, %d) should not be called", key, iVal);
-        A(0);
+        Assert(0);
     }
 }
 void KeysLoad::LoadDoubleForKey(char key, double fVal){
     if(m_bExhaustive)
     {
         LG(ERR, "KeysLoad::LoadDoubleForKey(%d, %d) should not be called", key, fVal);
-        A(0);
+        Assert(0);
     }
 }
 void KeysLoad::LoadCharArrayForKey(char key, char * /*pcVal*/, size_t nElems) {
     if(m_bExhaustive)
     {
         LG(ERR, "KeysLoad::LoadCharArrayForKey(%d, ..., %d) should not be called", key, nElems);
-        A(0);
+        Assert(0);
     }
 }
 void KeysLoad::LoadInt32ArrayForKey(char key, int32_t * /*piVal*/, size_t nElems) {
     if(m_bExhaustive)
     {
         LG(ERR, "KeysLoad::LoadInt32ArrayForKey(%d, ..., %d) should not be called", key, nElems);
-        A(0);
+        Assert(0);
     }
 }
 void KeysLoad::LoadStringArrayForKey(char key, const std::vector<std::string> &)
@@ -726,27 +726,27 @@ void KeysLoad::LoadStringArrayForKey(char key, const std::vector<std::string> &)
     if(m_bExhaustive)
     {
         LG(ERR, "KeysLoad::LoadStringArrayForKey(%d, ...) should not be called", key);
-        A(0);
+        Assert(0);
     }
 }
 void KeysLoad::LoadFloatArrayForKey(char key, float * /*pfVal*/, size_t nElems) {
     if(m_bExhaustive)
     {
         LG(ERR, "KeysLoad::LoadFloatArrayForKey(%d, ..., %d) should not be called", key, nElems);
-        A(0);
+        Assert(0);
     }
 }
 void KeysLoad::LoadCharForKey(char key, char cVal) {
     if(m_bExhaustive)
     {
         LG(ERR, "KeysLoad::LoadCharForKey(%d, %d) should not be called", key, cVal);
-        A(0);
+        Assert(0);
     }
 }
 void KeysLoad::LoadFloatForKey(char key, float fVal) {
     if(m_bExhaustive)
     {
         LG(ERR, "KeysLoad::LoadFloatForKey(%d, %f) should not be called", key, fVal);
-        A(0);
+        Assert(0);
     }
 }

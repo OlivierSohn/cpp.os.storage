@@ -234,13 +234,13 @@ void WritableStorage::UpdateFileHeader()
         else
         {
             LG(ERR, "WritableStorage::UpdateFileHeader : fsetpos failed : %d", errno);
-            A(0);
+            Assert(0);
         }
     }
     else
     {
         LG(ERR, "WritableStorage::UpdateFileHeader : fgetpos failed : %d", errno);
-        A(0);
+        Assert(0);
     }
 }
 
@@ -363,7 +363,7 @@ namespace imajuscule {
 #ifdef _WIN32
     void string_cast(const wchar_t* pSource, unsigned int codePage, std::string & oCast)
     {
-        A(pSource != 0);
+        Assert(pSource != 0);
         oCast.clear();
         size_t sourceLength = std::wcslen(pSource);
         if (likely(sourceLength > 0))
@@ -516,7 +516,7 @@ namespace imajuscule {
             tstrLen = MultiByteToWideChar(CP_ACP, 0, path.c_str(), strlen(path.c_str()), nullptr, 0);
             if ( unlikely(tstrLen >= nMax) ) {
                 LG(ERR, "listFilenames : string %s is tool long", path.c_str());
-                A(0);
+                Assert(0);
                 return filenames;
             }
             tstrTo[tstrLen] = 0;
@@ -526,7 +526,7 @@ namespace imajuscule {
             if ( err != 0 )
             {
                 LG(ERR, "listFilenames : strcpy_s error %d", err);
-                A(0);
+                Assert(0);
                 return filenames;
             }
             tstrLen = strlen( tstrTo );
