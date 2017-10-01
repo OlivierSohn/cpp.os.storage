@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		091578351F80695B0058B088 /* genRandBytes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 091578341F80695B0058B088 /* genRandBytes.cpp */; };
+		0965AB651F806F860017F78C /* unity.build.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0978356C1D57B13B00E47ED3 /* unity.build.cpp */; };
+		0965AB681F80742B0017F78C /* libalgorithms.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0965AB661F80742B0017F78C /* libalgorithms.a */; };
+		0965AB691F80742B0017F78C /* libos.log.osx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0965AB671F80742B0017F78C /* libos.log.osx.a */; };
+		0965AB6A1F8074870017F78C /* unity.build.mm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09EC87091E06625900252038 /* unity.build.mm.cpp */; };
+		0965AB6C1F8074F40017F78C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0965AB6B1F8074F40017F78C /* CoreGraphics.framework */; };
+		0965AB6E1F8075080017F78C /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0965AB6D1F8075080017F78C /* AppKit.framework */; };
 		0978356D1D57B13B00E47ED3 /* unity.build.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0978356C1D57B13B00E47ED3 /* unity.build.cpp */; };
 		0978356E1D57B13E00E47ED3 /* unity.build.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0978356C1D57B13B00E47ED3 /* unity.build.cpp */; };
 		09EC870B1E06628C00252038 /* unity.build.mm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09EC87091E06625900252038 /* unity.build.mm.cpp */; };
@@ -14,6 +21,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		0915782B1F8068940058B088 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		09C2F83819BF181B00472700 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -28,6 +44,8 @@
 /* Begin PBXFileReference section */
 		0914BEE61D13904C007D6795 /* file2string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = file2string.cpp; path = source/file2string.cpp; sourceTree = "<group>"; };
 		0914BEE91D13905F007D6795 /* file2string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file2string.h; path = include/file2string.h; sourceTree = "<group>"; };
+		0915782D1F8068940058B088 /* genRndBytes */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = genRndBytes; sourceTree = BUILT_PRODUCTS_DIR; };
+		091578341F80695B0058B088 /* genRandBytes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = genRandBytes.cpp; path = source/genRandBytes.cpp; sourceTree = "<group>"; };
 		092A2A091BC4B6B400CBB8A9 /* iosDialogs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = iosDialogs.mm; path = source/ios/iosDialogs.mm; sourceTree = "<group>"; };
 		093592471ECFCC0D008DFAB2 /* utf8.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = utf8.hpp; path = include/utf8.hpp; sourceTree = "<group>"; };
 		093DCC921B6213C200140F7B /* os.abstraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.abstraction.h; path = include/os.abstraction.h; sourceTree = "<group>"; };
@@ -37,6 +55,11 @@
 		0951E94F1D865C0500876382 /* Posix.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = Posix.cpp; path = source/Posix.cpp; sourceTree = "<group>"; };
 		0951E9511D87B3BA00876382 /* iOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = iOS.h; path = include/iOS.h; sourceTree = "<group>"; };
 		0951E9521D87B44B00876382 /* iOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = iOS.mm; path = source/iOS.mm; sourceTree = "<group>"; };
+		0965AB661F80742B0017F78C /* libalgorithms.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libalgorithms.a; path = ../algorithms/build/Debug/libalgorithms.a; sourceTree = "<group>"; };
+		0965AB671F80742B0017F78C /* libos.log.osx.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libos.log.osx.a; path = ../os.log/build/Debug/libos.log.osx.a; sourceTree = "<group>"; };
+		0965AB6B1F8074F40017F78C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		0965AB6D1F8075080017F78C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		0965AB6F1F807AA20017F78C /* generated */ = {isa = PBXFileReference; lastKnownFileType = folder; path = generated; sourceTree = "<group>"; };
 		0978356C1D57B13B00E47ED3 /* unity.build.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unity.build.cpp; path = source/unity.build.cpp; sourceTree = "<group>"; };
 		0992C61B1E0572330003688B /* private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = private.h; path = source/private.h; sourceTree = "<group>"; };
 		0992C61C1E0572400003688B /* public.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = public.h; path = include/public.h; sourceTree = "<group>"; };
@@ -73,6 +96,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0915782A1F8068940058B088 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0965AB6E1F8075080017F78C /* AppKit.framework in Frameworks */,
+				0965AB6C1F8074F40017F78C /* CoreGraphics.framework in Frameworks */,
+				0965AB681F80742B0017F78C /* libalgorithms.a in Frameworks */,
+				0965AB691F80742B0017F78C /* libos.log.osx.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		09C2F82619BF163B00472700 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -121,6 +155,7 @@
 		09C2F82019BF163A00472700 = {
 			isa = PBXGroup;
 			children = (
+				0965AB6F1F807AA20017F78C /* generated */,
 				09C84A611C271DC4002CF5B7 /* xcode.config */,
 				09C2F83119BF17E100472700 /* include */,
 				09C2F83019BF17DB00472700 /* source */,
@@ -134,6 +169,7 @@
 			children = (
 				09C2F82919BF163B00472700 /* libos.storage.osx.a */,
 				09C2F83A19BF181B00472700 /* libos.storage.ios.a */,
+				0915782D1F8068940058B088 /* genRndBytes */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -154,6 +190,7 @@
 				09EC87081E0661C100252038 /* read.resources.mm.cpp */,
 				0978356C1D57B13B00E47ED3 /* unity.build.cpp */,
 				09EC87091E06625900252038 /* unity.build.mm.cpp */,
+				091578341F80695B0058B088 /* genRandBytes.cpp */,
 			);
 			name = source;
 			sourceTree = "<group>";
@@ -181,6 +218,10 @@
 		09C2F83B19BF181B00472700 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0965AB6D1F8075080017F78C /* AppKit.framework */,
+				0965AB6B1F8074F40017F78C /* CoreGraphics.framework */,
+				0965AB661F80742B0017F78C /* libalgorithms.a */,
+				0965AB671F80742B0017F78C /* libos.log.osx.a */,
 				09C2F83C19BF181B00472700 /* Foundation.framework */,
 				09C2F84A19BF181B00472700 /* XCTest.framework */,
 				09C2F84D19BF181B00472700 /* UIKit.framework */,
@@ -217,6 +258,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		0915782C1F8068940058B088 /* genRndBytes */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 091578331F8068940058B088 /* Build configuration list for PBXNativeTarget "genRndBytes" */;
+			buildPhases = (
+				091578291F8068940058B088 /* Sources */,
+				0915782A1F8068940058B088 /* Frameworks */,
+				0915782B1F8068940058B088 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = genRndBytes;
+			productName = genRndBytes;
+			productReference = 0915782D1F8068940058B088 /* genRndBytes */;
+			productType = "com.apple.product-type.tool";
+		};
 		09C2F82819BF163B00472700 /* os.storage.osx */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 09C2F82D19BF163B00472700 /* Build configuration list for PBXNativeTarget "os.storage.osx" */;
@@ -259,6 +317,12 @@
 			attributes = {
 				LastUpgradeCheck = 0600;
 				ORGANIZATIONNAME = Olivier;
+				TargetAttributes = {
+					0915782C1F8068940058B088 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+					};
+				};
 			};
 			buildConfigurationList = 09C2F82419BF163A00472700 /* Build configuration list for PBXProject "os.storage" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -274,11 +338,22 @@
 			targets = (
 				09C2F82819BF163B00472700 /* os.storage.osx */,
 				09C2F83919BF181B00472700 /* os.storage.ios */,
+				0915782C1F8068940058B088 /* genRndBytes */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		091578291F8068940058B088 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0965AB6A1F8074870017F78C /* unity.build.mm.cpp in Sources */,
+				0965AB651F806F860017F78C /* unity.build.cpp in Sources */,
+				091578351F80695B0058B088 /* genRandBytes.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		09C2F82519BF163B00472700 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -300,6 +375,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		091578311F8068940058B088 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 09C84A621C271DC4002CF5B7 /* osx.debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		091578321F8068940058B088 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 09C84A661C271DC4002CF5B7 /* osx.release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 		09C2F82B19BF163B00472700 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09C84A681C271DC4002CF5B7 /* Project.Debug.xcconfig */;
@@ -345,6 +434,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		091578331F8068940058B088 /* Build configuration list for PBXNativeTarget "genRndBytes" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				091578311F8068940058B088 /* Debug */,
+				091578321F8068940058B088 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		09C2F82419BF163A00472700 /* Build configuration list for PBXProject "os.storage" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -48,6 +48,22 @@ namespace bsonparser {
             writeAString(s);
         }
 
+        template<typename F>
+        void writeBinary(int32_t nBytes, F generateOneByte) {
+            writeByte(bsonparser::Item::x05); // binary
+            
+            writeName("");
+
+            n_bytes += WriteData(&nBytes,sizeof(int32_t),1);
+            
+            writeByte(bsonparser::Item::x80); // user-defined
+
+            for(int i=0; i<nBytes; ++i) {
+                uint8_t const b = generateOneByte();
+                n_bytes += WriteData(&b, sizeof(uint8_t), 1);
+            }
+        }
+
     protected:
         
         void DoUpdateFileHeader() override {

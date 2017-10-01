@@ -54,11 +54,14 @@ namespace platform {
             }
         }
         
+#ifndef NDEBUG
         bool isDone() const { return it == ITER{}; }
-        
+#endif
         unsigned char getNext() {
+#ifndef NDEBUG
             throwIfEnd();
-
+#endif
+            
             auto val = *it;
             ++it;
 #if BSONPARSER_DEBUGLOGS
@@ -75,11 +78,49 @@ namespace platform {
         std::ifstream file;
         ITER it;
         
+#ifndef NDEBUG
         void throwIfEnd() {
             if(isDone()) {
                 throw incomplete_file();
             }
         }
+#endif
+    };
+    
+    
+    /*
+     * reads a file all at one
+     */
+    struct OnceFileReader {
+        
+        OnceFileReader(std::string const & file_name)
+        {
+            std::ifstream file{file_name.c_str(), std::ios::binary};
+            if(!file) {
+                throw std::runtime_error("file not found : " + file_name);
+            }
+            // Determine the file length
+            file.seekg(0, std::ios_base::end);
+            auto size=file.tellg();
+            file.seekg(0, std::ios_base::beg);
+            // Create a vector to store the data
+            buf.resize(size);
+            // Load the data
+            file.read((char*) &buf[0], size);
+            // Close the file
+            file.close();
+        }
+        
+        unsigned char getNext() {
+            auto val = buf[i];
+            ++i;
+            return val;
+        }
+        
+    private:
+        
+        std::vector<uint8_t> buf;
+        int i = 0;
     };
     
     constexpr int is_big_endian()
