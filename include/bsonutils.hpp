@@ -123,7 +123,7 @@ namespace platform {
         int i = 0;
     };
     
-    constexpr int is_big_endian()
+    static inline int is_big_endian()
     {
         union {
             uint32_t i;
