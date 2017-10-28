@@ -129,8 +129,7 @@ namespace utf8 {
         
         std::wstring res;
         Utf8Decoder dec(res);
-        for(int i=0, sz = buffer.size(); i<sz; ++i) {
-            auto c = buffer[i];
+        for(auto c: buffer){
             dec.feed(c);
         }
         if(!dec.hasFinished()) {
