@@ -4,7 +4,7 @@ namespace imajuscule {
     bool Open(FileSystemOperation::Kind k, const std::vector<std::string> & extensions, std::string & sPath)
     {
         bool bRet = false;
-        A(0);
+        Assert(0);
         return bRet;
 
     }
@@ -12,7 +12,7 @@ namespace imajuscule {
     bool BasicFileOpen(std::string & sFilePath, std::string & fileName, const std::string & fileExt)
     {
         bool bRet = false;
-        A(0);
+        Assert(0);
         return bRet;
     }
 
