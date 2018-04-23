@@ -8,8 +8,8 @@
 #include <string>
 #include <vector>
 
-#include "../../algorithms/include/public.h"
-#include "../../os.log/include/public.h"
+#include "../../cpp.algorithms/include/public.h"
+#include "../../cpp.os.logs/include/public.h"
 
 #include "file2string.h"
 #include "os.abstraction.h"
