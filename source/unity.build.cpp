@@ -8,7 +8,6 @@
 #elif __APPLE__
 #endif
 
-#include "read.resources.cpp"
 #include "file2string.cpp"
 #include "os.abstraction.cpp"
 #include "os.file.dialog.cpp"

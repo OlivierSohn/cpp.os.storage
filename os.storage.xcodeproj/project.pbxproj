@@ -85,12 +85,10 @@
 		09C84A691C271DC4002CF5B7 /* Project.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Release.xcconfig; sourceTree = "<group>"; };
 		09C84A6A1C271DC4002CF5B7 /* Project.Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Shared.xcconfig; sourceTree = "<group>"; };
 		09D1348D1D15B570001CE54F /* read.resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = read.resources.h; path = include/read.resources.h; sourceTree = "<group>"; };
-		09D1348F1D15B57F001CE54F /* read.resources.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = read.resources.cpp; path = source/read.resources.cpp; sourceTree = "<group>"; };
 		09DBDCB91B07EF8800870E0A /* os.file.dialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.file.dialog.cpp; path = source/os.file.dialog.cpp; sourceTree = "<group>"; };
 		09E632381AEF18C80073D796 /* CocoaDialogs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaDialogs.mm; path = source/cocoa/CocoaDialogs.mm; sourceTree = "<group>"; };
 		09E6323B1AEF19720073D796 /* os.file.dialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.file.dialog.h; path = include/os.file.dialog.h; sourceTree = "<group>"; };
 		09EC87071E06611700252038 /* private.mm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = private.mm.h; path = source/private.mm.h; sourceTree = "<group>"; };
-		09EC87081E0661C100252038 /* read.resources.mm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = read.resources.mm.cpp; path = source/read.resources.mm.cpp; sourceTree = "<group>"; };
 		09EC87091E06625900252038 /* unity.build.mm.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = unity.build.mm.cpp; path = source/unity.build.mm.cpp; sourceTree = "<group>"; };
 		09EC870A1E06625900252038 /* Posix.mm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Posix.mm.cpp; path = source/Posix.mm.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -186,8 +184,6 @@
 				09186AF71E84ED2700E5BEC9 /* platforms */,
 				0992C61B1E0572330003688B /* private.h */,
 				09EC87071E06611700252038 /* private.mm.h */,
-				09D1348F1D15B57F001CE54F /* read.resources.cpp */,
-				09EC87081E0661C100252038 /* read.resources.mm.cpp */,
 				0978356C1D57B13B00E47ED3 /* unity.build.cpp */,
 				09EC87091E06625900252038 /* unity.build.mm.cpp */,
 				091578341F80695B0058B088 /* genRandBytes.cpp */,
