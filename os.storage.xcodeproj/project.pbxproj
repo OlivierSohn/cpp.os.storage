@@ -84,7 +84,6 @@
 		09C84A681C271DC4002CF5B7 /* Project.Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Debug.xcconfig; sourceTree = "<group>"; };
 		09C84A691C271DC4002CF5B7 /* Project.Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Release.xcconfig; sourceTree = "<group>"; };
 		09C84A6A1C271DC4002CF5B7 /* Project.Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.Shared.xcconfig; sourceTree = "<group>"; };
-		09D1348D1D15B570001CE54F /* read.resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = read.resources.h; path = include/read.resources.h; sourceTree = "<group>"; };
 		09DBDCB91B07EF8800870E0A /* os.file.dialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = os.file.dialog.cpp; path = source/os.file.dialog.cpp; sourceTree = "<group>"; };
 		09E632381AEF18C80073D796 /* CocoaDialogs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaDialogs.mm; path = source/cocoa/CocoaDialogs.mm; sourceTree = "<group>"; };
 		09E6323B1AEF19720073D796 /* os.file.dialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = os.file.dialog.h; path = include/os.file.dialog.h; sourceTree = "<group>"; };
@@ -206,7 +205,6 @@
 				0951E94D1D865BE700876382 /* platform.h */,
 				09186AF61E84ECC000E5BEC9 /* platforms */,
 				0992C61C1E0572400003688B /* public.h */,
-				09D1348D1D15B570001CE54F /* read.resources.h */,
 			);
 			name = include;
 			sourceTree = "<group>";

@@ -16,7 +16,6 @@
 #include "os.storage.h"
 #include "os.storage.keys.h"
 #include "os.file.dialog.h"
-#include "read.resources.h"
 #include "platform.h"
 #include "bsonutils.hpp"
 #include "utf8.hpp"
