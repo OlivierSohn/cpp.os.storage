@@ -13,7 +13,11 @@ int main(int argc, const char * argv[]) {
     constexpr auto countBytes = 2224 * 1668; // the number of pixels of 10.5 inch ipad pro
     
     auto writer = std::make_unique<bsonparser::BSonWriter>(DirectoryPath{"./"}, FileName{"rndBytes.bson"});
-    writer->Initialize();
+    auto res = writer->Initialize();
+    if (res != ILE_SUCCESS) {
+        LG(ERR,"writer initialize failed");
+        return -1;
+    }
     writer->writeBinary(countBytes, []() -> uint8_t {
         return std::uniform_int_distribution<>{0,255}(mersenne<SEEDED::No>());
     });

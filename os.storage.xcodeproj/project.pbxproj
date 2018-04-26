@@ -259,6 +259,7 @@
 				091578291F8068940058B088 /* Sources */,
 				0915782A1F8068940058B088 /* Frameworks */,
 				0915782B1F8068940058B088 /* CopyFiles */,
+				09D084E62092259600163EE0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -336,6 +337,22 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		09D084E62092259600163EE0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo ${BUILT_PRODUCTS_DIR}\n${BUILT_PRODUCTS_DIR}/genRndBytes";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		091578291F8068940058B088 /* Sources */ = {
