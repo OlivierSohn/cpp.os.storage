@@ -8,6 +8,7 @@
 #  define STRICT_TYPED_ITEMIDS
 #  include <windows.h>      // For common windows data types and function headers
 #  include <tchar.h>
+#  include <Shobjidl.h>
 #  include <shlobj.h>
 #  include <objbase.h>      // For COM headers
 #  include <shobjidl.h>     // for IFileDialogEvents and IFileDialogControlEvents
