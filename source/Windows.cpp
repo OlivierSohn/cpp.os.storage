@@ -2,8 +2,6 @@
 #include "Windows.h"
 #include "Shlobj.h"
 
-#include "platform.h"
-
 namespace imajuscule {
     
     DirectoryPath Windows::user_path() {
