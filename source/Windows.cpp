@@ -1,6 +1,3 @@
-#define NOMINMAX
-#include "Windows.h"
-#include "Shlobj.h"
 
 namespace imajuscule {
     
