@@ -5,8 +5,9 @@
 #  ifndef NOMINMAX
 #    define NOMINMAX
 #  endif
-#  include <windows.h>      // For common windows data types and function headers
 #  define STRICT_TYPED_ITEMIDS
+#  include <windows.h>      // For common windows data types and function headers
+#  include <tchar.h>
 #  include <shlobj.h>
 #  include <objbase.h>      // For COM headers
 #  include <shobjidl.h>     // for IFileDialogEvents and IFileDialogControlEvents
@@ -17,7 +18,6 @@
 #  include <propidl.h>      // for the Property System APIs
 #  include <strsafe.h>      // for StringCchPrintfW
 #  include <shtypes.h>      // for COMDLG_FILTERSPEC
-#  include <tchar.h>
 #  pragma comment(linker, "\"/manifestdependency:type='Win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #else
 #  include <dirent.h>
