@@ -8,10 +8,6 @@
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
-#if _WIN32
-
-#include "os.storage.h"
-#include "os.file.dialog.h"
 
 #include <windows.h>      // For common windows data types and function headers
 #define STRICT_TYPED_ITEMIDS
@@ -468,5 +464,3 @@ bool BasicFileOpen(std::string & sFilePath, std::string & fileName, const std::s
         return FileSystemOperation::Nature::BLOCKING;
     }
 }
-
-#endif // _WIN32

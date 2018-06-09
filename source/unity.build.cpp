@@ -13,5 +13,8 @@
 #include "os.file.dialog.cpp"
 #include "os.storage.cpp"
 #include "os.storage.keys.cpp"
-#include "win32/Win32Dialogs.cpp"
+
+#if _WIN32
+#  include "win32/Win32Dialogs.cpp"
+#endif
 
