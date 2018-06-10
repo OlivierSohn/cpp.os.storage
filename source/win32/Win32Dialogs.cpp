@@ -9,8 +9,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
 
-#include "Shobjidl.h"
-
 // Indices of file types
 #define INDEX_WORDDOC 1
 #define INDEX_WEBPAGE 2
@@ -379,12 +377,12 @@ bool BasicFileOpen(std::string & sFilePath, std::string & fileName, const std::s
 
                         std::wstring W1(L"*.");
                         W1.append(WfileExt);
-                        
+
                         std::wstring W2(WfileExt);
                         W2.append(L" File (*.");
                         W2.append(WfileExt);
                         W2.append(L")");
-                        
+
                         const COMDLG_FILTERSPEC c_rgSaveTypes2[] =
                         {
                             { W2.c_str(), W1.c_str() }
