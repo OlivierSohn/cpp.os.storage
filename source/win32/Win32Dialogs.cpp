@@ -9,6 +9,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
 
+#include "Shobjidl.h"
+
 // Indices of file types
 #define INDEX_WORDDOC 1
 #define INDEX_WEBPAGE 2

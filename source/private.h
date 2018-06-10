@@ -5,6 +5,7 @@
 #    define NOMINMAX
 #  endif
 #  define STRICT_TYPED_ITEMIDS
+#  include <SDKDDKVer.h>
 #  include <windows.h>      // For common windows data types and function headers
 #  include <tchar.h>
 #  include <Shobjidl.h>
