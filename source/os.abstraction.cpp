@@ -23,3 +23,4 @@ void OSAbstraction::unregisterAbstraction(OSAbstraction * a)
     Assert(m_registered == a);
     m_registered = nullptr;
 }
+

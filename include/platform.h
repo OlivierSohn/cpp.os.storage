@@ -17,4 +17,7 @@ namespace imajuscule
     using Platform = Posix;
 
 #endif
+
+  DirectoryPath root();
+
 }

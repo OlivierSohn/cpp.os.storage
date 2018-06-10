@@ -15,3 +15,10 @@
 #if _WIN32
 #  include "win32/Win32Dialogs.cpp"
 #endif
+
+
+namespace imajuscule {
+  DirectoryPath root() {
+    return Platform::user_path() + "grid3d";
+  }
+}
