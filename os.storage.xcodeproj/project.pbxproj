@@ -42,7 +42,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0914BEE61D13904C007D6795 /* file2string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = file2string.cpp; path = source/file2string.cpp; sourceTree = "<group>"; };
 		0914BEE91D13905F007D6795 /* file2string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = file2string.h; path = include/file2string.h; sourceTree = "<group>"; };
 		0915782D1F8068940058B088 /* genRndBytes */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = genRndBytes; sourceTree = BUILT_PRODUCTS_DIR; };
 		091578341F80695B0058B088 /* genRandBytes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = genRandBytes.cpp; path = source/genRandBytes.cpp; sourceTree = "<group>"; };
@@ -171,7 +170,6 @@
 			isa = PBXGroup;
 			children = (
 				09186AF81E84ED3D00E5BEC9 /* dialogs */,
-				0914BEE61D13904C007D6795 /* file2string.cpp */,
 				093DCC941B6213F800140F7B /* os.abstraction.cpp */,
 				09DBDCB91B07EF8800870E0A /* os.file.dialog.cpp */,
 				09C6C6C81A0186E9003ECAB4 /* os.storage.keys.cpp */,

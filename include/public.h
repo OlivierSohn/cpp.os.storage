@@ -7,3 +7,7 @@
 #include "os.storage.keys.h"
 #include "os.file.dialog.h"
 #include "platform.h"
+
+namespace imajuscule {
+  std::string generateGuid();
+}

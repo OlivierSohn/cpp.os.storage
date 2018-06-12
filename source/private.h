@@ -18,7 +18,6 @@
 #  include <propvarutil.h>  // for PROPVAR-related functions
 #  include <propkey.h>      // for the Property key APIs/datatypes
 #  include <propidl.h>      // for the Property System APIs
-#  include <strsafe.h>      // for StringCchPrintfW
 #  include <shtypes.h>      // for COMDLG_FILTERSPEC
 #  pragma comment(linker, "\"/manifestdependency:type='Win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #else
