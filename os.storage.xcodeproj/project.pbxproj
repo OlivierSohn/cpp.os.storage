@@ -10,7 +10,6 @@
 		091578351F80695B0058B088 /* genRandBytes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 091578341F80695B0058B088 /* genRandBytes.cpp */; };
 		0965AB651F806F860017F78C /* unity.build.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0978356C1D57B13B00E47ED3 /* unity.build.cpp */; };
 		0965AB681F80742B0017F78C /* libalgorithms.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0965AB661F80742B0017F78C /* libalgorithms.a */; };
-		0965AB691F80742B0017F78C /* libos.log.osx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0965AB671F80742B0017F78C /* libos.log.osx.a */; };
 		0965AB6A1F8074870017F78C /* unity.build.mm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09EC87091E06625900252038 /* unity.build.mm.cpp */; };
 		0965AB6C1F8074F40017F78C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0965AB6B1F8074F40017F78C /* CoreGraphics.framework */; };
 		0965AB6E1F8075080017F78C /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0965AB6D1F8075080017F78C /* AppKit.framework */; };
@@ -54,7 +53,6 @@
 		0951E9511D87B3BA00876382 /* iOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = iOS.h; path = include/iOS.h; sourceTree = "<group>"; };
 		0951E9521D87B44B00876382 /* iOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = iOS.mm; path = source/iOS.mm; sourceTree = "<group>"; };
 		0965AB661F80742B0017F78C /* libalgorithms.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libalgorithms.a; path = ../algorithms/build/Debug/libalgorithms.a; sourceTree = "<group>"; };
-		0965AB671F80742B0017F78C /* libos.log.osx.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libos.log.osx.a; path = ../os.log/build/Debug/libos.log.osx.a; sourceTree = "<group>"; };
 		0965AB6B1F8074F40017F78C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		0965AB6D1F8075080017F78C /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		0965AB6F1F807AA20017F78C /* generated */ = {isa = PBXFileReference; lastKnownFileType = folder; path = generated; sourceTree = "<group>"; };
@@ -95,7 +93,6 @@
 				0965AB6E1F8075080017F78C /* AppKit.framework in Frameworks */,
 				0965AB6C1F8074F40017F78C /* CoreGraphics.framework in Frameworks */,
 				0965AB681F80742B0017F78C /* libalgorithms.a in Frameworks */,
-				0965AB691F80742B0017F78C /* libos.log.osx.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,7 +202,6 @@
 				0965AB6D1F8075080017F78C /* AppKit.framework */,
 				0965AB6B1F8074F40017F78C /* CoreGraphics.framework */,
 				0965AB661F80742B0017F78C /* libalgorithms.a */,
-				0965AB671F80742B0017F78C /* libos.log.osx.a */,
 				09C2F83C19BF181B00472700 /* Foundation.framework */,
 				09C2F84A19BF181B00472700 /* XCTest.framework */,
 				09C2F84D19BF181B00472700 /* UIKit.framework */,
